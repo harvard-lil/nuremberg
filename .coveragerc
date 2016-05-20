@@ -1,0 +1,17 @@
+[run]
+data_file=coverage/.coverage
+omit=
+  */settings/*
+  */admin.py
+  */test*
+  */urls.py
+  */wsgi.py
+  */__init__.py
+branch=True
+
+[report]
+skip_covered=True
+fail_under=90
+
+[html]
+directory=coverage

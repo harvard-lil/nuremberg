@@ -1,4 +1,4 @@
-from nuremberg.settings.generic import *
+from .generic import *
 
 DEBUG = True;
 DATABASES['default'] = {

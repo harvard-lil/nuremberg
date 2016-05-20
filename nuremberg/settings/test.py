@@ -1,0 +1,4 @@
+from .dev import *
+
+DEBUG = False
+STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE = False

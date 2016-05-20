@@ -1,4 +1,4 @@
-from nuremberg.settings.generic import *
+from .generic import *
 import dj_database_url
 
 DEBUG = True;

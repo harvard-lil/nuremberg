@@ -4,3 +4,7 @@ django-static-precompiler==1.4
 dj-database-url==0.4.1
 mysqlclient==1.3.7
 whitenoise==3.1
+pyquery==1.2.13
+pytest-django==2.9.1
+pytest-cov==2.2.1
+sure==1.2.24
