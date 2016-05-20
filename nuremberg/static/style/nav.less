@@ -1,0 +1,61 @@
+@navbar-border-radius: 0;
+@navbar-height: 62px;
+@navbar-margin-bottom: 0;
+
+.site-nav {
+  .navbar();
+  .navbar-default();
+  .sans-serif(normal, 20px, 22px);
+  padding: 22px 47px 0;
+
+  background-color: @black;
+  color: white;
+  border: none;
+  .border-radius(0);
+
+  .site-brand {
+    .navbar-header();
+    .sans-serif(normal, 19px, 19px);
+    div {
+      display: inline-block;
+    }
+    .brand-harvard {
+      display: none;
+    }
+    .brand-harvard-abbr {
+      color: @dark-gray;
+    }
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    .nav();
+    .navbar-nav();
+    .pull-right();
+
+    .sans-serif(normal, 16px, 16px);
+
+    margin: 0;
+
+
+    li {
+      float: left;
+      margin-left: 30px;
+      > a {
+        @underline-height: 5px;
+        padding: 0 0 7px;
+        color: white;
+        text-decoration: none;
+        &:hover {
+          color: white;
+          border-bottom: @underline-height solid @white;
+        }
+        &.active {
+          border-bottom: @underline-height solid @gray;
+          cursor: pointer;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+}

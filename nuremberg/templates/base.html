@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <title>Nuremberg - {% block title %}Base Page{% endblock %}</title>
+
+    {% load compile_static %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style/base.less'|compile %}"
+  </head>
+  <body class="{% block body_class %}{% endblock %}">
+    <header>
+      {% block header %}
+        {% include 'nav.html' %}
+      {% endblock %}
+    </header>
+
+    <main>
+      {% block content %}
+      Nothing here!
+      {% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      {% block footer %}
+      <div class="footer-about">
+        <h3> Harvard Law School Library Nuremberg Trials Project </h3>
+        The Nuremberg Trials Project is an open-access initiative to create and present
+        digitized images or full-text versions of the Library's Nuremberg documents,
+        descriptions of each document, and general information about the trials.
+        <br />
+        <a href="mailto:specialc@law.harvard.edu" class="email">specialc@law.harvard.edu</a>
+        <div class="copyright">
+          Copyright 2015 &copy; The President and Fellows of Harvard College. Last reviewed: June 2016.
+        </div>
+      </div>
+      <ul class="footer-nav-col offset">
+        <li>
+          <a href="{% url 'content:trials' %}"> Trials </a>
+        </li>
+        <li>
+          <a href="{% url 'content:approaches' %}"> Approaches </a>
+        </li>
+        <li>
+          <a href="{% url 'content:history' %}"> History </a>
+        </li>
+        <li>
+          <a href="/search"> Advanced Search </a>
+        </li>
+      </ul>
+      <ul class="footer-nav-col">
+        <li>
+          <a href="{% url 'content:about' %}"> About the Project </a>
+        </li>
+        <li>
+          <a href="/donate"> Donate </a>
+        </li>
+        <li>
+          <a href="/api"> API </a>
+        </li>
+      </ul>
+      {% endblock %}
+    </footer>
+  </body>
+</html>

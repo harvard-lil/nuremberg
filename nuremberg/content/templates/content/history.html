@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} About the Project {% endblock %}
+
+{% block body_class %}about{% endblock %}
+
+{% block content %}
+<section class="spacer"></section>
+<section class="theme-white content-head">
+  <div class="side-nav-layout">
+    <div class="sidebar-column">
+      <h3 class="sans">History</h3>
+      <nav class="sub-nav vertical">
+        <li>
+          <a href="#collection">History of the Project</a>
+        </li>
+        <li>
+          <a href="#transcripts">Transcripts</a>
+        </li>
+        <li>
+          <a href="#documents">Documents</a>
+        </li>
+        <li>
+          <a href="#citation">Citation</a>
+        </li>
+        <li>
+          <a href="#funding">Funding</a>
+        </li>
+        <li>
+          <a href="#api">API</a>
+        </li>
+      </nav>
+    </div>
+    <div class="main-column">
+      <h1 id="collection"> History of the Project </h1>
+      <p class="intro">
+        The Harvard Law School Library has approximately 120,000 Nuremberg documents,
+        amounting to roughly 1,000,000 pages of material in 680 records storage cartons.
+      </p>
+      <p>
+        So far, our project covers approximately 82,000 documents and 650,000 pages of this material.
+        Our long-term goal is to complete the analysis and photography of the documents and to
+        place digital images of them and their accompanying transcripts on the Project website.
+      </p>
+      <h3 class="serif"> Materials Currently Provided by the Project </h3>
+      <p>
+        The Project currently provides access to the following materials for three
+        United States Nuremberg Military Tribunals,
+        <br />
+        NMT 1 (U.S.A. v. Karl Brandt et al.),
+        NMT 2 (U.S.A. v. Erhard Milch), and NMT 4 (U.S.A. v. Pohl et al.):
+      </p>
+      <ul class="p">
+        <li> Trial documents. These are documents used by the prosecution and defense during the trials. They include written briefs, transcripts of oral arguments, and document books of evidence to be presented as exhibits.
+        <li> Evidence file documents. These are sets of evidentiary material assembled by the war crimes staff for potential use in the trials. Nearly all prosecution exhibits and many defense exhibits were derived from these documents. Most of the evidence was seized from German military, governmental, and economic offices, but other material, such as affidavits, was added during the war crimes investigations. For any given document, the collection often includes a photostat copy of the original, an analysis by the war crimes staff, a typescript in English, and a typescript in German.
+        <li> Trial transcripts. These are the verbatim records of proceedings in court, including witness testimony, oral arguments, and court rulings and judgments. We plan to include all English language trial documents and trial transcripts, and all the evidence file documents (in any language) that were drawn upon in any trial.
+      </ul>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,128 @@
+.document-tools {
+  padding: 15px 0 7px;
+}
+
+.zoom-buttons {
+  height: 30px;
+  line-height: 0;
+  font-size: 0;
+  color: transparent;
+
+  button {
+    display: inline-block;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: @white;
+    border: 1px solid @light-gray;
+
+    width: 47px;
+    height: 35px;
+    margin: 0;
+
+    &.zoom-in {
+      background-image: url('@{image_url}/icon-zoom-in.png');
+    }
+    &.zoom-out {
+      background-image: url('@{image_url}/icon-zoom-out.png');
+    }
+    &:first-child {
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+      border-right: none;
+    }
+    &:last-child {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+  }
+}
+
+.page-buttons {
+  height: 30px;
+  line-height: 0;
+  font-size: 0;
+  color: transparent;
+
+  select {
+    .form-control();
+    display: inline-block;
+    width: 200px;
+    margin-right: 7px;
+    vertical-align: bottom;
+  }
+
+  button {
+    height: 32px;
+    width: 32px;
+    margin: 1px;
+
+    display: inline-block;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: @white;
+    border: none;
+
+    &.first-page {
+      background-image: url('@{image_url}/icon-first-page.png');
+    }
+    &.prev-page {
+      background-image: url('@{image_url}/icon-prev-page.png');
+    }
+    &.next-page {
+      background-image: url('@{image_url}/icon-next-page.png');
+    }
+    &.last-page {
+      background-image: url('@{image_url}/icon-last-page.png');
+    }
+  }
+}
+
+hr {
+  margin-bottom: 50px;
+}
+
+.document-image {
+  margin: 10px;
+  max-width: 100%;
+  &.small-image {
+    max-width: 150px;
+  }
+}
+
+.sidebar-layout {
+  .main-column {
+    .make-md-column(8);
+    height: 100%;
+    overflow: scroll;
+  }
+  .sidebar-column {
+    .make-md-column(4);
+    .make-md-column-offset(0);
+    padding-top: 25px;
+    padding-left: 30px;
+  }
+
+  h3 {
+    .serif-headline(normal, 21px, 27px);
+    margin-bottom: 5px;
+  }
+  p {
+    .sans-serif(normal, 14px, 14px);
+    &.date {
+      font-size: 16px;
+    }
+  }
+  h5 {
+    margin: 0 0 20px;
+    .sans-serif(300, 15px, 25px);
+  }
+  h6 {
+    .sans-serif(bold, 14px, 14px);
+    color: @gray;
+    text-transform: uppercase;
+
+    margin: 42px 0 10px;
+  }
+}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %} Document Search Results {% endblock %}
+
+{% block body_class %}document-search{% endblock %}
+
+{% block content %}
+<section class="theme-beige thin">
+  <div class="full-width">
+    <form class="results-search" action='{% url 'search:search' %}' method='GET'>
+      <input type="search" name="query" value="{{query}}" required />
+      <button class="button search-button">Search</button>
+    </form>
+  </div>
+</section>
+<section class="theme-light">
+  <div class="sidebar-layout">
+    <div class="sidebar-column search-filters">
+      <h4>Filter Results</h4>
+      <p>Filters go here</p>
+    </div>
+    <div class="main-column search-results">
+      <p class="hint">
+        Showing {{results.count}} results for
+        <strong>{{query}}</strong>
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th class="material-col"> Material </th>
+            <th> Authors </th>
+            <th> Date </th>
+            <th> Type </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for document in results %}
+            {% include 'search/document-row.html' %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

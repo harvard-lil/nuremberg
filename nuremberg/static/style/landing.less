@@ -1,0 +1,236 @@
+nav.site-nav {
+  background: transparent;
+  border: none;
+
+  .site-brand {
+    text-transform: uppercase;
+    div {
+      display: block;
+    }
+    .brand-harvard-abbr {
+      display: none;
+    }
+    .brand-harvard {
+      color: @light-gray;
+      font-size: 12px;
+      line-height: 12px;
+    }
+    .brand-project {
+      font-size: 22px;
+    }
+  }
+  .nav-links {
+    margin-top: 5px;
+    margin-right: -4px;
+    a {
+      font-size: 18px;
+      margin-left: 30px;
+    }
+  }
+}
+
+section {
+  h2 {
+    font-size: 24px;
+  }
+
+  &.landing-hero {
+    padding-bottom: 53px;
+    color: white;
+    background-color: @gray;
+    background-image: url('@{image_url}/landing/landing-hero.jpg');
+    background-position: center;
+    background-size: 1200px;
+  }
+
+  .landing-hero-content {
+    margin-top: 43px;
+    .make-md-column(8.5);
+    .make-md-column-offset(2.2);
+
+    h1 {
+      margin-bottom: 0px;
+      font-size: 38px;
+    }
+    h2 {
+      color: @blue;
+      margin-top: 5px;
+      font-size: 20px;
+      font-weight: normal;
+    }
+    padding-left: 0;
+  }
+
+  .landing-search {
+    margin-top: 35px;
+    margin-bottom: 15px;
+
+    fieldset.include-materials {
+      padding: 14px 0px;
+      border: none;
+
+      .sans-serif(normal, 13px, 16px);
+      label {
+        margin-left: 10px;
+      }
+
+      input[type=checkbox] {
+        width: 14px;
+        height: 14px;
+      }
+    }
+    legend {
+      display: inline-block;
+      color: @light-gray;
+    }
+
+  }
+
+  &.collection {
+    h2 {
+      .serif-headline(bold, 28px, 30px);
+    }
+
+    p {
+      line-height: 28px;
+      max-width: 75%;
+      margin: 5px 0;
+
+      &.small {
+        font-size: 14px;
+        line-height: 25px;
+      }
+    }
+  }
+
+  .materials {
+    padding: 20px 15px;
+
+    .material-category {
+      background-repeat: no-repeat;
+      background-position: 0px 0px;
+      padding-left: 50px;
+      padding-right: 10px;
+
+      .sans-serif(normal, 14px, 21px);
+
+      h3 {
+        margin: 0;
+        .sans-serif(bold, 15px, 23px);
+      }
+    }
+  }
+
+  .approaches-categories {
+    padding: 12px 0;
+
+    .approach-category {
+      padding-right: 20px;
+      h3 {
+        margin: 10px 0;
+      }
+
+      .tag-list {
+        margin-top: 20px;
+      }
+    }
+  }
+
+  &.transcripts {
+    margin-top: -5px;
+  }
+
+  .transcript-preview {
+    padding-top: 0px;
+
+    .transcript-links {
+      padding-top: 10px;
+
+      h3 {
+        margin-top: 16px;
+      }
+
+      nav {
+        padding: 12px 3px;
+      }
+    }
+
+    p {
+      font-size: 16px;
+      max-width: 600px;
+    }
+  }
+
+}
+
+.project-progress {
+  .progress-summary {
+    .serif-text(normal, 15px, 23px);
+  }
+  .progress-graph {
+    padding: 35px 20px 0 55px;
+
+    .progress-bar {
+      position: relative;
+      height: 50px;
+      width: 100%;
+      background-color: @light-gray;
+    }
+    .completion-date {
+      float: left;
+      .sans-serif(300, 14px, 12px);
+      position: relative;
+      top: -25px;
+      margin-left: -7px;
+      height: 0px;
+      transform: rotate(-20deg);
+
+      &.end-date {
+        position: absolute;
+        right: 0px;
+      }
+      &.start-date {
+        position: absolute;
+        left: 0px;
+      }
+    }
+    .bar-segment {
+      float: left;
+      height: 100%;
+      padding-top: 17px;
+      text-align: center;
+
+      .sans-serif(normal, 15px, 15px);
+
+      &.documents-digitized {
+        background-color: @beige;
+      }
+      &.transcripts-keyed {
+        background-color: @dark-blue;
+      }
+    }
+    .progress-legend {
+      margin-top: 10px;
+    }
+    .legend {
+      float: left;
+      margin-right: 10px;
+      .sans-serif(300, 12px, 14px);
+
+      &::before {
+        display: inline-block;
+        line-height: 15px;
+        margin: -2px 5px;
+        width: 15px;
+        height: 15px;
+        content: '\A0'; // &nbsp;
+      }
+      &.documents-digitized::before {
+        background-color: @beige;
+      }
+      &.transcripts-keyed::before {
+        background-color: @dark-blue;
+      }
+    }
+  }
+}

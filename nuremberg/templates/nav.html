@@ -1,0 +1,23 @@
+<nav class="site-nav">
+  <div class="site-brand">
+    <a class="unstyled" href="{% url 'content:landing' %}">
+      <div class="brand-harvard"> Harvard Law School Library </div>
+      <div class="brand-harvard-abbr"> HLS </div>
+      <div class="brand-project"> Nuremberg Trials Project </div>
+    </a>
+  </div>
+  <ul class="nav-links">
+    <li> <a href="{% url 'content:trials' %}"
+      {% if request.resolver_match.url_name == 'trials' %}class="active"{% endif %}
+      > Trials </a> </li>
+    <li> <a href="{% url 'content:approaches' %}"
+      {% if request.resolver_match.url_name == 'approaches' %}class="active"{% endif %}
+      >  Approaches </a> </li>
+    <li> <a href="{% url 'content:history' %}"
+      {% if request.resolver_match.url_name == 'history' %}class="active"{% endif %}
+      >  History </a> </li>
+    <li> <a href="{% url 'content:about' %}"
+      {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}
+      >  About the Project </a> </li>
+  </ul>
+</nav>

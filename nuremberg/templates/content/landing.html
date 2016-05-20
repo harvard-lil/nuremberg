@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Explore the Nuremberg Trials! {% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block body_class %}landing-page{% endblock %}
+
+{% block content %}
+<section class="landing-hero">
+  {% include 'nav.html' %}
+
+  <div class="landing-hero-content">
+    <hgroup class="landing-header">
+      <h1>
+        Search millions of historical documents related to the Nuremberg trials.
+      </h1>
+      <h2>
+        Examine trial transcripts, briefs, document books, evidence files, and other
+        papers from the trials of military and political leaders of Nazi Germany.
+      </h2>
+    </hgroup>
+    <form class="landing-search" action='{% url 'search:search' %}' method='GET'>
+      <input type="search" name="query" required />
+      <button class="button search-button">Search</button>
+
+      <fieldset class="include-materials">
+        <legend>Include these materials:</legend>
+        <label>
+          <input type="checkbox" name="include" value="documents" />
+          Documents
+        </label>
+        <label>
+          <input type="checkbox" name="include" value="transcripts" />
+          Transcripts
+        </label>
+        <label>
+          <input type="checkbox" name="include" value="photographs" />
+          Photographs
+        </label>
+      </fieldset>
+    </form>
+  </div>
+</section>
+
+<section class="collection">
+  <h2> Access the Collection </h2>
+  <p class="partial-width">
+    The Harvard Law School Library's Nuremberg Trials Project is and open-access initiative to create
+    and present digitized images or full-text versions of the Library's Nuremberg documents,
+    descriptions of each document, and general information about the trials.
+  </p>
+  <p class="small">
+    The Project currently provides access to the following materials for three
+    United States Nuremberg Military Tribunals,
+    <br />
+    NMT 1 (U.S.A. v. Karl Brandt et al.),
+    NMT 2 (U.S.A. v. Erhard Milch), and NMT 4 (U.S.A. v. Pohl et al.):
+  </p>
+  <div class="materials four-column-layout">
+    <div class="column material-category material-documents">
+      <h3> Trial documents </h3>
+      Documents used by the prosecution and defense during the trials.
+    </div>
+    <div class="column material-category material-documents">
+      <h3> Evidence file documents </h3>
+      Sets of evidentiary material assembled by the war crimes staff for potential use in the trials.
+    </div>
+    <div class="column material-category material-transcripts">
+      <h3> Trial transcripts </h3>
+      Verbatim records of proceedings in court, including witness testimony, oral arguments, and court rulings and judgments.
+    </div>
+    <div class="column material-category material-photographs">
+      <h3> Photographs </h3>
+      Photographs of Nuremberg Trials defendants, judges, and trial activities.
+    </div>
+  </div>
+  <p>
+    <a class="teaser" href="{% url 'content:about' %}"> More about the Project </a>
+  </p>
+</section>
+
+<section class="theme-beige">
+  <h2> Approaches </h2>
+  <div class="three-column-layout approaches-categories">
+    <div class="column approach-category">
+      <img src="{% static 'images/landing/topics.png' %}" />
+      <h3> Topics </h3>
+      <p>
+        Uncover the topics related to the Nuremberg trials. Trial topics are criminal activities or subjects
+        at issue in a trial or pertaining to a document. Usually these are prosecution
+        charges&mdash;like <a>crimes against humanity</a>&mdash;or a defense response. Examine some of the
+        collection's most-accessed trial topics.
+      </p>
+
+      <p class="tag-list">
+        <a class="button tag-button">Epidemic jaundice experiments</a>
+        <a class="button tag-button">High altitude experiments</a>
+        <a class="button tag-button">Jewish skeleton collection</a>
+        <a class="button tag-button">Malaria experiments</a>
+        <a class="button tag-button">Poison gas experiments</a>
+      </p>
+    </div>
+    <div class="column approach-category">
+      <img src="{% static 'images/landing/people.jpg' %}" />
+      <h3> People </h3>
+      <p>
+        Access documents and transcripts related to specific people&mdash;defendants, authors, prosecutors,
+        and more&mdash;involved in the trials. Start with these three high-ranking officers.
+      </p>
+      <ul class="default">
+        <li>
+          <a> Karl Brandt</a>: Reich Commissioner for Health and Sanitation
+        </li>
+        <li>
+          <a> Hermann Goering</a>: General of the Air Force, chief of the war economy, Minister for Aviation
+        </li>
+        <li>
+          <a> Heinrich Himmler</a>: Reichsfuehrer-SS and Chief of the Police
+        </li>
+      </ul>
+    </div>
+    <div class="column approach-category">
+      <img src="{% static 'images/landing/documents.jpg' %}" />
+      <h3> Evidence File Documents </h3>
+      <p>
+        Collections of documents assembled by IMT and NMT staff for possible use in the trials,
+        evidence files provided nearly all of the documentary evidence used by the prosecution. The
+        documents were organized into sixteen subject groups. Here are three of the most interesting.
+      </p>
+      <ul class="default">
+        <li>
+          <strong> C: </strong> <a> Crimes </a> ; IMT
+        </li>
+        <li>
+          <strong> NO: </strong> <a> Nuremberg Organizations </a> ; concerning Nazi organizations,
+          such as the SS; NMT
+        </li>
+        <li>
+          <strong> NG: </strong> <a> Nuremberg Government </a> ; concerning Nazi government
+          agencies; NMT
+        </li>
+      </ul>
+    </div>
+  </div>
+  <p>
+    <a class="teaser"> More approaches to the Collection </a>
+  </p>
+</section>
+
+<section class="transcripts">
+
+  <h2> Trial Transcripts </h2>
+  <div class="sidebar-layout transcript-preview">
+    <div class="sidebar-column transcript-links">
+      <a class="unstyled trial-overlay" href="trial">
+        <span class="trial-flag trial-nmt-1">NMT 1</span>
+        <img src="{% static 'images/landing/trial-transcripts.jpg' %}" />
+      </a>
+      <h3> NMT Case 1 <br /> USA v. Karl Brandt et al. 1946-47 </h3>
+      <nav class="sub-nav vertical">
+        <li>
+          <a> Table of Contents </a>
+        </li>
+        <li>
+          <a> Detailed Summary </a>
+        </li>
+        <li>
+          <a> Begin Reading </a>
+        </li>
+      </nav>
+    </div>
+    <div class="main-column transcript-summary">
+      <blockquote>
+        Whatever book or treatise on medical ethics we may
+        examine, and whatever expert on forensic medicine we
+        may question, will say that it is a fundamental and
+        inescapable obligation of every physician under any
+        known system of law not to perform a dangerous
+        experiment without the subject's consent.
+      </blockquote>
+      <cite>
+        Telford Taylor, Chief of Counsel for war crimes for all NMT trials, 9 December 1946
+      </cite>
+      <p>
+        Currently, a portion of the Medical Case transcript is the only trial
+        transcript material we are able to make available. The portion offered
+        covers the first seven days of the proceedings. The full Medical Trial
+        extends from 21 November 1946 through 20 August 1947. It includes
+        witness testimony, the presentation of exhibits, oral arguments by
+        counsel, and rulings by the tribunal.
+      </p>
+      <p>
+        <a class="teaser"> Begin reading </a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="progress theme-blue">
+  <h2> Project Progress </h2>
+  <div class="project-progress sidebar-layout">
+    <div class="progress-summary sidebar-column">
+      As of Spring 2016, we have digitized images of all documents in the collection
+      and are beginning to provide searchable text transcripts using
+      corrected OCR. The process is expected to take several years to complete.
+    </div>
+    <div class="progress-graph main-column">
+      <div class="progress-bar">
+        <div class="completion-date start-date">2003</div>
+        <div class="bar-segment transcripts-keyed" style="width: 13%;">13%</div>
+        <div class="completion-date">2011</div>
+        <div class="bar-segment documents-digitized" style="width: 30%;">30%</div>
+        <div class="completion-date">2015</div>
+        <div class="completion-date end-date">2025</div>
+      </div>
+      <div class="progress-legend">
+        <div class="legend documents-digitized">Documents Digitized</div>
+        <div class="legend transcripts-keyed">Transcripts Keyed</div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,81 @@
+// Import bootstrap mixins, but don't include any bootstrap CSS in our bundle
+@import (reference) "bootstrap/bootstrap";
+@import "bootstrap/normalize";
+@import "bootstrap/scaffolding";
+
+@import "grid";
+@import "nav";
+@import "content";
+@import "text";
+@import "forms";
+@import "colors";
+@import "mixins";
+
+// body, html {
+// 	height: 100%;
+// }
+
+body {
+  color: black;
+  margin: 0px;
+  padding: 0px;
+  .center-block();
+  max-width: 1200px;
+  border-left: 1px solid @light-gray;
+  border-right: 1px solid @light-gray;
+}
+
+footer.site-footer {
+  .make-row();
+  margin: 0;
+  padding: 20px 35px;
+
+  background-image: url('@{image_url}/footer.jpg');
+  color: white;
+
+  .footer-about {
+    .make-md-column(6);
+
+    color: @beige;
+    .sans-serif(normal, 14px, 21px);
+
+    h3 {
+      color: white;
+      .sans-serif(bold, 17px, 20px);
+      margin-bottom: 10px;
+    }
+
+    a.email {
+      color: white;
+      text-decoration: none;
+    }
+  }
+  .footer-nav-col {
+    list-style: none;
+    .make-md-column(1.5);
+    .make-md-column-offset(0.9);
+    &.offset {
+      .make-md-column-offset(1.8);
+    }
+
+    padding: 24px 0;
+
+    .sans-serif(300, 14px, 14px);
+    li {
+      padding: 7px 0;
+    }
+    a {
+      text-decoration: none;
+      color: white;
+      &:hover {
+        border-bottom: 2px solid white;
+      }
+    }
+  }
+
+  .copyright {
+    color: @light-gray;
+    .sans-serif(300, 11px, 12px);
+    margin-top: 25px;
+  }
+}
