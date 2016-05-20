@@ -1,12 +1,36 @@
 @navbar-border-radius: 0;
 @navbar-height: 62px;
 @navbar-margin-bottom: 0;
+@navbar-padding-vertical: 22px;
+@navbar-padding-horizontal: 50px;
+
+body {
+    &.fixed-nav {
+      > header {
+        .navbar-fixed-top();
+        nav {
+          .navbar-fixed-width();
+          border-left: 1px solid @light-gray;
+          border-right: 1px solid @light-gray;
+        }
+      }
+      padding-top: @navbar-height;
+    }
+}
+.navbar-fixed-width {
+  margin-left: auto;
+  margin-right: auto;
+
+  @media all and (min-width: @screen-lg-min) {
+    width: @screen-lg-min;
+  }
+
+  width: 100%
+}
 
 .site-nav {
   .navbar();
-  .navbar-default();
-  .sans-serif(normal, 20px, 22px);
-  padding: 22px 47px 0;
+  padding: @navbar-padding-vertical @navbar-padding-horizontal 0;
 
   background-color: @black;
   color: white;
@@ -15,7 +39,7 @@
 
   .site-brand {
     .navbar-header();
-    .sans-serif(normal, 19px, 19px);
+    .sans-serif(normal, 20px, 20px);
     div {
       display: inline-block;
     }
@@ -25,6 +49,10 @@
     .brand-harvard-abbr {
       color: @dark-gray;
     }
+    .brand-project {
+      letter-spacing: 1px;
+      margin-left: 2px;
+    }
     text-transform: uppercase;
   }
 
@@ -33,25 +61,30 @@
     .navbar-nav();
     .pull-right();
 
-    .sans-serif(normal, 16px, 16px);
+    .sans-serif(@light, 18px, 18px);
 
     margin: 0;
 
-
     li {
       float: left;
-      margin-left: 30px;
+      margin: 0 0 0 30px;
       > a {
-        @underline-height: 5px;
-        padding: 0 0 7px;
+        @underline-color: #424D56;
+        padding: 0 0 4px;
         color: white;
         text-decoration: none;
         &:hover {
-          color: white;
-          border-bottom: @underline-height solid @white;
+          color: @dark-blue;
+          background-color: transparent;
+        }
+        &:focus {
+          background-color: transparent;
+        }
+        &:active {
+          color: @dark-gray;
         }
         &.active {
-          border-bottom: @underline-height solid @gray;
+          border-bottom: 5px solid @underline-color;
           cursor: pointer;
           pointer-events: none;
         }

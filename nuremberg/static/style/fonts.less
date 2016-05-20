@@ -1,0 +1,76 @@
+.load-font(@family, @style, @weight, @path){
+    font-family: @family;
+    font-style: @style;
+    font-weight: @weight;
+    src: url('@{font_url}/@{path}.eot');
+    src: url('@{font_url}/@{path}.eot') format('embedded-opentype'),
+      url('@{font_url}/@{path}.woff') format('woff');
+}
+
+.load-font-otf(@family, @style, @weight, @path){
+    font-family: @family;
+    font-style: @style;
+    font-weight: @weight;
+    src: url('@{font_url}/@{path}.otf');
+    src: url('@{font_url}/@{path}.otf') format('opentype');
+}
+
+@font-face {
+  .load-font('Tiempos Headline', normal, bold, 'TiemposHeadlineWeb-Bold');
+}
+@font-face {
+  .load-font('Tiempos Headline', normal, normal, 'TiemposHeadlineWeb-Medium');
+}
+@font-face {
+  .load-font('Tiempos Text', italic, bold, 'TiemposWebLF-SemiboldItalic');
+}
+@font-face {
+  .load-font('Tiempos Text', normal, normal, 'TiemposWebLF-Regular');
+}
+
+@light: 300;
+@medium: 500;
+
+@font-face {
+  .load-font-otf('Proof', normal, @light, 'Proof-Light');
+}
+@font-face {
+  .load-font-otf('Proof', italic, @light, 'Proof-LightItalic');
+}
+@font-face {
+  .load-font-otf('Proof', normal, normal, 'Proof-Book');
+}
+@font-face {
+  .load-font-otf('Proof', italic, normal, 'Proof-BookItalic');
+}
+@font-face {
+  .load-font-otf('Proof', normal, @medium, 'Proof-Medium');
+}
+@font-face {
+  .load-font-otf('Proof', italic, @medium, 'Proof-MediumItalic');
+}
+@font-face {
+  .load-font-otf('Proof', normal, bold, 'Proof-Bold');
+}
+@font-face {
+  .load-font-otf('Proof', italic, bold, 'Proof-BoldItalic');
+}
+
+.set-font(@family, @weight, @size, @height) {
+  font-family: @family;
+  font-weight: @weight;
+  font-size: @size;
+  line-height: @height;
+}
+
+.sans-serif(@weight, @size, @height) {
+  .set-font( 'Proof', sans-serif; @weight; @size; @height);
+}
+
+.serif-headline(@weight, @size, @height) {
+  .set-font( 'Tiempos Headline', serif; @weight; @size; @height);
+}
+
+.serif-text(@weight, @size, @height) {
+  .set-font( 'Tiempos Text', serif; @weight; @size; @height);
+}

@@ -5,19 +5,26 @@
 
 {% block body_class %}approaches{% endblock %}
 
+
 {% block content %}
-<section class="theme-white content-head">
-  <nav class="sub-nav horizontal">
+<nav class="sub-nav horizontal">
+  <li>
     <a href="#people">People Involved</a>
+  </li>
+  <li>
     <a href="#issues">Trial Issues &amp; Activities</a>
+  </li>
+  <li>
     <a href="#documents">Documents</a>
-  </nav>
+  </li>
+</nav>
+<section class="theme-white">
   <div class="partial-width">
     <h1> Trials </h1>
     <p class="intro">
       The Nuremberg trials were a complex set of proceedings,
       taking several years to complete. Here are some ways to
-      start research with our collection.
+      start research with our collection. blah blah blah
     </p>
   </div>
 </section>
@@ -38,11 +45,11 @@
       <img src="{% static 'images/approaches/people-hero.png' %}" />
     </div>
   </div>
-  <h4 class="serif"> The People of the Nuremberg Trials </h4>
-  <div class="three-column-layout">
+  <h3 class="serif"> The People of the Nuremberg Trials </h3>
+  <div class="three-column-layout modules">
     <div class="column">
       <img src="{% static 'images/approaches/people-defendants.jpg' %}" />
-      <h5>Defendants</h5>
+      <h4>Defendants</h4>
       <p>
         This section outlines the organizations and leading individuals in four overlapping spheres
         of Nazi Germany: the Reich ministries (the government); the Nazi party; the SS; and the
@@ -52,7 +59,7 @@
     </div>
     <div class="column">
       <img src="{% static 'images/approaches/people-authors.jpg' %}" />
-      <h5>Authors</h5>
+      <h4>Authors</h4>
       <p>
         This section outlines the organizations and leading individuals in four overlapping spheres
         of Nazi Germany: the Reich ministries (the government); the Nazi party; the SS; and the
@@ -62,7 +69,7 @@
     </div>
     <div class="column">
       <img src="{% static 'images/approaches/people-speakers.jpg' %}" />
-      <h5>Speakers</h5>
+      <h4>Speakers</h4>
       <p>
         This section outlines the organizations and leading individuals in four overlapping spheres
         of Nazi Germany: the Reich ministries (the government); the Nazi party; the SS; and the
@@ -93,7 +100,8 @@
       and other medical procedures inflicted on both civilians and prisoners of war.
     </p>
   </div>
-  <div class="three-column-layout">
+  <br />
+  <div class="three-column-layout modules">
     <div class="column">
       <p>
         <a class="trial-flag trial-nmt-1">NMT 1</a>
@@ -231,7 +239,7 @@
     </div>
   </div>
   <div class="center-text">
-    <h5>Full set of documents for Evidence File NO-208</h5>
+    <h4>Full set of documents for Evidence File NO-208</h4>
     <p class="hint">Click on each document to view it in the Document Viewer.</p>
   </div>
   <div class="four-column-layout">
@@ -239,30 +247,30 @@
       <a class="unstyled" href="/documents/1">
         <img src="{% static 'images/approaches/document-photostat.png' %}" />
       </a>
-      <p class="small">Photostat of original document</p>
+      <p class="caption">Photostat of original document</p>
     </div>
     <div class="column">
       <a class="unstyled" href="/documents/1">
         <img src="{% static 'images/approaches/document-german.png' %}" />
       </a>
-      <p class="small">German typescript</p>
+      <p class="caption">German typescript</p>
     </div>
     <div class="column">
       <a class="unstyled" href="/documents/1">
         <img src="{% static 'images/approaches/document-english.png' %}" />
       </a>
-      <p class="small">English translation</p>
+      <p class="caption">English translation</p>
     </div>
     <div class="column">
       <a class="unstyled" href="/documents/1">
         <img src="{% static 'images/approaches/document-analysis.png' %}" />
       </a>
-      <p class="small">Staff analysis</p>
+      <p class="caption">Staff analysis</p>
     </div>
   </div>
 
   <div class="center-text">
-    <h5>Trial Document</h5>
+    <h4>Trial Document</h4>
     <p class="hint">
       This Case File Document (Trial Document) was derived from the English translation of
       <br />

@@ -1,54 +1,12 @@
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,300italic,400italic,600italic);
-
-.load-font(@family, @style, @weight, @path){
-    font-family: @family;
-    font-style: @style;
-    font-weight: @weight;
-    src: url('@{font_url}/@{path}.eot');
-    src: url('@{font_url}/@{path}.eot') format('embedded-opentype'),
-      url('@{font_url}//@{path}.woff') format('woff');
-}
-
-@font-face {
-  .load-font('Tiempos Headline', normal, bold, 'TiemposHeadlineWeb-Bold');
-}
-@font-face {
-  .load-font('Tiempos Headline', normal, normal, 'TiemposHeadlineWeb-Medium');
-}
-@font-face {
-  .load-font('Tiempos Text', italic, bold, 'TiemposWebLF-SemiboldItalic');
-}
-@font-face {
-  .load-font('Tiempos Text', normal, normal, 'TiemposWebLF-Regular');
-}
-
-.set-font(@family, @weight, @size, @height) {
-  font-family: @family;
-  font-weight: @weight;
-  font-size: @size;
-  line-height: @height;
-}
-
-.sans-serif(@weight, @size, @height) {
-  .set-font( 'Open Sans', sans-serif; @weight; @size; @height);
-}
-
-.serif-headline(@weight, @size, @height) {
-  .set-font( 'Tiempos Headline', serif; @weight; @size; @height);
-}
-
-.serif-text(@weight, @size, @height) {
-  .set-font( 'Tiempos Text', serif; @weight; @size; @height);
-}
-
 h1 {
   .serif-headline(bold, 48px, 48px);
+  margin: 0 0 30px;
 }
 
 h2 {
-  .sans-serif(700, 24px, 30px);
+  .sans-serif(bold, 28px, 30px);
 
-  margin: 8px 0 30px;
+  margin: 4px 0 26px;
 
   &.serif {
     .serif-headline(bold, 28px, 30px);
@@ -65,9 +23,9 @@ h3, .h3 {
 }
 
 h4 {
-  .sans-serif(300, 18px, 22px);
+  .sans-serif(@light, 20px, 22px);
 
-  margin: 20px 0;
+  margin: 16px 0 9px;
   &.serif {
     .serif-headline(normal, 20px, 22px);
   }
@@ -79,7 +37,7 @@ h5 {
   margin: 10px 0;
 }
 
-p, .p {
+p {
   .serif-text(normal, 18px, 30px);
 
   &.intro {
@@ -90,17 +48,23 @@ p, .p {
     margin: 50px 0 0;
   }
 
-  &.module {
-    .sans-serif(normal, 14px, 21px);
-    margin: 10px 0;
+  &.module, .modules & {
+    .sans-serif(normal, 16px, 21px);
+    margin: 5px 0;
+    color: @gray;
   }
 
   &.hint {
-    .sans-serif(normal, 14px, 15px);
+    .sans-serif(normal, 16px, 22px);
   }
 
   &.small {
-    .sans-serif(normal, 12px, 12px);
+    color: @gray;
+    .sans-serif(@light, 12px, 12px);
+  }
+  &.caption {
+    color: @gray;
+    .sans-serif(@light, 14px, 14px);
   }
 }
 
@@ -120,9 +84,9 @@ a {
   text-decoration: underline;
 
   &.teaser {
-    .sans-serif(300, 17px, 26px);
+    .sans-serif(300, 18px, 26px);
     text-decoration: none;
-    padding-bottom: 3px;
+    padding-bottom: 2px;
     border-bottom: 1px solid @dark-blue;
     &::after {
       content: '\2192'; // &rarr;
@@ -142,7 +106,14 @@ a {
   }
 }
 
-ul.default {
+ul:extend(p) {
+  > li {
+    margin-bottom: 10px;
+  }
+}
+
+ul.module, .modules ul {
+  &:extend(p.module);
   padding-left: 5px;
   > li {
     margin-bottom: 5px;

@@ -121,5 +121,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_PRECOMPILER_ROOT = os.path.join(BASE_DIR, 'nuremberg/static')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# static precompiler settings
+
+STATIC_PRECOMPILER_ROOT = os.path.join(BASE_DIR, 'nuremberg/static')
+
+
+# whitenoise settings
+# https://warehouse.python.org/project/whitenoise/
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'

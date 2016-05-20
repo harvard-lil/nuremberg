@@ -95,7 +95,10 @@ hr {
   .main-column {
     .make-md-column(8);
     height: 100%;
-    overflow: scroll;
+    overflow: hidden;
+    &.scrollable {
+      overflow: scroll;
+    }
   }
   .sidebar-column {
     .make-md-column(4);

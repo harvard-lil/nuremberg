@@ -22,12 +22,13 @@ form {
 }
 
 input[type=search] {
-  max-width: 585px;
-  height: 28px;
+  max-width: 580px;
+  height: 32px;
   .border-radius(3px);
   width: 100%;
+  margin-right: 5px;
 
-  border: 1px solid @light-gray;
+  border: none;
   background-image: url('@{image_url}/search-icon.png');
   background-repeat: no-repeat;
   background-position: 5px 5px;
@@ -44,6 +45,9 @@ input[type=search] {
 .search-button {
   .btn();
   .btn-primary();
+
+  .sans-serif(normal, 17px, 20px);
+  padding: 6px 13px;
 
   vertical-align: bottom;
 }

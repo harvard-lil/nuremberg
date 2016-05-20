@@ -1,6 +1,7 @@
 nav.site-nav {
   background: transparent;
   border: none;
+  padding: 0;
 
   .site-brand {
     text-transform: uppercase;
@@ -11,31 +12,27 @@ nav.site-nav {
       display: none;
     }
     .brand-harvard {
-      color: @light-gray;
-      font-size: 12px;
-      line-height: 12px;
+      color: #8E8C89;
+      .sans-serif(normal, 14px, 14px);
+      letter-spacing: 0.2px;
     }
     .brand-project {
-      font-size: 22px;
+      .sans-serif(normal, 26px, 34px);
+      letter-spacing: 1.2px;
+      margin-left: 0;
     }
   }
   .nav-links {
-    margin-top: 5px;
-    margin-right: -4px;
+    margin-top: 9px;
     a {
-      font-size: 18px;
-      margin-left: 30px;
+      .sans-serif(@light, 20px, 20px);
     }
   }
 }
 
 section {
-  h2 {
-    font-size: 24px;
-  }
-
   &.landing-hero {
-    padding-bottom: 53px;
+    padding-bottom: 50px;
     color: white;
     background-color: @gray;
     background-image: url('@{image_url}/landing/landing-hero.jpg');
@@ -44,32 +41,30 @@ section {
   }
 
   .landing-hero-content {
-    margin-top: 43px;
+    margin-top: 53px;
     .make-md-column(8.5);
-    .make-md-column-offset(2.2);
+    .make-md-column-offset(2);
 
     h1 {
-      margin-bottom: 0px;
-      font-size: 38px;
+      margin: 25px 0 10px;
+      .serif-headline(bold, 38px, 46px);
     }
     h2 {
-      color: @blue;
-      margin-top: 5px;
-      font-size: 20px;
-      font-weight: normal;
+      color: #B4CCCD;
+      margin: 10px 0 20px;
+      .sans-serif(normal, 22px, 30px);
     }
-    padding-left: 0;
   }
 
   .landing-search {
-    margin-top: 35px;
+    margin-top: 30px;
     margin-bottom: 15px;
 
     fieldset.include-materials {
       padding: 14px 0px;
       border: none;
 
-      .sans-serif(normal, 13px, 16px);
+      .sans-serif(normal, 14px, 20px);
       label {
         margin-left: 10px;
       }
@@ -77,6 +72,7 @@ section {
       input[type=checkbox] {
         width: 14px;
         height: 14px;
+        margin-right: 3px;
       }
     }
     legend {
@@ -89,22 +85,21 @@ section {
   &.collection {
     h2 {
       .serif-headline(bold, 28px, 30px);
+      margin: 23px 0 19px;
     }
 
     p {
-      line-height: 28px;
-      max-width: 75%;
+      .partial-width();
       margin: 5px 0;
 
-      &.small {
-        font-size: 14px;
-        line-height: 25px;
+      &.hint-serif {
+        .serif-text(normal, 14px, 23px);
       }
     }
   }
 
   .materials {
-    padding: 20px 15px;
+    padding: 20px 15px 5px;
 
     .material-category {
       background-repeat: no-repeat;
@@ -115,19 +110,23 @@ section {
       .sans-serif(normal, 14px, 21px);
 
       h3 {
-        margin: 0;
-        .sans-serif(bold, 15px, 23px);
+        margin: 3px 0;
+        .sans-serif(bold, 18px, 18px);
       }
     }
   }
 
+  h2 {
+    margin: 21px 0 20px;
+  }
+
   .approaches-categories {
-    padding: 12px 0;
+    padding: 12px 0 5px;
 
     .approach-category {
       padding-right: 20px;
       h3 {
-        margin: 10px 0;
+        margin: 10px 0 0;
       }
 
       .tag-list {
@@ -156,8 +155,8 @@ section {
     }
 
     p {
-      font-size: 16px;
-      max-width: 600px;
+      .serif-text(normal, 16px, 26px);
+      max-width: 550px;
     }
   }
 

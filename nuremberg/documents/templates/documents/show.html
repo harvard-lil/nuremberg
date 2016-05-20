@@ -6,7 +6,13 @@
 {% block body_class %}document-viewer{% endblock %}
 
 {% block content %}
-<section class="theme-light flush">
+<section class="theme-light flush" onmousewheel="
+console.log('scroll event', event, this); if ((event.deltaY > 0 && window.scrollY + window.innerHeight > documentViewport.offsetTop + documentViewport.offsetHeight)
+|| (event.deltaY < 0 && window.scrollY < documentViewport.offsetTop)) {
+  documentViewport.classList.add('scrollable');
+} else {
+  documentViewport.classList.remove('scrollable');
+}">
   <div class="document-tools full-width">
     <div class="zoom-buttons pull-left">
       <button class="zoom-in" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.remove('small-image')});">
@@ -38,7 +44,7 @@
   </div>
   <hr />
   <div class="sidebar-layout">
-    <div class="main-column">
+    <div id="documentViewport" class="main-column">
       {% for image_url in document.image_urls %}
         <img id="page-{{forloop.counter}}" src="{{image_url}}" class="document-image"/>
       {% endfor %}
@@ -74,7 +80,7 @@
         <h6>Institutional Author{{document.group_authors.count|pluralize}}</h6>
         {% for author in document.group_authors.all %}
           <p>
-            <a href="{% search_url author.full_name %}">{{author.name}}</a>
+            <a href="{% search_url author.short_name %}">{{author.name}}</a>
           </p>
         {% endfor %}
       {% endif %}

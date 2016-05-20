@@ -95,8 +95,10 @@ class DocumentDate(models.Model):
     year = models.IntegerField(db_column='DocYear')
 
     def as_date(self):
-        if self.year == 0 or self.month == 13 or self.day == 32:
+        if self.year == 0 or self.month == 13 or self.day >= 32:
             return None
+        if self.month == 2 and self.day == 29 and (self.year % 4) != 0:
+            return None # this is an issue
         return datetime.date(self.year, self.month, self.day)
 
     class Meta:

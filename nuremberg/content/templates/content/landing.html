@@ -21,14 +21,14 @@
         papers from the trials of military and political leaders of Nazi Germany.
       </h2>
     </hgroup>
-    <form class="landing-search">
+    <form class="landing-search" action='{% url 'search:search' %}' method='GET'>
       <input type="search" name="query" required />
       <button class="button search-button">Search</button>
 
       <fieldset class="include-materials">
         <legend>Include these materials:</legend>
         <label>
-          <input type="checkbox" name="include" value="documents" />
+          <input type="checkbox" name="include" value="documents" checked />
           Documents
         </label>
         <label>
@@ -51,43 +51,52 @@
     and present digitized images or full-text versions of the Library's Nuremberg documents,
     descriptions of each document, and general information about the trials.
   </p>
-  <p class="small">
+  <p class="hint-serif">
     The Project currently provides access to the following materials for three
-    United States Nuremberg Military Tribunals,
+    United States Nuremberg Military
     <br />
+    Tribunals,
     NMT 1 (U.S.A. v. Karl Brandt et al.),
     NMT 2 (U.S.A. v. Erhard Milch), and NMT 4 (U.S.A. v. Pohl et al.):
   </p>
   <div class="materials four-column-layout">
     <div class="column material-category material-documents">
       <h3> Trial documents </h3>
-      Documents used by the prosecution and defense during the trials.
+      <p class="module">
+        Documents used by the prosecution and defense during the trials.
+      </p>
     </div>
     <div class="column material-category material-documents">
       <h3> Evidence file documents </h3>
-      Sets of evidentiary material assembled by the war crimes staff for potential use in the trials.
+      <p class="module">
+        Sets of evidentiary material assembled by the war crimes staff for potential use in the trials.
+      </p>
     </div>
     <div class="column material-category material-transcripts">
       <h3> Trial transcripts </h3>
-      Verbatim records of proceedings in court, including witness testimony, oral arguments, and court rulings and judgments.
+      <p class="module">
+        Verbatim records of proceedings in court, including witness testimony, oral arguments, and court rulings and judgments.
+      </p>
     </div>
     <div class="column material-category material-photographs">
       <h3> Photographs </h3>
-      Photographs of Nuremberg Trials defendants, judges, and trial activities.
+      <p class="module">
+        Photographs of Nuremberg Trials defendants, judges, and trial activities.
+      </p>
     </div>
   </div>
-  <p>
-    <a class="teaser" href="{% url 'content_about' %}"> More about the Project </a>
-  </p>
+  <footer>
+    <a class="teaser" href="{% url 'content:about' %}"> More about the Project </a>
+  </footer>
 </section>
 
-<section class="theme-beige">
+<section class="theme-beige approaches">
   <h2> Approaches </h2>
   <div class="three-column-layout approaches-categories">
     <div class="column approach-category">
       <img src="{% static 'images/landing/topics.png' %}" />
       <h3> Topics </h3>
-      <p>
+      <p class="module">
         Uncover the topics related to the Nuremberg trials. Trial topics are criminal activities or subjects
         at issue in a trial or pertaining to a document. Usually these are prosecution
         charges&mdash;like <a>crimes against humanity</a>&mdash;or a defense response. Examine some of the
@@ -105,31 +114,31 @@
     <div class="column approach-category">
       <img src="{% static 'images/landing/people.jpg' %}" />
       <h3> People </h3>
-      <p>
+      <p class="module">
         Access documents and transcripts related to specific people&mdash;defendants, authors, prosecutors,
         and more&mdash;involved in the trials. Start with these three high-ranking officers.
       </p>
-      <ul class="default">
+      <ul class="module">
         <li>
-          <a> Karl Brandt </a> : Reich Commissioner for Health and Sanitation
+          <a> Karl Brandt</a>: Reich Commissioner for Health and Sanitation
         </li>
         <li>
-          <a> Hermann Goering </a> : General of the Air Force, chief of the war economy, Minister for Aviation
+          <a> Hermann Goering</a>: General of the Air Force, chief of the war economy, Minister for Aviation
         </li>
         <li>
-          <a> Heinrich Himmler </a> : Reichsfuehrer-SS and Chief of the Police
+          <a> Heinrich Himmler</a>: Reichsfuehrer-SS and Chief of the Police
         </li>
       </ul>
     </div>
     <div class="column approach-category">
       <img src="{% static 'images/landing/documents.jpg' %}" />
       <h3> Evidence File Documents </h3>
-      <p>
+      <p class="module">
         Collections of documents assembled by IMT and NMT staff for possible use in the trials,
         evidence files provided nearly all of the documentary evidence used by the prosecution. The
         documents were organized into sixteen subject groups. Here are three of the most interesting.
       </p>
-      <ul class="default">
+      <ul class="module">
         <li>
           <strong> C: </strong> <a> Crimes </a> ; IMT
         </li>
@@ -144,9 +153,9 @@
       </ul>
     </div>
   </div>
-  <p>
+  <footer>
     <a class="teaser"> More approaches to the Collection </a>
-  </p>
+  </footer>
 </section>
 
 <section class="transcripts">
@@ -191,9 +200,9 @@
         witness testimony, the presentation of exhibits, oral arguments by
         counsel, and rulings by the tribunal.
       </p>
-      <p>
+      <footer>
         <a class="teaser"> Begin reading </a>
-      </p>
+      </footer>
     </div>
   </div>
 </section>

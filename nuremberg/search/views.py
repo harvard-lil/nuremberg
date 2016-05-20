@@ -11,6 +11,7 @@ class Search(View):
             results = Document.objects
             for word in query.split(' '):
                 results = results.filter(title__icontains=word)
+            results = results[0:50]
         else:
             results = []
         return render(request, self.template_name, {'query': query, 'results': results})
