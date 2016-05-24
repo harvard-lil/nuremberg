@@ -11,7 +11,14 @@ class Search(View):
             results = Document.objects
             for word in query.split(' '):
                 results = results.filter(title__icontains=word)
-            results = results[0:50]
+            results = results[0:9]
         else:
             results = []
-        return render(request, self.template_name, {'query': query, 'results': results})
+        current_page = 5
+        total_pages = 50
+        pagination = {
+            'current_page': current_page,
+            'total_pages': total_pages,
+            'page_numbers_to_display': range(max(1, current_page - 5), min(current_page + 5, total_pages)),
+        }
+        return render(request, self.template_name, {'query': query, 'results': results, 'pagination': pagination})

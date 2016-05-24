@@ -32,7 +32,7 @@ h4 {
 }
 
 h5 {
-  .sans-serif(400, 17px, 20px);
+  .sans-serif(@medium, 14px, 20px);
 
   margin: 10px 0;
 }
@@ -204,10 +204,13 @@ ul.module, .modules ul {
 
 table {
   .table();
+  > thead > tr > th, > tbody > tr > td {
+    padding-left: 6px;
+  }
   > thead > tr > th {
     text-align: left;
-    .sans-serif(300, 16px, 16px);
-    padding-bottom: 15px;
+    .sans-serif(300, 18px, 18px);
+    padding-bottom: 25px;
     border: none;
   }
   > tbody > tr > td {

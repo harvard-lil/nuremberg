@@ -1,0 +1,32 @@
+{% extends "documents/show.html" %}
+
+{% block title %} Transcript Viewer - {{document.title}} {% endblock %}
+
+{% block body_class %}transcript-viewer{% endblock %}
+
+{% block document_controls %}
+  <div class="zoom-buttons pull-left">
+    <select class="select-date">
+      <option>21 November 1946</option>
+      <option>5 December 1946</option>
+      <option>9 December 1946</option>
+    </select>
+  </div>
+{% endblock %}
+
+{% block page_selection %}
+  <label>
+    Go to page:
+    <input type="text" />
+  </label>
+{% endblock %}
+
+{% block viewport %}
+  <div class="transcript-text">
+    {{ document.text|safe }}
+  </div>
+{% endblock %}
+
+{% block document_details %}
+
+{% endblock %}

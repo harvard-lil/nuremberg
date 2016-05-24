@@ -19,9 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@xf59!g4b(=z==*@#(0hdjc$_q5taw-t-1m#9@o!nzx_h1z@r9'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
@@ -42,6 +39,7 @@ INSTALLED_APPS = [
     'nuremberg',
     'nuremberg.content',
     'nuremberg.documents',
+    'nuremberg.transcripts',
     'nuremberg.search',
 ]
 
@@ -69,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'nuremberg.middlewares.context_processors.show_mockups',
             ],
         },
     },
@@ -80,6 +79,7 @@ WSGI_APPLICATION = 'nuremberg.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+# Configured in environment files
 DATABASES = {
 }
 
@@ -126,7 +126,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # static precompiler settings
 
 STATIC_PRECOMPILER_ROOT = os.path.join(BASE_DIR, 'nuremberg/static')
-
+STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE = True
 
 # whitenoise settings
 # https://warehouse.python.org/project/whitenoise/

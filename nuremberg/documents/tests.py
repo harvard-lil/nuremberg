@@ -2,7 +2,6 @@ from nuremberg.tests.acceptance_helpers import *
 
 def test_document_viewer():
     document_id = 350
-    print('url', url('documents:show', kwargs={'document_id': document_id}))
     response = client.get(url('documents:show', kwargs={'document_id': document_id}))
     page = PyQuery(response.content)
 

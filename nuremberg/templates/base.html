@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
   <head>
     <title>Nuremberg - {% block title %}Base Page{% endblock %}</title>
@@ -6,7 +7,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'style/base.less'|compile %}"
   </head>
-  <body class="{% block body_class %}{% endblock %}">
+  <body class="{% block body_class %}{% endblock %} {% if show_mockup %}mockups{% endif %}">
     <header>
       {% block header %}
         {% include 'nav.html' %}
@@ -21,43 +22,25 @@
 
     <footer class="site-footer">
       {% block footer %}
-      <div class="footer-about">
-        <h3> Harvard Law School Library Nuremberg Trials Project </h3>
-        The Nuremberg Trials Project is an open-access initiative to create and present
-        digitized images or full-text versions of the Library's Nuremberg documents,
-        descriptions of each document, and general information about the trials.
-        <br />
-        <a href="mailto:specialc@law.harvard.edu" class="email">specialc@law.harvard.edu</a>
-        <div class="copyright">
-          Copyright 2015 &copy; The President and Fellows of Harvard College. Last reviewed: June 2016.
-        </div>
-      </div>
-      <ul class="footer-nav-col offset">
-        <li>
-          <a href="{% url 'content:trials' %}"> Trials </a>
-        </li>
-        <li>
-          <a href="{% url 'content:approaches' %}"> Approaches </a>
-        </li>
-        <li>
-          <a href="{% url 'content:history' %}"> History </a>
-        </li>
-        <li>
-          <a href="/search"> Advanced Search </a>
-        </li>
-      </ul>
-      <ul class="footer-nav-col">
-        <li>
-          <a href="{% url 'content:about' %}"> About the Project </a>
-        </li>
-        <li>
-          <a href="/donate"> Donate </a>
-        </li>
-        <li>
-          <a href="/api"> API </a>
-        </li>
-      </ul>
+        {% include "footer.html" %}
       {% endblock %}
     </footer>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    {# compress all site JS into a single blob #}
+    {# {% compress %}#}
+      <script src="{% static 'scripts/jquery-ui.js' %}"></script>
+      {# <script src="{% static 'scripts/jquery.mousewheel.js' %}"></script>#}
+      <script src="{% static 'scripts/modulejs.js' %}"></script>
+      <script src="{% static 'scripts/search.js' %}"></script>
+      <script src="{% static 'scripts/documents.js' %}"></script>
+    {# {% endcompress %}#}
+    <script>
+      $(document).ready(function () {
+        var entryPoint = '{% block javascript_module %}{% endblock %}';
+        if (entryPoint) {
+          modulejs.require(entryPoint);
+        }
+      });
+    </script>
   </body>
 </html>

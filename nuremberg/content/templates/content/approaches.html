@@ -6,7 +6,7 @@
 {% block body_class %}approaches fixed-nav{% endblock %}
 
 {% block header %}
-  {% include 'nav.html' %}
+  {{ block.super }}
   <nav class="sub-nav horizontal">
     <li>
       <a href="#people">People Involved</a>

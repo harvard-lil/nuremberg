@@ -1,15 +1,17 @@
 {% load search_url %}
 
-<tr class="document-row">
+<tr class="document-row {% if document.personal_authors.count <= 2 %}extra-padding{% endif %}">
   <td>
-    <p>
+    <p class="trial-flags">
       {% for case in document.cases.all %}
-        <div class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</div>
+        <span class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</span>
       {% endfor %}
     </p>
     <a class="unstyled" href="{% url 'documents:show' document_id=document.id %}">
       <h3>{{document.title}}</h3>
-      <h5>{{document.literal_title}}</h5>
+      {% if document.literal_title %}
+        <p>{{document.literal_title}}</p>
+      {% endif %}
     </a>
 
     <p>
@@ -36,13 +38,14 @@
   <td>
     <h5 class="date">
         {% if document.date %}
-          {{document.date|date:'d M Y'}}
+          {{document.date|date:'d F Y'}}
         {% else %}
           Unknown
         {% endif %}
       </h5>
   </td>
   <td>
-    {{document.images.first.image_type.name}}
+    <div class="document-type-icon type-{{document.images.first.image_type.name|slugify}}">
+    {{document.images.first.image_type.name}}</div>
   </td>
 </tr>

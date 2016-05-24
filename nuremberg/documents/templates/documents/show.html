@@ -5,29 +5,29 @@
 
 {% block body_class %}document-viewer{% endblock %}
 
+{% block javascript_module %}documents{% endblock %}
+
 {% block content %}
-<section class="theme-light flush" onmousewheel="
-console.log('scroll event', event, this); if ((event.deltaY > 0 && window.scrollY + window.innerHeight > documentViewport.offsetTop + documentViewport.offsetHeight)
-|| (event.deltaY < 0 && window.scrollY < documentViewport.offsetTop)) {
-  documentViewport.classList.add('scrollable');
-} else {
-  documentViewport.classList.remove('scrollable');
-}">
+<section class="theme-light flush">
   <div class="document-tools full-width">
-    <div class="zoom-buttons pull-left">
-      <button class="zoom-in" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.remove('small-image')});">
-        Zoom In
-      </button>
-      <button class="zoom-out" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.add('small-image')});">
-        Zoom Out
-      </button>
-    </div>
+    {% block document_controls %}
+      <div class="zoom-buttons pull-left">
+        <button class="zoom-in" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.remove('small-image')});">
+          Zoom In
+        </button>
+        <button class="zoom-out" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.add('small-image')});">
+          Zoom Out
+        </button>
+      </div>
+    {% endblock %}
     <div class="page-buttons pull-right">
-      <select onchange="window.location.hash = this.value;console.log(this.value)">
-        {% for image_url in document.image_urls %}
-          <option value="page-{{forloop.counter}}">Page {{forloop.counter}}</option>
-        {% endfor %}
-      </select>
+      {% block page_selection %}
+        <select onchange="window.location.hash = this.value;console.log(this.value)">
+          {% for image_url in document.image_urls %}
+            <option value="page-{{forloop.counter}}">Page {{forloop.counter}}</option>
+          {% endfor %}
+        </select>
+      {% endblock %}
       <button class="first-page">
         First Page
       </button>
@@ -44,67 +44,71 @@ console.log('scroll event', event, this); if ((event.deltaY > 0 && window.scroll
   </div>
   <hr />
   <div class="sidebar-layout">
-    <div id="documentViewport" class="main-column">
-      {% for image_url in document.image_urls %}
-        <img id="page-{{forloop.counter}}" src="{{image_url}}" class="document-image"/>
-      {% endfor %}
+    <div id="document-viewport" class="main-column scrollable">
+      {% block viewport %}
+        {% for image_url in document.image_urls %}
+          <img id="page-{{forloop.counter}}" src="{{image_url}}" class="document-image"/>
+        {% endfor %}
+      {% endblock %}
     </div>
     <div class="sidebar-column document-info">
       <div class="material-icon material-documents"></div>
-      <p>
+      <p class="trial-flags">
         {% for case in document.cases.all %}
-          <div class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</div>
+          <span class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</span>
         {% endfor %}
       </p>
       <h3>{{document.title}}</h3>
       <h5>{{document.literal_title}}</h5>
-      <p class="date">
-        {% if document.date %}
-          <a>{{document.date|date:'d M Y'}}</a>
+      {% block document_details %}
+        <p class="date">
+          {% if document.date %}
+            <a>{{document.date|date:'d F Y'}}</a>
+          {% else %}
+            <a>Date Unknown</a>
+          {% endif %}
+        </p>
+        <h6>Author{{document.personal_authors.count|pluralize}}</h6>
+        {% if document.personal_authors.count %}
+          {% for author in document.personal_authors.all %}
+            <p>
+              <a href="{% search_url author.full_name %}">{{author.first_name}} {{author.last_name}}</a>
+              ({{author.title}})
+            </p>
+          {% endfor %}
         {% else %}
-          <a>Date Unknown</a>
+          <p> Unknown </p>
         {% endif %}
-      </p>
-      <h6>Author{{document.personal_authors.count|pluralize}}</h6>
-      {% if document.personal_authors.count %}
-        {% for author in document.personal_authors.all %}
-          <p>
-            <a href="{% search_url author.full_name %}">{{author.first_name}} {{author.last_name}}</a>
-            ({{author.title}})
-          </p>
-        {% endfor %}
-      {% else %}
-        <p> Unknown </p>
-      {% endif %}
-      {% if document.group_authors.count %}
-        <h6>Institutional Author{{document.group_authors.count|pluralize}}</h6>
-        {% for author in document.group_authors.all %}
-          <p>
-            <a href="{% search_url author.short_name %}">{{author.name}}</a>
-          </p>
-        {% endfor %}
-      {% endif %}
-      {% if document.defendants.count %}
-        <h6>Defendant{{document.defendants.count|pluralize}}</h6>
-        {% for defendant in document.defendants.all %}
-          <p>
-            <a href="{% search_url defendant.full_name %}">{{defendant.first_name}} {{defendant.last_name}}</a>
-          </p>
-        {% endfor %}
-      {% endif %}
-      <br />
-      <p>
-        <strong>Language of text:</strong>
-        {{document.language.name}}
-      </p>
-      <p>
-        <strong>Source of Text:</strong>
-        {{document.source.name}}
-      </p>
-      <p>
-        <strong>HLSL Item No.:</strong>
-        {{document.id}}
-      </p>
+        {% if document.group_authors.count %}
+          <h6>Institutional Author{{document.group_authors.count|pluralize}}</h6>
+          {% for author in document.group_authors.all %}
+            <p>
+              <a href="{% search_url author.short_name %}">{{author.name}}</a>
+            </p>
+          {% endfor %}
+        {% endif %}
+        {% if document.defendants.count %}
+          <h6>Defendant{{document.defendants.count|pluralize}}</h6>
+          {% for defendant in document.defendants.all %}
+            <p>
+              <a href="{% search_url defendant.full_name %}">{{defendant.first_name}} {{defendant.last_name}}</a>
+            </p>
+          {% endfor %}
+        {% endif %}
+        <br />
+        <p>
+          <strong>Language of text:</strong>
+          {{document.language.name}}
+        </p>
+        <p>
+          <strong>Source of Text:</strong>
+          {{document.source.name}}
+        </p>
+        <p>
+          <strong>HLSL Item No.:</strong>
+          {{document.id}}
+        </p>
+      {% endblock %}
       {% if document.activities.count %}
         <h6>Trial Activites</h6>
         <p>

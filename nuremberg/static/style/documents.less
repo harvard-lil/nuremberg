@@ -6,7 +6,6 @@
   height: 30px;
   line-height: 0;
   font-size: 0;
-  color: transparent;
 
   button {
     display: inline-block;
@@ -15,6 +14,8 @@
     background-position: center;
     background-color: @white;
     border: 1px solid @light-gray;
+    color: transparent !important;
+    overflow: hidden;
 
     width: 47px;
     height: 35px;
@@ -40,9 +41,15 @@
 
 .page-buttons {
   height: 30px;
-  line-height: 0;
-  font-size: 0;
-  color: transparent;
+
+  label {
+    .sans-serif(normal, 14px, 14px);
+    color: @dark-gray;
+  }
+  input[type="text"] {
+    width: 50px;
+    margin: 0 5px;
+  }
 
   select {
     .form-control();
@@ -63,6 +70,8 @@
     background-position: center;
     background-color: @white;
     border: none;
+    color: transparent !important;
+    overflow: hidden;
 
     &.first-page {
       background-image: url('@{image_url}/icon-first-page.png');
@@ -94,10 +103,10 @@ hr {
 .sidebar-layout {
   .main-column {
     .make-md-column(8);
-    height: 100%;
+    height: 100vh;
     overflow: hidden;
     &.scrollable {
-      overflow: scroll;
+      overflow-y: auto;
     }
   }
   .sidebar-column {
@@ -109,23 +118,44 @@ hr {
 
   h3 {
     .serif-headline(normal, 21px, 27px);
-    margin-bottom: 5px;
+    margin: 0 0 5px;
   }
   p {
-    .sans-serif(normal, 14px, 14px);
-    &.date {
-      font-size: 16px;
+    .sans-serif(normal, 16px, 20px);
+    margin: 9px 0;
+    &.trial-flags {
+      margin: 14px 0;
     }
   }
   h5 {
     margin: 0 0 20px;
-    .sans-serif(300, 15px, 25px);
+    .sans-serif(300, 16px, 25px);
   }
   h6 {
     .sans-serif(bold, 14px, 14px);
+    letter-spacing: 2px;
     color: @gray;
     text-transform: uppercase;
 
-    margin: 42px 0 10px;
+    margin: 37px 0 10px;
+  }
+}
+
+.transcript-text {
+  p {
+    .serif-text(normal, 18px, 30px);
+    margin: 29px 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  br {
+    display: block;
+    margin: 10px 0 0;
+  }
+  strong {
+    .sans-serif(bold, 18px, 30px);
   }
 }

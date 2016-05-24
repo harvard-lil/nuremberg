@@ -10,13 +10,13 @@ def test_search_results():
     search_bar.should.not_be.empty
     search_bar.val().should.match('transcript')
 
-    page('p').text().should.contain('Showing 30 results for transcript')
+    page('p').text().should.contain('Results 1-9 of 1,289 for transcript')
 
     results = page('table tbody tr')
-    results.length.should.be(30)
+    results.length.should.be(9)
 
     result = PyQuery(results[0])
     result.find('h3').text().should.contain('Transcripts of conversation between Dr. Grawitz and Dr. Rascher')
-    result.find('.date').text().should.match('13 Jan 1943')
+    result.find('.date').text().should.match('13 January 1943')
     result.text().should.contain('Language of text: English')
     result.text().should.contain('Defendants: Helmut Poppendick Wolfram Sievers')

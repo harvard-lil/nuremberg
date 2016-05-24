@@ -3,41 +3,52 @@
 @import "bootstrap/normalize";
 @import "bootstrap/scaffolding";
 
-@import "grid";
-@import "nav";
-@import "content";
+@import "mixins";
+
 @import "fonts";
 @import "text";
-@import "forms";
 @import "colors";
-@import "mixins";
+@import "forms";
+
+@import "grid";
+@import "nav";
+@import "layout";
 @import "footer";
 
-// body, html {
-// 	height: 100%;
-// }
+@import (less) "jquery-ui.css";
 
-// body {
-// 	background-position: top;
-// 	background-repeat: no-repeat;
-// }
-// section, header, footer {
-// 	opacity: 0.8;
-// }
-//
-// body.landing-page {
-// 	background-image: url('@{image_url}/landing-mockup.png');
-// }
-//
-// body.approaches {
-// 	background-image: url('@{image_url}/approaches-mockup.png');
-// }
-// body.document-viewer {
-// 	background-image: url('@{image_url}/document-viewer-mockup.png');
-// }
+body.landing-page {
+	@import "landing";
+}
+body.document-viewer, body.transcript-viewer {
+	@import "documents";
+}
+body.document-search {
+	@import "search";
+}
 
-body.document-viewer {
-  @import "documents";
+body.mockups {
+	background-position: top;
+	background-repeat: no-repeat;
+
+	header, footer, main {
+		opacity: 0.8;
+	}
+	&.approaches {
+		background-image: url('@{image_url}/approaches-mockup.png');
+	}
+	&.landing-page {
+		background-image: url('@{image_url}/landing-mockup.png');
+	}
+	&.document-viewer {
+		background-image: url('@{image_url}/document-viewer-mockup.png');
+	}
+	&.transcript-viewer {
+		background-image: url('@{image_url}/transcript-viewer-mockup.png');
+	}
+	&.document-search {
+		background-image: url('@{image_url}/search-results-mockup.png');
+	}
 }
 
 body.document-search {

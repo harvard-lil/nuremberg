@@ -35,9 +35,10 @@ section {
     padding-bottom: 50px;
     color: white;
     background-color: @gray;
+    position: relative;
     background-image: url('@{image_url}/landing/landing-hero.jpg');
-    background-position: center;
-    background-size: 1200px;
+    background-position: top;
+    background-attachment: fixed;
   }
 
   .landing-hero-content {
@@ -60,7 +61,20 @@ section {
     margin-top: 30px;
     margin-bottom: 15px;
 
-    fieldset.include-materials {
+
+    input[type=search] {
+      border: 1px solid @light-gray;
+      background-size: 21px;
+      background-position: 5px 5px;
+      padding-left: 30px;
+    }
+
+    .search-button {
+      .sans-serif(normal, 17px, 20px);
+      padding: 6px 13px;
+    }
+
+    .include-materials {
       padding: 14px 0px;
       border: none;
 
@@ -73,6 +87,7 @@ section {
         width: 14px;
         height: 14px;
         margin-right: 3px;
+
       }
     }
     legend {

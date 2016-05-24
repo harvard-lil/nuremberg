@@ -14,10 +14,6 @@ class Document(models.Model):
     language = models.ForeignKey('DocumentLanguage', db_column='DocLanguageID')
     source = models.ForeignKey('DocumentSource', db_column='DocVersionID')
 
-    @property
-    def case(self):
-        return self.cases.first()
-
     def date(self):
         date = self.dates.first()
         if date:
@@ -35,6 +31,7 @@ class Document(models.Model):
             image_number += 1
 
     class Meta:
+        managed = False
         db_table = 'tblDoc'
 
     def __str__(self):
@@ -65,6 +62,7 @@ class DocumentImage(models.Model):
         return "#{} - {} Page {}".format(self.document.id, self.document.title, self.page_number)
 
     class Meta:
+        managed = False
         db_table = 'tblImagesList'
 
 
@@ -72,18 +70,21 @@ class DocumentImageType(models.Model):
     id = models.AutoField(primary_key=True, db_column='PageTypeID')
     name = models.CharField(max_length=50, db_column='PageType')
     class Meta:
+        managed = False
         db_table = 'tblPageTypes'
 
 class DocumentSource(models.Model):
     id = models.AutoField(primary_key=True, db_column='VersionID')
     name = models.CharField(max_length=50, db_column='Version')
     class Meta:
+        managed = False
         db_table = 'tblVersions'
 
 class DocumentLanguage(models.Model):
     id = models.AutoField(primary_key=True, db_column='LanguageID')
     name = models.CharField(max_length=15, db_column='Language')
     class Meta:
+        managed = False
         db_table = 'tblLanguages'
 
 class DocumentDate(models.Model):
@@ -102,6 +103,7 @@ class DocumentDate(models.Model):
         return datetime.date(self.year, self.month, self.day)
 
     class Meta:
+        managed = False
         db_table = 'tblDatesOfDocList'
 
 
@@ -117,6 +119,7 @@ class DocumentPersonalAuthor(models.Model):
         return '{} {}'.format(self.first_name, self.last_name)
 
     class Meta:
+        managed = False
         db_table = 'tblPersonalAuthors'
 
 
@@ -126,6 +129,7 @@ class DocumentsToPersonalAuthors(models.Model):
     author = models.ForeignKey(DocumentPersonalAuthor, db_column='PAuthNameID')
 
     class Meta:
+        managed = False
         db_table = 'tblPersonalAuthorsList'
 
 class DocumentGroupAuthor(models.Model):
@@ -138,6 +142,7 @@ class DocumentGroupAuthor(models.Model):
         return name.split(' (')[0]
 
     class Meta:
+        managed = False
         db_table = 'tblGroupAuthors'
 
 class DocumentsToGroupAuthors(models.Model):
@@ -146,6 +151,7 @@ class DocumentsToGroupAuthors(models.Model):
     author = models.ForeignKey(DocumentGroupAuthor, db_column='GANameID')
 
     class Meta:
+        managed = False
         db_table = 'tblGroupAuthorsList'
 
 
@@ -161,6 +167,7 @@ class DocumentDefendant(models.Model):
         return '{} {}'.format(self.first_name, self.last_name)
 
     class Meta:
+        managed = False
         db_table = 'tblDefendants'
 
 
@@ -170,6 +177,7 @@ class DocumentsToDefendants(models.Model):
     defendant = models.ForeignKey(DocumentDefendant, db_column='DefNameID')
 
     class Meta:
+        managed = False
         db_table = 'tblDefendantsList'
 
 
@@ -190,6 +198,7 @@ class DocumentCase(models.Model):
     documents = models.ManyToManyField(Document, related_name='cases', through='DocumentsToCases', through_fields=('case', 'document'))
 
     class Meta:
+        managed = False
         db_table = 'tblCases'
 
 
@@ -199,6 +208,7 @@ class DocumentsToCases(models.Model):
     case = models.ForeignKey(DocumentCase, db_column='DocCaseID')
 
     class Meta:
+        managed = False
         db_table = 'tblCasesList'
 
 class DocumentActivity(models.Model):
@@ -213,6 +223,7 @@ class DocumentActivity(models.Model):
     documents = models.ManyToManyField(Document, related_name='activities', through='DocumentsToActivities', through_fields=('activity', 'document'))
 
     class Meta:
+        managed = False
         db_table = 'tblActivities'
 
 class DocumentsToActivities(models.Model):
@@ -221,4 +232,5 @@ class DocumentsToActivities(models.Model):
     activity = models.ForeignKey(DocumentActivity, db_column='ActNameID')
 
     class Meta:
+        managed = False
         db_table = 'tblActivitiesList'
