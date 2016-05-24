@@ -1,0 +1,21 @@
+{% extends "transcripts/show.html" %}
+
+{% block title %} Search in Transcript - {{document.title}} {% endblock %}
+
+{% block body_class %}transcript-search{% endblock %}
+
+{% block viewport %}
+  <div class="search-results">
+    {% for result in results %}
+      <div class="result-row">
+        <a class="teaser" href="{% url 'transcripts:show' document.id %}">Page {{result.page}} </a>
+        <div class="occurrence-count">{{result.count}} occurences</div>
+        <p>
+          {{ result.text|safe }}
+        </p>
+      </div>
+    {% empty %}
+      No results found.
+    {% endfor %}
+  </div>
+{% endblock %}

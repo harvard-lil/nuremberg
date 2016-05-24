@@ -1,12 +1,14 @@
 from django import template
 from django.core.urlresolvers import reverse
-from django.http import QueryDict
+from urllib.parse import urlencode
 
 register = template.Library()
 
 @register.simple_tag
 def search_url(query):
-    root_url = reverse('search:search')
-    query_dict = QueryDict(mutable=True)
-    query_dict['query'] = query
-    return '{}?{}'.format(root_url, query_dict.urlencode())
+    return url_with_query('search:search', query=query)
+
+@register.simple_tag
+def url_with_query(url, *args, **kwargs):
+    root_url = reverse(url, args=args)
+    return '{}?{}'.format(root_url, urlencode(kwargs))

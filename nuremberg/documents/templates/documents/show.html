@@ -9,39 +9,58 @@
 
 {% block content %}
 <section class="theme-light flush">
-  <div class="document-tools full-width">
-    {% block document_controls %}
-      <div class="zoom-buttons pull-left">
-        <button class="zoom-in" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.remove('small-image')});">
-          Zoom In
+  {% block document_tools %}
+    {% if query %}
+      <div class="document-tools">
+        <form class="document-search-inline" action='{% url 'transcripts:search' document.id %}' method='GET'>
+          <input type="search" name="query" value="{{query}}" required />
+          <button class="clear-search" type="reset">Clear</button>
+          {% if results %}
+            <label><strong>{{results|length}}</strong> results in this transcript</label>
+            <a>Order by Page</a>
+            <a class="active">Order by Relevance</a>
+          {% endif %}
+        </form>
+        <div class="return-link">
+          <a href="{% search_url query %}"> &larr; Back to search results </a>
+        </div>
+      </div>
+      <hr />
+    {% endif %}
+    <div class="document-tools">
+      {% block document_controls %}
+        <div class="zoom-buttons">
+          <button class="zoom-in" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.remove('small-image')});">
+            Zoom In
+          </button>
+          <button class="zoom-out" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.add('small-image')});">
+            Zoom Out
+          </button>
+        </div>
+      {% endblock %}
+      <div class="page-buttons">
+        {% block page_selection %}
+          <select onchange="window.location.hash = this.value;console.log(this.value)">
+            {% for image_url in document.image_urls %}
+              <option value="page-{{forloop.counter}}">Page {{forloop.counter}}</option>
+            {% endfor %}
+          </select>
+        {% endblock %}
+        <button class="first-page">
+          First Page
         </button>
-        <button class="zoom-out" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.add('small-image')});">
-          Zoom Out
+        <button class="prev-page">
+          Previous Page
+        </button>
+        <button class="next-page">
+          Next Page
+        </button>
+        <button class="last-page">
+          Last Page
         </button>
       </div>
-    {% endblock %}
-    <div class="page-buttons pull-right">
-      {% block page_selection %}
-        <select onchange="window.location.hash = this.value;console.log(this.value)">
-          {% for image_url in document.image_urls %}
-            <option value="page-{{forloop.counter}}">Page {{forloop.counter}}</option>
-          {% endfor %}
-        </select>
-      {% endblock %}
-      <button class="first-page">
-        First Page
-      </button>
-      <button class="prev-page">
-        Previous Page
-      </button>
-      <button class="next-page">
-        Next Page
-      </button>
-      <button class="last-page">
-        Last Page
-      </button>
     </div>
-  </div>
+  {% endblock %}
   <hr />
   <div class="sidebar-layout">
     <div id="document-viewport" class="main-column scrollable">

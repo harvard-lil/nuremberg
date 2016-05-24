@@ -126,10 +126,10 @@ Secrets (usernames, passwords, security tokens, nonces, etc.) should not be plac
 
 CSS code is generated from `.less` files that live in `nuremberg/static/styles`. The styles are built based on Bootstrap 3 mixins, but don't bundle any Bootstrap code directly to ensure a clean semantic design.
 
-Compilation is handled automatically by the `django-static-precompiler` module while the development server is running. The compiled files are sent to `nuremberg/static/COMPILED/styles`, and should be committed to git in order to ensure consistency when deploying.
+Compilation is handled automatically by the `django-static-precompiler` module while the development server is running.
 
 #### In Production
 
-The `django.contrib.staticfiles` module will automatically move all static files into `static/` when `python manage.py collectstatic` is run. This should be done as a part of the deployment process, and this folder should not be committed to git.
+When deploying, you should run `manage.py compress` to bundle, minify and compress CSS and JS files, and `manage.py collectstatic` to move the remaining assets into `static/`. This folder should not be committed to git.
 
 For deployment to Heroku, these static files will be served by the WhiteNoise server. In other environments it may be appropriate to serve them directly with Nginx or Apache. If necessary, the output directory can be controlled with an environment-specific override of the `STATIC_ROOT` settings variable.

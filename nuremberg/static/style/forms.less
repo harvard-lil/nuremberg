@@ -57,6 +57,25 @@ input[type=search] {
 
   color: @black;
   .sans-serif(normal, 14px, 20px);
+
+  &:not(:valid) ~ .clear-search {
+    display: none;
+  }
+}
+
+button.clear-search {
+  font-size: 0px;
+  color: transparent;
+  background-repeat: no-repeat;
+  background-image: url('@{image_url}/icon-clear-search.png');
+  width: 12px;
+  height: 12px;
+  padding: 0px;
+  margin-left: -30.5px;
+  margin-right: 15px;
+  margin-top: 14px;
+  vertical-align: top;
+  cursor: pointer;
 }
 
 input[type=text], .text-input {
@@ -76,15 +95,17 @@ select {
   width: inherit;
   .sans-serif(@light, 14px, 20px);
 }
-
-button, .search-button {
+button {
+  border: none;
+  background: none;
+  vertical-align: top;
+}
+.search-button, .go-button {
   .btn();
   .btn-primary();
 
   .sans-serif(@light, 14px, 20px);
   padding: 7px 16px;
-
-  vertical-align: bottom;
 }
 
 

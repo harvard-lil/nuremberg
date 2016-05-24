@@ -20,8 +20,17 @@
 body.landing-page {
 	@import "landing";
 }
-body.document-viewer, body.transcript-viewer {
+body.document-viewer, body.transcript-viewer, body.transcript-search {
 	@import "documents";
+}
+body.document-viewer {
+	@import "document-viewer";
+}
+body.transcript-viewer {
+	@import "transcript-viewer";
+}
+body.transcript-search {
+	@import "transcript-search";
 }
 body.document-search {
 	@import "search";
@@ -48,6 +57,9 @@ body.mockups {
 	}
 	&.document-search {
 		background-image: url('@{image_url}/search-results-mockup.png');
+	}
+	&.transcript-search {
+		background-image: url('@{image_url}/transcript-search-mockup.png');
 	}
 }
 

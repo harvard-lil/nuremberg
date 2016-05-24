@@ -1,4 +1,6 @@
 __pycache__
+/static
 .cache
 coverage
+debug.txt
 venv

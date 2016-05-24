@@ -7,7 +7,7 @@
         <span class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</span>
       {% endfor %}
     </p>
-    <a class="unstyled" href="{% url 'documents:show' document_id=document.id %}">
+    <a class="unstyled" href="{% url_with_query 'documents:show' document.id query=query %}">
       <h3>{{document.title}}</h3>
       {% if document.literal_title %}
         <p>{{document.literal_title}}</p>

@@ -14,4 +14,12 @@ modulejs.define('documents', function () {
       $('#document-viewport').removeClass('scrollable');
     }
   });
+  
+  $('.clear-search').on('click', function (e) {
+    e.preventDefault();
+    $(this).closest('form').find('input[type="search"]').val('');
+  });
+  $('.document-viewer .clear-search').on('click', function (e) {
+    $(this).closest('.document-tools').hide().next('hr').hide();
+  });
 });

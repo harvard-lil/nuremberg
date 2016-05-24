@@ -13,4 +13,9 @@ modulejs.define('search', function () {
   $('.facet .collapse').on('click', function () {
     $(this).closest('.facet').toggleClass('collapsed');
   });
+
+  $('.clear-search').on('click', function (e) {
+    e.preventDefault();
+    $(this).closest('form').find('input[type="search"]').val('');
+  });
 })

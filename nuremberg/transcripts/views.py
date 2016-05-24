@@ -1,6 +1,41 @@
 from django.shortcuts import render
 from django.views.generic import View
 
+class Search(View):
+    template_name = 'transcripts/search.html'
+    def get(self, request, transcript_id, *args, **kwargs):
+        query = request.GET.get('query', None)
+        document = {
+            'id': 350,
+            'title': """
+Medical Case
+(USA v. Karl Brandt et al. 1946-47)""",
+            'literal_title': """
+            The Medical Case, U.S.A. vs. Karl Brandt, et al.
+(also known as the Doctors’ Trial), was prosecuted in 1946-47 against twenty-three doctors and administrators accused of organizing and participating in war crimes and crimes against humanity in the form of medical experiments and medical procedures inflicted on prisoners and civilians.
+            """,
+            'cases': {'all':[{'short_name': 'NMT 1'}]},
+        }
+        results = [
+            {
+                'text': """Oskar Schroeder, Karl Genzken, Karl [Geb]hardt, Kurt Blome, <mark>Rudolf</mark> <mark>Brandt</mark>, Joachim Mrugowsky, Helmut Poppendick, Wolfram Sievers, Gerhard Rose, Siegfried Ruff, Hans Wo[l]fgang Romberg, Vi[k]tor […]""",
+                'page': 1,
+                'count': 2,
+            },
+            {
+                'text': """<mark>BRANDT</mark>—Personal physician to Rudolf [i.e., Adolf] Hitler, Gruppenfuehrer in the  […] Office for Medical Science and Research under the defendant Karl Brandt, Reich Commissioner for Health and Sanitation […]""",
+                'page': 2,
+                'count': 3,
+            },
+            {
+                'text': """the matter of the United States of America, against Karl <mark>Brandt</mark>, et al, defendants, sitting at Nurnberg, Germany, on 9 December […] Secretary General: Karl <mark>Brandt</mark>, Siegfried Handloser, Paul Rostock, Oskar […]""",
+                'page': 2,
+                'count': 8,
+            },
+        ]
+        return render(request, self.template_name, {'query': query, 'document': document, 'results': results})
+
+
 class Show(View):
     template_name = 'transcripts/show.html'
     def get(self, request, transcript_id, *args, **kwargs):

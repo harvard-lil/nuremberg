@@ -1,45 +1,62 @@
 .document-tools {
-  padding: 15px 0 7px;
-}
+  .make-row();
 
+  padding: 15px 0 7px;
+
+  select {
+    .form-control();
+    display: inline-block;
+    width: 200px;
+    margin-right: 7px;
+    vertical-align: bottom;
+  }
+
+  input[type="search"] {
+    width: 310px;
+  }
+  button.clear-search {
+    margin-right: 15px;
+  }
+
+  .sans-serif(normal, 14px, 14px);
+  color: @gray;
+
+  a {
+    margin: 0px 5px;
+    font-weight: normal;
+    &.active {
+      font-weight: @medium;
+      color: @dark-gray;
+      text-decoration: none;
+    }
+  }
+
+  .document-search-inline {
+    label {
+      margin-right: 15px;
+    }
+    .make-md-column(9);
+    .pull-left();
+  }
+  .return-link {
+    .make-md-column(2);
+    .pull-right();
+    text-align: right;
+    padding-top: 12px;
+  }
+}
 .zoom-buttons {
+  .make-md-column(4);
+
   height: 30px;
   line-height: 0;
   font-size: 0;
-
-  button {
-    display: inline-block;
-    cursor: pointer;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: @white;
-    border: 1px solid @light-gray;
-    color: transparent !important;
-    overflow: hidden;
-
-    width: 47px;
-    height: 35px;
-    margin: 0;
-
-    &.zoom-in {
-      background-image: url('@{image_url}/icon-zoom-in.png');
-    }
-    &.zoom-out {
-      background-image: url('@{image_url}/icon-zoom-out.png');
-    }
-    &:first-child {
-      border-top-left-radius: 3px;
-      border-bottom-left-radius: 3px;
-      border-right: none;
-    }
-    &:last-child {
-      border-top-right-radius: 3px;
-      border-bottom-right-radius: 3px;
-    }
-  }
 }
 
 .page-buttons {
+  .make-md-column(6);
+  .pull-right();
+  text-align: right;
   height: 30px;
 
   label {
@@ -51,18 +68,9 @@
     margin: 0 5px;
   }
 
-  select {
-    .form-control();
-    display: inline-block;
-    width: 200px;
-    margin-right: 7px;
-    vertical-align: bottom;
-  }
-
   button {
-    height: 32px;
+    height: 35px;
     width: 32px;
-    margin: 1px;
 
     display: inline-block;
     cursor: pointer;
@@ -89,18 +97,12 @@
 }
 
 hr {
-  margin-bottom: 50px;
-}
-
-.document-image {
-  margin: 10px;
-  max-width: 100%;
-  &.small-image {
-    max-width: 150px;
-  }
+  margin: 12px 0 0;
 }
 
 .sidebar-layout {
+  margin-top: 50px;
+
   .main-column {
     .make-md-column(8);
     height: 100vh;
@@ -138,24 +140,5 @@ hr {
     text-transform: uppercase;
 
     margin: 37px 0 10px;
-  }
-}
-
-.transcript-text {
-  p {
-    .serif-text(normal, 18px, 30px);
-    margin: 29px 0;
-
-    &:first-child {
-      margin-top: 0;
-    }
-  }
-
-  br {
-    display: block;
-    margin: 10px 0 0;
-  }
-  strong {
-    .sans-serif(bold, 18px, 30px);
   }
 }

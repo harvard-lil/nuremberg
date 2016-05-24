@@ -1,0 +1,35 @@
+
+.sidebar-layout {
+  margin-top: 30px;
+}
+.main-column {
+  .make-md-column(7);
+}
+.sidebar-column {
+  .make-md-column-offset(1);
+}
+
+.result-row {
+  padding-bottom: 20px;
+  border-bottom: 1px solid @light-gray;
+  margin: 15px 0 20px;
+
+  .occurrence-count {
+    float: right;
+    margin-top: 5px;
+    &:extend(p.module);
+    font-size: 15px;
+  }
+
+  p {
+    .serif-text(normal, 18px, 30px);
+  }
+
+  mark {
+    display: inline;
+    padding: 2px;
+    margin: 0 -2px;
+    background-color: @yellow;
+    color: black;
+  }
+}

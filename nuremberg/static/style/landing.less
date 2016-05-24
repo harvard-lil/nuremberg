@@ -34,11 +34,12 @@ section {
   &.landing-hero {
     padding-bottom: 50px;
     color: white;
-    background-color: @gray;
+    background-color: @black;
     position: relative;
-    background-image: url('@{image_url}/landing/landing-hero.jpg');
+    background-image: url('@{image_url}/landing/landing-hero-fade.jpg');
     background-position: top;
     background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 
   .landing-hero-content {
@@ -65,7 +66,7 @@ section {
     input[type=search] {
       border: 1px solid @light-gray;
       background-size: 21px;
-      background-position: 5px 5px;
+      background-position: 5px 7px;
       padding-left: 30px;
     }
 

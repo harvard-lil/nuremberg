@@ -1,0 +1,42 @@
+.zoom-buttons {
+
+  button {
+    display: inline-block;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: @white;
+    border: 1px solid @light-gray;
+    color: transparent !important;
+    overflow: hidden;
+    .border-radius(0);
+
+    width: 47px;
+    height: 35px;
+    margin: 0;
+
+    &.zoom-in {
+      background-image: url('@{image_url}/icon-zoom-in.png');
+    }
+    &.zoom-out {
+      background-image: url('@{image_url}/icon-zoom-out.png');
+    }
+    &:first-child {
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+      border-right: none;
+    }
+    &:last-child {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+  }
+}
+
+.document-image {
+  margin: 10px;
+  max-width: 100%;
+  &.small-image {
+    max-width: 150px;
+  }
+}

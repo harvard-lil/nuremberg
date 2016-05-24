@@ -34,7 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'static_precompiler',
+    'compressor',
 
     'nuremberg',
     'nuremberg.content',
@@ -116,17 +118,32 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# static precompiler settings
+# compressor settings
 
-STATIC_PRECOMPILER_ROOT = os.path.join(BASE_DIR, 'nuremberg/static')
-STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE = True
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+]
+
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.rCSSMinFilter',
+]
+
+# Compress supports precompilers, but static_precompiler has better watch features for dev
+#
+# COMPRESS_PRECOMPILERS = (
+#     ('text/less', 'lessc {infile} {outfile}'),
+# )
+
+COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 
 # whitenoise settings
 # https://warehouse.python.org/project/whitenoise/
