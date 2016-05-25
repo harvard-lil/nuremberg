@@ -5,7 +5,7 @@
 
 ## Project Structure
 
-The project is organized into several feature-oriented omodules ("apps" in Django parlance). Each module includes all URL routing, model and view code, tests, templates, JavaScript code, and static assets for the corresponding feature set:
+The project is organized into several feature-oriented modules ("apps" in Django parlance). Each module includes all URL routing, model and view code, tests, templates, JavaScript code, and static assets for the corresponding feature set:
 
 - `nuremberg`: The core module; files for root URL routing, test hooks, inherited templates, and site-wide style files.
   - `.content`: Files for static pages with project information, etc.
@@ -82,7 +82,7 @@ You should now be all set to run the local server:
 python manage.py runserver
 ```
 
-Then visit http://localhost:8000.
+Then visit [localhost:8000](http://localhost:8000).
 
 ### Testing
 
