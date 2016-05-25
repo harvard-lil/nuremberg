@@ -1,4 +1,4 @@
-from nuremberg.tests.acceptance_helpers import *
+from nuremberg.core.tests.acceptance_helpers import *
 
 def test_document_viewer():
     document_id = 350

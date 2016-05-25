@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^', include('nuremberg.content.urls')),
 ]
 
-handler400 = 'nuremberg.views.handler400'
-handler403 = 'nuremberg.views.handler403'
-handler404 = 'nuremberg.views.handler404'
-handler500 = 'nuremberg.views.handler500'
+handler400 = 'nuremberg.core.views.handler400'
+handler403 = 'nuremberg.core.views.handler403'
+handler404 = 'nuremberg.core.views.handler404'
+handler500 = 'nuremberg.core.views.handler500'
