@@ -1,4 +1,4 @@
-from nuremberg.tests.acceptance_helpers import *
+from nuremberg.core.tests.acceptance_helpers import *
 from nuremberg.search.templatetags.search_url import search_url
 
 def test_search_results():

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'compressor',
 
     'nuremberg',
+    'nuremberg.core',
     'nuremberg.content',
     'nuremberg.documents',
     'nuremberg.transcripts',
@@ -56,7 +57,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'nuremberg.urls'
+ROOT_URLCONF = 'nuremberg.core.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'nuremberg.middlewares.context_processors.show_mockups',
+                'nuremberg.core.middlewares.context_processors.show_mockups',
             ],
         },
     },

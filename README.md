@@ -7,13 +7,13 @@
 
 The project is organized into several feature-oriented modules ("apps" in Django parlance). Each module includes all URL routing, model and view code, tests, templates, JavaScript code, and static assets for the corresponding feature set:
 
-- `nuremberg`: The core module; files for root URL routing, test hooks, inherited templates, and site-wide style files.
+- `nuremberg`: Top-level namespace for organizational purposes only.
+  - `.core`: Top-level URL routing, test frameworks, base templates and middleware, and site-wide style files.
+  - `.settings`: Environment-specific Django settings files.
   - `.content`: Files for static pages with project information, etc.
-  - `.documents`: Files for digitized document images.
+  - `.documents`: Files for displaying digitized document images.
   - `.transcripts`: Files for full-text transcripts and OCR documents.
   - `.search`: Files for the search interface and API.
-
-Functionality can be shared between modules by normal `import` statements; any files that aren't shared across the entire app should live in a specific module.
 
 This document covers the following topics:
 
