@@ -58,8 +58,20 @@ input[type=search] {
   color: @black;
   .sans-serif(normal, 14px, 20px);
 
-  &:not(:valid) ~ .clear-search {
+  &:not(:valid) ~ .button-wrapper .clear-search {
     display: none;
+  }
+}
+
+.search-bar-wrapper {
+  width: 100%;
+  padding-right: 120px;
+  white-space: nowrap;
+  .button-wrapper {
+    height: 36px;
+    display: inline-block;
+    overflow: visible;
+    vertical-align: bottom;
   }
 }
 

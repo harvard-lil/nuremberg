@@ -10,9 +10,13 @@
 <section class="theme-beige thin">
   <div class="full-width">
     <form class="results-search" action='{% url 'search:search' %}' method='GET'>
-      <input type="search" name="query" value="{{query}}" required />
-      <button class="clear-search" type="reset">Clear</button>
-      <button class="button search-button">Search</button>
+      <div class="search-bar-wrapper">
+        <input type="search" name="query" value="{{query}}" required />
+        <div class="button-wrapper">
+          <button class="clear-search" type="reset">Clear</button>
+          <button class="button search-button" type="submit">Search</button>
+        </div>
+      </div>
     </form>
   </div>
 </section>

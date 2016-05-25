@@ -22,9 +22,13 @@
       </h2>
     </hgroup>
     <form class="landing-search" action='{% url 'search:search' %}' method='GET'>
-      <input type="search" name="query" required />
-      <button class="clear-search" type="reset">Clear</button>
-      <button class="button search-button" type="submit">Search</button>
+      <div class="search-bar-wrapper">
+        <input type="search" name="query" required />
+        <div class="button-wrapper">
+          <button class="clear-search" type="reset">Clear</button>
+          <button class="button search-button" type="submit">Search</button>
+        </div>
+      </div>
 
       <div class="include-materials">
         <legend>Include these materials:</legend>
