@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+<section class="theme-light">
+  <h1>{{friendly_message}}</h1>
+  <p>
+    {{friendly_description}}
+  </p>
+  <p>
+    Or, try these links instead:
+  </p>
+  <ul>
+    <li> <a href="{% url 'content:landing' %}">Home Page</a>
+    <li> <a href="{% url 'search:search' %}">Search the Archive</a>
+    <li> <a href="{% url 'content:approaches' %}">Approaches to the Collection</a>
+    <li> <a href="{% url 'content:about' %}">About the Project</a>
+  </ul>
+  <p>
+    If you see this message repeatedly, contact us at
+    <a href="mailto:specialc@law.harvard.edu" class="email">specialc@law.harvard.edu</a>
+    for assistance.
+  </p>
+</section>
+{% endblock %}
