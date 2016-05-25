@@ -58,38 +58,24 @@
 @font-face {
   .load-font-otf('Proof', italic, bold, 'Proof-BoldItalic');
 }
-// 67.2
+
 .set-font(@weight, @size, @height) {
-  // font-family: @family;
   font-weight: @weight;
   font-size: @size;
   line-height: @height;
 }
 
-.font-proof {
-  font-family: 'Proof', sans-serif;
-}
-.font-text {
-  font-family: 'Tiempos Text', serif;
-}
-.font-headline {
-  font-family: 'Tiempos Headline', serif;
-}
-
-* {
-  &:extend(.font-proof);
-}
 .sans-serif(@weight, @size, @height) {
-  // &:extend(.font-proof);
+  font-family: 'Proof', sans-serif;
   .set-font(@weight; @size; @height);
 }
 
 .serif-headline(@weight, @size, @height) {
-  &:extend(.font-headline);
+  font-family: 'Tiempos Headline', serif;
   .set-font(@weight; @size; @height);
 }
 
 .serif-text(@weight, @size, @height) {
-  &:extend(.font-text);
+  font-family: 'Tiempos Text', serif;
   .set-font(@weight; @size; @height);
 }
