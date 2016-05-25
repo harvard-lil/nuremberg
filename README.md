@@ -47,7 +47,7 @@ pip install -r requirements.txt
 If you will be running the test suite, you need to install test dependencies:
 
 ```bash
-pip install -r nuremberg/tests/requirements.txt
+pip install -r nuremberg/core/tests/requirements.txt
 ```
 
 In order to compile static assets (which is configured to happen automatically while running the development server), you will need to install `lessc` from npm:
@@ -63,7 +63,7 @@ The easiest way to set up the dev database is loading the test fixtures:
 ```bash
 mysql -uroot -e "CREATE DATABASE IF NOT EXISTS nuremberg_dev"
 mysql -uroot -e "CREATE USER nuremberg; GRANT ALL ON nuremberg_dev.* TO nuremberg"
-mysql -unuremberg nuremberg_dev < nuremberg/tests/data.sql
+mysql -unuremberg nuremberg_dev < nuremberg/core/tests/data.sql
 ```
 
 Again, if you want to run the test suite, you should do the same for the test database. (Our tests run on a persistent database):
@@ -71,7 +71,7 @@ Again, if you want to run the test suite, you should do the same for the test da
 ```bash
 mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test_nuremberg_dev"
 mysql -uroot -e "GRANT ALL ON test_nuremberg_dev.* TO nuremberg"
-mysql -unuremberg test_nuremberg_dev < nuremberg/tests/data.sql
+mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
 ```
 
 #### Run the server
@@ -107,7 +107,7 @@ Running the test suite will print a code coverage report to the terminal, as wel
 To improve test compliance, there is a git pre-commit hook to run the test suite before each commit. It's self-installing, so just run:
 
 ```bash
-bash ./nuremberg/tests/pre-commit-hook.sh
+bash ./nuremberg/core/tests/pre-commit-hook.sh
 ```
 
 Now if any test fails, or test coverage is below 95%, the hook will cancel the commit.
@@ -124,7 +124,7 @@ Secrets (usernames, passwords, security tokens, nonces, etc.) should not be plac
 
 #### CSS
 
-CSS code is generated from `.less` files that live in `nuremberg/static/styles`. The styles are built based on Bootstrap 3 mixins, but don't bundle any Bootstrap code directly to ensure a clean semantic design.
+CSS code is generated from `.less` files that live in `nuremberg/core/static/styles`. The styles are built based on Bootstrap 3 mixins, but don't bundle any Bootstrap code directly to ensure a clean semantic design.
 
 Compilation is handled automatically by the `django-static-precompiler` module while the development server is running.
 
