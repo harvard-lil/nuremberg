@@ -84,9 +84,9 @@ I have two questions now to propound to the defendants. As the name of each defe
 <strong>PAUL ROSTOCK:</strong> Yes.
 <p>
 <strong>THE PRESIDENT:</strong> Have you received and have you had an opportunity to read the indictment filed against you?
-<p>
-<div class="page-number">Page 1</div>
-<strong>KARL BRANDT:</strong> I have read the indictment, yes.
+
+<div class="page-handle"><span class="page-number">Page 1</span></div>
+<p><strong>KARL BRANDT:</strong> I have read the indictment, yes.
 <p>
 <strong>THE PRESIDENT:</strong> Have you entered your plea of Not Guilty to this indictment and do you now plea Not Guilty?
 <p>
