@@ -124,19 +124,30 @@ ul.module, .modules ul {
     background-repeat: no-repeat;
   }
 }
+
+&.material-documents {
+  background-image: url('@{image_url}/material-icon-documents.png');
+}
+&.material-transcripts {
+  background-image: url('@{image_url}/material-icon-transcripts.png');
+}
+&.material-photographs {
+  background-image: url('@{image_url}/material-icon-photos.png');
+}
+
 .material-icon {
   width: 20px;
   height: 20px;
   background-size: contain;
-}
-.material-documents {
-  background-image: url('@{image_url}/material-icon-documents.png');
-}
-.material-transcripts {
-  background-image: url('@{image_url}/material-icon-transcripts.png');
-}
-.material-photographs {
-  background-image: url('@{image_url}/material-icon-photos.png');
+  &.material-documents {
+    background-image: url('@{image_url}/material-icon-documents-small.png');
+  }
+  &.material-transcripts {
+    background-image: url('@{image_url}/material-icon-transcripts-small.png');
+  }
+  &.material-photographs {
+    background-image: url('@{image_url}/material-icon-photos-small.png');
+  }
 }
 
 .trial-flag {

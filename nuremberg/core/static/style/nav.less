@@ -1,7 +1,7 @@
 @navbar-border-radius: 0;
 @navbar-height: 62px;
 @navbar-margin-bottom: 0;
-@navbar-padding-vertical: 22px;
+@navbar-padding-vertical: 12px;
 @navbar-padding-horizontal: 50px;
 
 body {
@@ -30,7 +30,8 @@ body {
 
 .site-nav {
   .navbar();
-  padding: @navbar-padding-vertical @navbar-padding-horizontal 0;
+  padding: 22px @navbar-padding-horizontal 0;
+  min-height: inherit;
 
   background-color: @black;
   color: white;
@@ -56,7 +57,7 @@ body {
     text-transform: uppercase;
   }
 
-  .nav-links {
+  ul.nav-links {
     .nav();
     .navbar-nav();
     .pull-right();
@@ -64,13 +65,15 @@ body {
     .sans-serif(@light, 18px, 18px);
 
     margin: 0;
+    margin-bottom: 13px !important;
 
     li {
       float: left;
       margin: 0 0 0 30px;
       > a {
         @underline-color: #424D56;
-        padding: 0 0 4px;
+        padding: 7px 0 14px;
+        line-height: 0px;
         color: white;
         text-decoration: none;
         &:hover {

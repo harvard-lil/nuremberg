@@ -20,7 +20,10 @@ main > section {
   }
 
   border-bottom: 1px solid lighten(@light-gray, 10%);
-  &:last-child,&.spacer {
+  &.spacer {
+    border-bottom: none;
+  }
+  &:last-child {
     border-bottom: none;
   }
 

@@ -68,28 +68,8 @@
   {% endblock %}
   <hr />
   <div class="sidebar-layout">
-    <div id="document-viewport" class="main-column scrollable">
-      {% block viewport %}
-        {% for image in document.images_screen %}
-          <div class="document-image {% if not image.url %}image-missing{% endif %}" id="page-{{image.page_number}}" style="width: {{image.width}}px; height: {{image.height}}px;">
-            {% if image.url %}
-              <img src="{{image.url}}" width="{{image.width}}" height="{{image.height}}"/>
-                <div class="image-label">
-                  Page {{image.page_number}}
-                  <br />
-                  Loading...
-                </div>
-            {% else %}
-              <div class="image-label">
-                Missing Page {{image.page_number}}
-              </div>
-            {% endif %}
-          </div>
-        {% endfor %}
-      {% endblock %}
-    </div>
     <div class="sidebar-column document-info">
-      <div class="material-icon material-documents"></div>
+      <div class="material-icon small material-documents"></div>
       <p class="trial-flags">
         {% for case in document.cases.all %}
           <span class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</span>
@@ -154,6 +134,26 @@
           {% endfor %}
         </p>
       {% endif %}
+    </div>
+    <div id="document-viewport" class="main-column scrollable">
+      {% block viewport %}
+        {% for image in document.images_screen %}
+          <div class="document-image {% if not image.url %}image-missing{% endif %}" id="page-{{image.page_number}}" style="max-width: {{image.width}}px; max-height: {{image.height}}px;">
+            {% if image.url %}
+              <img src="{{image.url}}" width="{{image.width}}" height="{{image.height}}"/>
+                <div class="image-label">
+                  Page {{image.page_number}}
+                  <br />
+                  Loading...
+                </div>
+            {% else %}
+              <div class="image-label">
+                Missing Page {{image.page_number}}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% endblock %}
     </div>
   </div>
 </section>

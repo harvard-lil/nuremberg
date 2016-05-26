@@ -1,13 +1,14 @@
 .zoom-buttons {
 
   button {
+    &:extend(.hide-text);
+
     display: inline-block;
     cursor: pointer;
     background-repeat: no-repeat;
     background-position: center;
     background-color: @white;
     border: 1px solid @light-gray;
-    color: transparent !important;
     overflow: hidden;
     .border-radius(0);
 
@@ -40,11 +41,10 @@
   position: relative;
   img {
     margin: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     z-index: 1;
-    max-width: 100%;
+    width: 100%;
+    height: auto;
     zoom:1;
   }
   &.small-image {
@@ -52,14 +52,16 @@
   }
   zoom:1;
   background-color: @light-black;
-  width: 650px;
-  height: 850px;
+  width: auto;
+  max-height: 850px;
+  max-width: 650px;
   .sans-serif(bold, 45px, 85px);
   text-align: center;
   color: @dark-gray;
   .image-label {
-    position: relative;
-    top: 45%;
+    position: absolute;
+    bottom: 50%;
     z-index: 0;
+    width: 100%;
   }
 }
