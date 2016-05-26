@@ -1,10 +1,10 @@
 .sidebar-layout {
   .sidebar-column {
-    .make-md-column(2.5);
+    .make-sm-column(2.5);
   }
   .main-column {
-    .make-md-column(9.5);
-    .make-md-column-offset(0);
+    .make-sm-column(9.5);
+    .make-sm-column-offset(0);
   }
 }
 
@@ -75,12 +75,12 @@ section.results {
 
     position: relative;
     .collapse {
+      &:extend(.hide-text);
       position: absolute;
       right: 8px;
       top: 5px;
       width: 10px;
       height: 7px;
-      color: transparent;
       background-repeat: no-repeat;
       background-size: contain;
       background-position: center;
@@ -114,7 +114,8 @@ section.results {
   .date-filter {
     input {
       width: 40px;
-      padding: 1px 6px;
+      padding-left: 6px;
+      padding-right: 6px;
       margin: 0 3px;
       &:first-child {
         margin-left: 0;
@@ -189,16 +190,17 @@ section.results {
     margin: 0;
   }
   .document-type-icon {
+    &:extend(.hide-text);
+
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: 100% auto;
     background-position: center;
     width: 26px;
     height: 26px;
     font-size: 0px;
     margin-top: -4px;
-    color: transparent;
     &.type-text {
-      background-image: url('@{image_url}/documents/icon-type-text.png');
+      background-image: url('@{image_url}/documents/icon-type-text-small.png');
     }
   }
 }
@@ -223,11 +225,12 @@ section.results {
     }
   }
   .next-page, .prev-page {
+    &:extend(.hide-text);
+
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
     width: 11px;
-    color: transparent;
     vertical-align: top;
     margin-top: 0px;
   }
