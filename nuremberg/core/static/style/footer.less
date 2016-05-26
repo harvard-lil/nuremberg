@@ -1,12 +1,11 @@
 footer.site-footer {
-  .make-row();
+  &:extend(.row);
   margin: 0;
   padding: 20px 35px;
 
   background-image: url('@{image_url}/footer.jpg');
   background-color: @dark-gray;
   background-position: bottom;
-  background-repeat: no-repeat;
   background-attachment: fixed;
   color: white;
 
@@ -24,7 +23,7 @@ footer.site-footer {
 
     a.email {
       color: white;
-      text-decoration: none;
+      border: none;
     }
   }
   .footer-nav-col {
@@ -42,7 +41,7 @@ footer.site-footer {
       padding: 6px 0;
     }
     a {
-      text-decoration: none;
+      border: none;
       color: white;
       &:hover {
         border-bottom: 2px solid white;

@@ -13,7 +13,7 @@ section.results {
 }
 
 .results-summary {
-  .make-row();
+  &:extend(.row);
 
   margin-bottom: 18px;
 
@@ -81,9 +81,7 @@ section.results {
       top: 5px;
       width: 10px;
       height: 7px;
-      background-repeat: no-repeat;
       background-size: contain;
-      background-position: center;
       background-image: url('@{image_url}/search/facet-collapse.png');
       cursor: pointer;
     }
@@ -192,9 +190,7 @@ section.results {
   .document-type-icon {
     &:extend(.hide-text);
 
-    background-repeat: no-repeat;
     background-size: 100% auto;
-    background-position: center;
     width: 26px;
     height: 26px;
     font-size: 0px;
@@ -206,7 +202,7 @@ section.results {
 }
 
 .pagination-row {
-  .make-row();
+  &:extend(.row);
 }
 .pagination-controls {
   .make-md-column(6);
@@ -219,7 +215,7 @@ section.results {
     margin: 3px 10px;
   }
   .page-number {
-    text-decoration: none;
+    border: none;
     &.current {
       color: @black;
     }
@@ -227,9 +223,7 @@ section.results {
   .next-page, .prev-page {
     &:extend(.hide-text);
 
-    background-repeat: no-repeat;
     background-size: contain;
-    background-position: center;
     width: 11px;
     vertical-align: top;
     margin-top: 0px;

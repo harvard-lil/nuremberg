@@ -9,14 +9,9 @@
 {% block content %}
 <section class="theme-beige thin">
   <div class="full-width">
+
     <form class="results-search" action='{% url 'search:search' %}' method='GET'>
-      <div class="search-bar-wrapper">
-        <input type="search" name="query" value="{{query}}" required />
-        <div class="button-wrapper">
-          <button class="clear-search" type="reset">Clear</button>
-          <button class="button search-button" type="submit">Search</button>
-        </div>
-      </div>
+      {% include 'search/search-bar.html' %}
     </form>
   </div>
 </section>

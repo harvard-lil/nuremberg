@@ -13,13 +13,7 @@
     {% if query %}
       <div class="document-tools">
         <form class="document-search-inline" action='{% url 'transcripts:search' document.id %}' method='GET'>
-          <div class="search-bar-wrapper">
-            <input type="search" name="query" value="{{query}}" required />
-            <div class="button-wrapper">
-              <button class="clear-search" type="reset">Clear</button>
-              {# <button class="button search-button" type="submit">Search</button>#}
-            </div>
-          </div>
+          {% include 'search/search-bar.html' %}
           {% if results %}
             <label><strong>{{results|length}}</strong> results in this transcript</label>
             <a>Order by Page</a>

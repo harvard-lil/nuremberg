@@ -70,24 +70,18 @@ p {
 
 h1,h2,h3,h4,h5 {
   a {
-    text-decoration: none;
     padding-bottom: 3px;
-    border-bottom: 1px solid @dark-blue;
-    &:hover {
-      text-decoration: none;
-    }
   }
 }
 
 a {
   color: @dark-blue;
-  text-decoration: underline;
+  text-decoration: none !important;
+  border-bottom: 1px solid @dark-blue;
 
   &.teaser {
     .sans-serif(300, 18px, 26px);
-    text-decoration: none;
     padding-bottom: 2px;
-    border-bottom: 1px solid @dark-blue;
     &::after {
       content: '\2192'; // &rarr;
     }
@@ -99,10 +93,7 @@ a {
     font-size: inherit !important;
     font-weight: inherit !important;
     text-decoration: inherit !important;
-    &:hover {
-      color: inherit !important;
-      text-decoration: inherit !important;
-    }
+    border: inherit !important;
   }
 }
 
@@ -160,7 +151,7 @@ ul.module, .modules ul {
 
   color: white;
   .sans-serif(normal, 11px, 11px);
-  text-decoration: none;
+  border: none;
 
   &.trial-nmt-1 {
     background-color:  #999FB2;

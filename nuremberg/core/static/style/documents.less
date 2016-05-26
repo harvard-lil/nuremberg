@@ -1,7 +1,10 @@
 .document-tools {
-  .make-row();
+  &:extend(.row);
 
   padding: 15px 0 7px;
+
+  .sans-serif(normal, 14px, 14px);
+  color: @gray;
 
   select {
     .form-control();
@@ -11,15 +14,17 @@
     vertical-align: bottom;
   }
 
-  input[type="search"] {
-    max-width: 310px;
+  .search-bar-wrapper {
+    width: 310px;
+    padding-right: 50px;
+    display: inline-block;
+  }
+  button.search-button {
+    display: none;
   }
   button.clear-search {
     margin-right: 15px;
   }
-
-  .sans-serif(normal, 14px, 14px);
-  color: @gray;
 
   a {
     margin: 0px 5px;
@@ -27,7 +32,7 @@
     &.active {
       font-weight: @medium;
       color: @dark-gray;
-      text-decoration: none;
+      border: none;
     }
   }
 
@@ -76,8 +81,6 @@
 
     display: inline-block;
     cursor: pointer;
-    background-repeat: no-repeat;
-    background-position: center;
     background-color: @white;
     border: none;
     overflow: hidden;

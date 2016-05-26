@@ -9,12 +9,10 @@
   height: 32px;
   padding: 10px 10px;
   margin-bottom: 3px;
-  text-decoration: none;
   .sans-serif(normal, 11px, 12px);
 
   background-color: @light-beige;
   border-color: @light-gray;
-
 }
 
 .applied-filter {
@@ -44,19 +42,31 @@ input[type=search] {
   max-width: 560px;
   margin-right: 5px;
 
-  background-image: url('@{image_url}/search-icon.png') !important;
-  background-repeat: no-repeat;
-  background-position: 8px 8px;
-  background-size: 17px;
   padding-left: 34px;
-  // &:valid {
-  //   background-image: none;
-  //    padding-left: 8px;
-  // }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-box-shadow: 60px 0 0px 1000px white inset;
+  }
 
   &:not(:valid) ~ .button-wrapper .clear-search {
     display: none;
   }
+}
+
+.search-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-left: -18px;
+
+  position: relative;
+  left: 31px;
+  top: 3px;
+
+  background-image: url('@{image_url}/search-icon.png') !important;
 }
 
 .search-bar-wrapper {
@@ -73,7 +83,6 @@ input[type=search] {
 
 button.clear-search {
   &:extend(.hide-text);
-  background-repeat: no-repeat;
   background-image: url('@{image_url}/icon-clear-search.png');
   width: 12px;
   height: 12px;
@@ -143,8 +152,6 @@ button {
 }
 
 .go-button {
-  background-repeat: no-repeat;
-  background-position: center;
   background-size: initial;
   &, &:active {
     background-image: url('@{image_url}/icon-button-go.png');
