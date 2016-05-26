@@ -11,3 +11,9 @@
 	-webkit-background-clip: padding-box;
 	background-clip:         padding-box;
 }
+
+.box-sizing(@boxmodel) {
+	-webkit-box-sizing: @boxmodel;
+		 -moz-box-sizing: @boxmodel;
+	box-sizing: @boxmodel;// ~"; *behavior: url(/static/scripts/ie7/boxsizing.htc)";
+}

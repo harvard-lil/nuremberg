@@ -14,6 +14,9 @@ class Document(models.Model):
     language = models.ForeignKey('DocumentLanguage', db_column='DocLanguageID')
     source = models.ForeignKey('DocumentSource', db_column='DocVersionID')
 
+    def images_screen(self):
+        return self.images.filter(scale=DocumentImage.SCREEN)
+
     def date(self):
         date = self.dates.first()
         if date:
@@ -37,29 +40,53 @@ class Document(models.Model):
     def __str__(self):
         return "#{0} - {1}".format(self.id, self.title)
 
-
 class DocumentImage(models.Model):
+    document = models.ForeignKey(Document, related_name='images', on_delete=models.PROTECT)
+
+    page_number = models.IntegerField()
+    physical_page_number = models.IntegerField(blank=True, null=True)
+
+    THUMB = 't'
+    HALF = 'h'
+    SCREEN = 's'
+    DOUBLE = 'd'
+    FULL = 'f'
+    IMAGE_SCALES = (
+        (THUMB, 'thumb'),
+        (HALF, 'half'),
+        (SCREEN, 'screen'),
+        (DOUBLE, 'double'),
+        (FULL, 'full'),
+    )
+
+    url = models.CharField(max_length=255, blank=True, null=True)
+    scale = models.CharField(max_length=1, choices=IMAGE_SCALES)
+    width = models.IntegerField(blank=True, null=True)
+    height = models.IntegerField(blank=True, null=True)
+
+    image_type = models.ForeignKey('DocumentImageType')
+
+    def image_tag(self):
+        return '<a href="{0}"><img src="{0}" width=100 /></a>'.format(self.url)
+    image_tag.allow_tags = True
+
+    def __str__(self):
+        return "#{} Page {} {} {}x{}".format(self.document.id, self.page_number, self.scale, self.width, self.height)
+
+    class Meta:
+        ordering = ['page_number']
+
+
+class OldDocumentImage(models.Model):
     id = models.AutoField(primary_key=True, db_column='ImagesListID')
-    document = models.ForeignKey(Document, related_name='images', on_delete=models.PROTECT, db_column='DocID')
+    document = models.ForeignKey(Document, related_name='old_images', on_delete=models.PROTECT, db_column='DocID')
 
     page_number = models.IntegerField(db_column='PageSequenceNo')
     physical_page_number = models.CharField(max_length=50, db_column='PhysicalPageNo')
 
-    file_prefix = models.CharField(max_length=8, db_column='CaseFolderName')
-    file_name = models.CharField(max_length=8, db_column='FileName')
-    file_suffix = models.CharField(max_length=5, db_column='FileFormat')
+    filename = models.CharField(db_column='FileName', max_length=8, blank=True, null=True)
 
     image_type = models.ForeignKey('DocumentImageType', db_column='PageTypeID')
-
-    def image_url(self):
-        return "{}/{}{}{}".format(IMAGE_URL_ROOT, self.file_prefix, self.file_name, self.file_suffix)
-
-    def image_tag(self):
-        return '<a href="{0}"><img src="{0}" width=100 /></a>'.format(self.image_url())
-    image_tag.allow_tags = True
-
-    def __str__(self):
-        return "#{} - {} Page {}".format(self.document.id, self.document.title, self.page_number)
 
     class Meta:
         managed = False

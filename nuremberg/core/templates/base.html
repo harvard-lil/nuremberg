@@ -16,8 +16,11 @@
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <script src="{% static 'scripts/html5shiv.min.js' %}" type="text/javascript"></script>
+      <script src="{% static 'scripts/respond.min.js' %}" type="text/javascript"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+      <script src="{% static 'scripts/ie7/IE7.js' %}" type="text/javascript"></script>
     <![endif]-->
   </head>
   <body class="{% block body_class %}{% endblock %} {% if show_mockup %}mockups{% endif %}">
@@ -38,9 +41,9 @@
         {% include "footer.html" %}
       {% endblock %}
     </footer>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     {# compress all site JS into a single blob #}
     {% compress js %}
+      <script src="{% static 'scripts/jquery-1.12.4.min.js' %}" type="text/javascript"></script>
       <script src="{% static 'scripts/jquery-ui.js' %}" type="text/javascript"></script>
       {# <script src="{% static 'scripts/jquery.mousewheel.js' %}"></script>#}
       <script src="{% static 'scripts/modulejs.js' %}" type="text/javascript"></script>
@@ -48,7 +51,10 @@
       <script src="{% static 'scripts/documents.js' %}" type="text/javascript"></script>
     {% endcompress %}
     <script>
-      $(document).ready(function () {
+      var a = $;
+      //var $ = jQuery;
+      var $document = a(document);
+      $document.ready(function () {
         var entryPoint = '{% block javascript_module %}{% endblock %}';
         if (entryPoint) {
           modulejs.require(entryPoint);

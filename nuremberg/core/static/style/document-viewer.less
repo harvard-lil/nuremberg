@@ -34,9 +34,32 @@
 }
 
 .document-image {
+  display: block;
   margin: 10px;
   max-width: 100%;
+  position: relative;
+  img {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    max-width: 100%;
+    zoom:1;
+  }
   &.small-image {
     max-width: 150px;
+  }
+  zoom:1;
+  background-color: @light-black;
+  width: 650px;
+  height: 850px;
+  .sans-serif(bold, 45px, 85px);
+  text-align: center;
+  color: @dark-gray;
+  .image-label {
+    position: relative;
+    top: 45%;
+    z-index: 0;
   }
 }

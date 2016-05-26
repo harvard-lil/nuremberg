@@ -35,17 +35,17 @@
     <div class="document-tools">
       {% block document_controls %}
         <div class="zoom-buttons">
-          <button class="zoom-in" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.remove('small-image')});">
+          <button class="zoom-in">
             Zoom In
           </button>
-          <button class="zoom-out" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.add('small-image')});">
+          <button class="zoom-out">
             Zoom Out
           </button>
         </div>
       {% endblock %}
       <div class="page-buttons">
         {% block page_selection %}
-          <select onchange="window.location.hash = this.value;console.log(this.value)">
+          <select>
             {% for image_url in document.image_urls %}
               <option value="page-{{forloop.counter}}">Page {{forloop.counter}}</option>
             {% endfor %}
@@ -70,8 +70,21 @@
   <div class="sidebar-layout">
     <div id="document-viewport" class="main-column scrollable">
       {% block viewport %}
-        {% for image_url in document.image_urls %}
-          <img id="page-{{forloop.counter}}" src="{{image_url}}" class="document-image"/>
+        {% for image in document.images_screen %}
+          <div class="document-image {% if not image.url %}image-missing{% endif %}" id="page-{{image.page_number}}" style="width: {{image.width}}px; height: {{image.height}}px;">
+            {% if image.url %}
+              <img src="{{image.url}}" width="{{image.width}}" height="{{image.height}}"/>
+                <div class="image-label">
+                  Page {{image.page_number}}
+                  <br />
+                  Loading...
+                </div>
+            {% else %}
+              <div class="image-label">
+                Missing Page {{image.page_number}}
+              </div>
+            {% endif %}
+          </div>
         {% endfor %}
       {% endblock %}
     </div>
