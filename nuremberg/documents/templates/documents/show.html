@@ -132,7 +132,7 @@
     <div id="document-viewport" class="main-column scrollable">
       {% block viewport %}
         {% for image in document.images_screen %}
-          <div class="document-image {% if not image.url %}image-missing{% endif %}" id="page-{{image.page_number}}" style="max-width: {{image.width}}px; max-height: {{image.height}}px;">
+          <div class="document-image {% if not image.url %}image-missing{% endif %}" id="page-{{image.page_number}}" style="width: {{image.width}}px; height: {{image.height}}px;">
             {% if image.url %}
               <img src="{{image.url}}" width="{{image.width}}" height="{{image.height}}"/>
                 <div class="image-label">

@@ -5,11 +5,11 @@
 .tag-button {
   .btn();
   .btn-default();
+  .sans-serif(normal, 11px, 12px);
 
   height: 32px;
   padding: 10px 10px;
   margin-bottom: 3px;
-  .sans-serif(normal, 11px, 12px);
 
   background-color: @light-beige;
   border-color: @light-gray;
@@ -17,19 +17,21 @@
 
 .applied-filter {
   &:extend(.tag-button);
+
   height: 30px;
   padding: 8px 9px;
   font-size: 12px;
   margin-bottom: 4px;
+
   background-color: @lighter-gray;
 
   .remove-button {
     display: inline-block;
-    cursor: pointer;
-    font-size: 20px;
-    margin: -10px 0 0 5px;
     height: 14px;
+    margin: -10px 0 0 5px;
     vertical-align: bottom;
+    font-size: 20px;
+    cursor: pointer;
   }
 }
 
@@ -39,16 +41,16 @@ form {
 
 input[type=search] {
   &:extend(.text-input);
+
   max-width: 560px;
   margin-right: 5px;
-
   padding-left: 34px;
 
   &:-webkit-autofill,
   &:-webkit-autofill:hover,
   &:-webkit-autofill:focus,
   &:-webkit-autofill:active {
-    -webkit-box-shadow: 60px 0 0px 1000px white inset;
+    -webkit-box-shadow: 0 0 0 1000px @white inset;
   }
 
   &:not(:valid) ~ .button-wrapper .clear-search {
@@ -73,6 +75,7 @@ input[type=search] {
   width: 100%;
   padding-right: 120px;
   white-space: nowrap;
+
   .button-wrapper {
     height: 36px;
     display: inline-block;
@@ -83,39 +86,43 @@ input[type=search] {
 
 button.clear-search {
   &:extend(.hide-text);
-  background-image: url('@{image_url}/icon-clear-search.png');
+
   width: 12px;
   height: 12px;
-  padding: 0px;
+  padding: 0;
   margin-left: -30.5px;
   margin-right: 15px;
-  margin-top: 14px;
+  margin-top: 12px;
+
+  background-image: url('@{image_url}/icon-clear-search.png');
+
   vertical-align: top;
   cursor: pointer;
 }
 
 input[type=text], .text-input {
+  .sans-serif(normal, 14px, 20px);
   .box-sizing(content-box);
   .border-radius(3px);
+
   height: 15px;
-  border: 1px solid @light-gray;
   width: 100%;
-  background-color: white;
   padding-top: 10px;
   padding-bottom: 9px;
 
-
+  background-color: @white;
+  border: 1px solid @light-gray;
   color: @black;
-  .sans-serif(normal, 14px, 20px);
 }
 
 select {
   .form-control();
+  .sans-serif(@light, 14px, 20px);
+
   display: inline-block;
+  width: inherit;
   margin-right: 7px;
   vertical-align: bottom;
-  width: inherit;
-  .sans-serif(@light, 14px, 20px);
 }
 button {
   border: none;
@@ -125,8 +132,8 @@ button {
 .search-button, .go-button {
   .btn();
   .btn-primary();
-
   .sans-serif(@light, 14px, 20px);
+
   padding: 7px 16px;
   vertical-align: top;
 }
@@ -135,31 +142,35 @@ button {
 .ui-slider.ui-slider-horizontal {
   margin-top: 15px;
   height: 2px;
+  position: relative;
   background-color: @light-gray;
 
   .ui-slider-range {
     margin-top: -0.5px;
     height: 3px;
+    position: absolute;
     background-color: @dark-blue;
   }
   .ui-slider-handle {
+    .border-radius(7.5px);
+
     width: 15px;
     height: 15px;
-    margin-top: -2px;
-    .border-radius(7.5px);
+    top: -6px;
+    margin-left:-7.5px;
+    position: absolute;
     background-color: @black;
   }
 }
 
 .go-button {
-  background-size: initial;
-  &, &:active {
-    background-image: url('@{image_url}/icon-button-go.png');
-  }
-  width: 39px;
-  height: 34px;
-  overflow: hidden;
   &:extend(.hide-text);
+
+  width: 39px;
+  height: 36px;
+  overflow: hidden;
+
+  background-image: url('@{image_url}/icon-button-go.png') !important;
 }
 
 legend {

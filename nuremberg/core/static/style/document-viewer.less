@@ -1,15 +1,14 @@
 .zoom-buttons {
-
   button {
     &:extend(.hide-text);
-
-    background-color: @white;
-    border: 1px solid @light-gray;
-    .border-radius(0);
 
     width: 47px;
     height: 35px;
     margin: 0;
+
+    background-color: @white;
+    border: 1px solid @light-gray;
+    .border-radius(0);
 
     &.zoom-in {
       background-image: url('@{image_url}/icon-zoom-in.png');
@@ -37,20 +36,22 @@
 }
 
 .document-image {
+  .sans-serif(bold, 45px, 85px);
+
   display: block;
   margin: 10px;
-  max-width: 100%;
   position: relative;
-  zoom:1;
   width: auto;
-  max-height: 850px;
-  max-width: 650px;
+  zoom:1;
 
-  text-align: center;
-  .sans-serif(bold, 45px, 85px);
-  background-color: @light-black;
   color: @dark-gray;
+  background-color: @light-black;
+  text-align: center;
 
+  &.image-missing {
+    height: 850px;
+    width: 650px;
+  }
   img {
     margin: 0;
     position: relative;
@@ -65,7 +66,7 @@
   .image-label {
     position: absolute;
     bottom: 50%;
-    z-index: 0;
     width: 100%;
+    z-index: 0;
   }
 }

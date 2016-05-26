@@ -15,7 +15,7 @@
 @import "layout";
 @import "footer";
 
-@import (less) "jquery-ui.css";
+// @import (less) "jquery-ui.css";
 
 body.landing-page {
   @import "landing";
@@ -62,21 +62,17 @@ body.mockups {
   }
 }
 
-body.document-search {
-  @import "search";
-}
-
 body {
-  color: black;
-  margin: 0px;
-  padding: 0px;
   .center-block();
+
+  color: black;
+  padding: 0px;
   max-width: 1200px;
   border-left: 1px solid @light-gray;
   border-right: 1px solid @light-gray;
 }
 
-div, button, input {
+div, button, input, li {
   background-repeat: no-repeat;
   background-position: center;
 }

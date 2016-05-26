@@ -6,6 +6,8 @@
 
 body {
     &.fixed-nav {
+      padding-top: @navbar-height;
+
       > header {
         .navbar-fixed-top();
         nav {
@@ -14,33 +16,35 @@ body {
           border-right: 1px solid @light-gray;
         }
       }
-      padding-top: @navbar-height;
     }
 }
 .navbar-fixed-width {
   margin-left: auto;
   margin-right: auto;
 
+  width: 100%;
+
   @media all and (min-width: @screen-lg-min) {
     width: @screen-lg-min;
   }
-
-  width: 100%
 }
 
 .site-nav {
   .navbar();
+  .border-radius(0);
+
   padding: 22px @navbar-padding-horizontal 0;
   min-height: inherit;
 
   background-color: @black;
-  color: white;
+  color: @white;
   border: none;
-  .border-radius(0);
 
   .site-brand {
     .navbar-header();
     .sans-serif(normal, 20px, 20px);
+    margin-top: -1px;
+
     div {
       display: inline-block;
     }
@@ -61,7 +65,6 @@ body {
     .nav();
     .navbar-nav();
     .pull-right();
-
     .sans-serif(@light, 18px, 18px);
 
     margin: 0;
@@ -71,23 +74,20 @@ body {
       float: left;
       margin: 0 0 0 30px;
       > a {
-        @underline-color: #424D56;
         padding: 7px 0 14px;
-        line-height: 0px;
-        color: white;
+        line-height: 0;
+        color: @white;
         border: none;
+        background-color: transparent !important;
+
         &:hover {
           color: @dark-blue;
-          background-color: transparent;
-        }
-        &:focus {
-          background-color: transparent;
         }
         &:active {
           color: @dark-gray;
         }
         &.active {
-          border-bottom: 5px solid @underline-color;
+          border-bottom: 5px solid @header-dark-gray;
           cursor: pointer;
           pointer-events: none;
         }

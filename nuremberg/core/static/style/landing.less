@@ -1,11 +1,13 @@
 nav.site-nav {
-  background: transparent;
-  border: none;
   padding: 0;
   min-height: 61px;
 
+  background: transparent;
+  border: none;
+
   .site-brand {
     text-transform: uppercase;
+
     div {
       display: block;
     }
@@ -13,18 +15,17 @@ nav.site-nav {
       display: none;
     }
     .brand-harvard {
-      color: #8E8C89;
       .sans-serif(@medium, 14px, 14px);
+      color: @header-gray;
       letter-spacing: 0.2px;
     }
     .brand-project {
       .sans-serif(normal, 24px, 34px);
-      letter-spacing: 1.2px;
       margin-left: 0;
+      letter-spacing: 1.2px;
     }
   }
   .nav-links {
-    // margin-top: 9px;
     a {
       .sans-serif(@light, 20px, 20px);
     }
@@ -34,7 +35,7 @@ nav.site-nav {
 section {
   &.landing-hero {
     padding-bottom: 50px;
-    color: white;
+    color: @white;
     background-color: @black;
     position: relative;
     background-image: url('@{image_url}/landing/landing-hero-fade.jpg');
@@ -43,9 +44,10 @@ section {
   }
 
   .landing-hero-content {
-    margin-top: 53px;
     .make-md-column(8.5);
     .make-md-column-offset(2);
+
+    margin-top: 53px;
 
     h1 {
       margin: 25px 0 10px;
@@ -61,6 +63,7 @@ section {
   .landing-search {
     margin-top: 30px;
     margin-bottom: 15px;
+
     input[type=search] {
       border: 1px solid @light-gray;
       background-size: 21px;
@@ -68,33 +71,29 @@ section {
       padding-left: 30px;
       width: 100%;
     }
-
     .search-button {
       .sans-serif(normal, 17px, 20px);
       padding: 7px 13px;
     }
-
     .include-materials {
-      padding: 14px 0px;
+      .sans-serif(normal, 14px, 20px);
+
+      padding: 14px 0;
       border: none;
 
-      .sans-serif(normal, 14px, 20px);
       label {
         margin-left: 10px;
       }
-
       input[type=checkbox] {
         width: 14px;
         height: 14px;
         margin-right: 3px;
-
       }
     }
     legend {
       display: inline-block;
       color: @light-gray;
     }
-
   }
 
   &.collection {
@@ -102,7 +101,6 @@ section {
       .serif-headline(bold, 28px, 30px);
       margin: 23px 0 19px;
     }
-
     p {
       .partial-width();
       margin: 5px 0;
@@ -117,15 +115,16 @@ section {
     padding: 20px 15px 5px;
 
     .material-category {
-      background-position: 0px 0px;
+      .sans-serif(normal, 14px, 21px);
+
       padding-left: 50px;
       padding-right: 10px;
 
-      .sans-serif(normal, 14px, 21px);
+      background-position: top left;
 
       h3 {
-        margin: 3px 0;
         .sans-serif(bold, 18px, 18px);
+        margin: 3px 0;
       }
     }
   }
@@ -154,7 +153,7 @@ section {
   }
 
   .transcript-preview {
-    padding-top: 0px;
+    padding-top: 0;
 
     .transcript-links {
       padding-top: 10px;
@@ -162,7 +161,6 @@ section {
       h3 {
         margin-top: 16px;
       }
-
       nav {
         padding: 12px 3px;
       }
@@ -176,74 +174,76 @@ section {
 
 }
 
-.project-progress {
-  .progress-summary {
-    .serif-text(normal, 15px, 23px);
+.progress-summary {
+  .serif-text(normal, 15px, 23px);
+}
+.progress-graph {
+  padding: 35px 20px 0 55px;
+
+  .progress-bar {
+    position: relative;
+    height: 50px;
+    width: 100%;
+    background-color: @light-gray;
   }
-  .progress-graph {
-    padding: 35px 20px 0 55px;
+  .completion-date {
+    .sans-serif(@light, 14px, 12px);
 
-    .progress-bar {
-      position: relative;
-      height: 50px;
-      width: 100%;
-      background-color: @light-gray;
+    margin-left: -7px;
+    height: 0;
+    float: left;
+    position: relative;
+    top: -25px;
+
+    transform: rotate(-20deg);
+
+    &.end-date {
+      position: absolute;
+      right: 0;
     }
-    .completion-date {
-      float: left;
-      .sans-serif(300, 14px, 12px);
-      position: relative;
-      top: -25px;
-      margin-left: -7px;
-      height: 0px;
-      transform: rotate(-20deg);
-
-      &.end-date {
-        position: absolute;
-        right: 0px;
-      }
-      &.start-date {
-        position: absolute;
-        left: 0px;
-      }
+    &.start-date {
+      position: absolute;
+      left: 0;
     }
-    .bar-segment {
-      float: left;
-      height: 100%;
-      padding-top: 17px;
-      text-align: center;
+  }
+  .bar-segment {
+    .sans-serif(normal, 15px, 15px);
 
-      .sans-serif(normal, 15px, 15px);
+    height: 100%;
+    padding-top: 17px;
+    float: left;
 
-      &.documents-digitized {
-        background-color: @beige;
-      }
-      &.transcripts-keyed {
-        background-color: @dark-blue;
-      }
+    text-align: center;
+
+    &.documents-digitized {
+      background-color: @beige;
     }
-    .progress-legend {
-      margin-top: 10px;
+    &.transcripts-keyed {
+      background-color: @dark-blue;
     }
-    .legend {
-      float: left;
-      margin-right: 10px;
-      .sans-serif(300, 12px, 14px);
+  }
+  .progress-legend {
+    margin-top: 10px;
+  }
+  .legend {
+    .sans-serif(@light, 12px, 14px);
+    margin-right: 10px;
+    float: left;
 
-      &::before {
-        display: inline-block;
-        line-height: 15px;
-        margin: -2px 5px;
-        width: 15px;
-        height: 15px;
-        content: '\A0'; // &nbsp;
-      }
-      &.documents-digitized::before {
-        background-color: @beige;
-      }
-      &.transcripts-keyed::before {
-        background-color: @dark-blue;
-      }
+    &::before {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin: -2px 5px;
+      line-height: 15px;
+
+      content: '\A0'; // &nbsp;
+    }
+    &.documents-digitized::before {
+      background-color: @beige;
+    }
+    &.transcripts-keyed::before {
+      background-color: @dark-blue;
     }
   }
 }

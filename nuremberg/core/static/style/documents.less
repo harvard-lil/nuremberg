@@ -27,8 +27,9 @@
   }
 
   a {
-    margin: 0px 5px;
+    margin: 0 5px;
     font-weight: normal;
+
     &.active {
       font-weight: @medium;
       color: @dark-gray;
@@ -37,17 +38,19 @@
   }
 
   .document-search-inline {
+    .make-md-column(9);
+    .pull-left();
+
     label {
       margin-right: 15px;
     }
-    .make-md-column(9);
-    .pull-left();
   }
   .return-link {
     .make-md-column(2);
     .pull-right();
-    text-align: right;
+
     padding-top: 12px;
+    text-align: right;
   }
 }
 .zoom-buttons {
@@ -61,8 +64,9 @@
 .page-buttons {
   .make-md-column(6);
   .pull-right();
-  text-align: right;
+
   height: 30px;
+  text-align: right;
 
   label {
     .sans-serif(normal, 14px, 14px);
@@ -74,16 +78,16 @@
   }
 
   button {
-    height: 35px;
-    width: 32px;
-
     &:extend(.hide-text);
 
     display: inline-block;
-    cursor: pointer;
+    height: 35px;
+    width: 32px;
+
     background-color: @white;
     border: none;
     overflow: hidden;
+    cursor: pointer;
 
     &.first-page {
       background-image: url('@{image_url}/icon-first-page.png');
@@ -111,19 +115,19 @@ hr {
     .make-md-column(8);
     .make-md-column-pull(4);
     .make-md-column-offset(0);
+
     height: 100%;
     height: 100vh;
     overflow: hidden;
+
     &.scrollable {
-      overflow-y: auto;
-      overflow-x: auto;
+      overflow: auto;
     }
   }
   .sidebar-column {
     .make-md-column(4);
     .make-md-column-push(8);
     padding-top: 25px;
-    // padding-left: 30px;
   }
 
   h3 {
@@ -138,15 +142,16 @@ hr {
     }
   }
   h5 {
+    .sans-serif(@light, 16px, 25px);
     margin: 0 0 20px;
-    .sans-serif(300, 16px, 25px);
   }
   h6 {
     .sans-serif(bold, 14px, 14px);
+
+    margin: 37px 0 10px;
+
     letter-spacing: 2px;
     color: @gray;
     text-transform: uppercase;
-
-    margin: 37px 0 10px;
   }
 }

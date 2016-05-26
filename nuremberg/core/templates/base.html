@@ -38,6 +38,7 @@
         {% include "footer.html" %}
       {% endblock %}
     </footer>
+
     {# compress all site JS into a single blob #}
     {% compress js %}
       <script src="{% static 'scripts/jquery-1.12.4.min.js' %}" type="text/javascript"></script>
@@ -54,8 +55,6 @@
         if (entryPoint) {
           modulejs.require(entryPoint);
         }
-
-        $('input[type=search]').on('change', console.log.bind(console));
       });
     </script>
   </body>
