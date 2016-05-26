@@ -5,7 +5,6 @@ h1 {
 
 h2 {
   .sans-serif(bold, 28px, 30px);
-
   margin: 4px 0 26px;
 
   &.serif {
@@ -15,8 +14,8 @@ h2 {
 
 h3, .h3 {
   .serif-headline(normal, 20px, 25px);
-
   margin: 16px 0;
+
   &.sans {
     .sans-serif(normal, 20px, 25px);
   }
@@ -24,8 +23,8 @@ h3, .h3 {
 
 h4 {
   .sans-serif(@light, 20px, 22px);
-
   margin: 16px 0 9px;
+
   &.serif {
     .serif-headline(normal, 20px, 22px);
   }
@@ -33,7 +32,6 @@ h4 {
 
 h5 {
   .sans-serif(@medium, 14px, 20px);
-
   margin: 10px 0;
 }
 
@@ -42,10 +40,9 @@ p {
 
   &.intro {
     .serif-text(bold, 28px, 40px);
+    margin: 50px 0 0;
     font-style: italic;
     color: @blue;
-
-    margin: 50px 0 0;
   }
 
   &.module, .modules & {
@@ -59,35 +56,30 @@ p {
   }
 
   &.small {
-    color: @gray;
     .sans-serif(@light, 12px, 12px);
+    color: @gray;
   }
   &.caption {
-    color: @gray;
     .sans-serif(@light, 14px, 14px);
+    color: @gray;
   }
 }
 
 h1,h2,h3,h4,h5 {
   a {
-    text-decoration: none;
     padding-bottom: 3px;
-    border-bottom: 1px solid @dark-blue;
-    &:hover {
-      text-decoration: none;
-    }
   }
 }
 
 a {
   color: @dark-blue;
-  text-decoration: underline;
+  text-decoration: none !important;
+  border-bottom: 1px solid @dark-blue;
 
   &.teaser {
-    .sans-serif(300, 18px, 26px);
-    text-decoration: none;
+    .sans-serif(@light, 18px, 26px);
     padding-bottom: 2px;
-    border-bottom: 1px solid @dark-blue;
+
     &::after {
       content: '\2192'; // &rarr;
     }
@@ -99,10 +91,7 @@ a {
     font-size: inherit !important;
     font-weight: inherit !important;
     text-decoration: inherit !important;
-    &:hover {
-      color: inherit !important;
-      text-decoration: inherit !important;
-    }
+    border: inherit !important;
   }
 }
 
@@ -115,13 +104,14 @@ ul:extend(p) {
 ul.module, .modules ul {
   &:extend(p.module);
   padding-left: 5px;
+
   > li {
     margin-bottom: 5px;
     padding-left: 20px;
     list-style: none;
+
     background-image: url('@{image_url}/list-style-bullet.png');
     background-position: 5px 8px;
-    background-repeat: no-repeat;
   }
 }
 
@@ -139,6 +129,7 @@ ul.module, .modules ul {
   width: 20px;
   height: 20px;
   background-size: contain;
+
   &.material-documents {
     background-image: url('@{image_url}/material-icon-documents-small.png');
   }
@@ -152,15 +143,15 @@ ul.module, .modules ul {
 
 .trial-flag {
   .label();
-  display: inline-block;
+  .sans-serif(normal, 11px, 11px);
 
+  display: inline-block;
   padding: 4px 8px;
   margin: 0 1px;
   min-width: 49px;
 
-  color: white;
-  .sans-serif(normal, 11px, 11px);
-  text-decoration: none;
+  color: @white;
+  border: none;
 
   &.trial-nmt-1 {
     background-color:  #999FB2;
@@ -215,14 +206,15 @@ ul.module, .modules ul {
 
 table {
   .table();
+
   > thead > tr > th, > tbody > tr > td {
     padding-left: 6px;
   }
   > thead > tr > th {
-    text-align: left;
-    .sans-serif(300, 18px, 18px);
+    .sans-serif(@light, 18px, 18px);
     padding-bottom: 25px;
     border: none;
+    text-align: left;
   }
   > tbody > tr > td {
     border: none;
