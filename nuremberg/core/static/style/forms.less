@@ -40,11 +40,11 @@ form {
 }
 
 input[type=search] {
-  .text-input();
+  &:extend(.text-input);
   max-width: 560px;
   margin-right: 5px;
 
-  background-image: url('@{image_url}/search-icon.png');
+  background-image: url('@{image_url}/search-icon.png') !important;
   background-repeat: no-repeat;
   background-position: 8px 8px;
   background-size: 17px;
@@ -53,10 +53,6 @@ input[type=search] {
   //   background-image: none;
   //    padding-left: 8px;
   // }
-
-
-  color: @black;
-  .sans-serif(normal, 14px, 20px);
 
   &:not(:valid) ~ .button-wrapper .clear-search {
     display: none;
@@ -76,8 +72,7 @@ input[type=search] {
 }
 
 button.clear-search {
-  font-size: 0px;
-  color: transparent;
+  &:extend(.hide-text);
   background-repeat: no-repeat;
   background-image: url('@{image_url}/icon-clear-search.png');
   width: 12px;
@@ -91,12 +86,18 @@ button.clear-search {
 }
 
 input[type=text], .text-input {
-  box-sizing: content-box;
+  .box-sizing(content-box);
   .border-radius(3px);
-  height: 32px;
+  height: 15px;
   border: 1px solid @light-gray;
   width: 100%;
   background-color: white;
+  padding-top: 10px;
+  padding-bottom: 9px;
+
+
+  color: @black;
+  .sans-serif(normal, 14px, 20px);
 }
 
 select {
@@ -118,6 +119,7 @@ button {
 
   .sans-serif(@light, 14px, 20px);
   padding: 7px 16px;
+  vertical-align: top;
 }
 
 
@@ -148,8 +150,9 @@ button {
     background-image: url('@{image_url}/icon-button-go.png');
   }
   width: 39px;
+  height: 34px;
   overflow: hidden;
-  color: transparent !important;
+  &:extend(.hide-text);
 }
 
 legend {

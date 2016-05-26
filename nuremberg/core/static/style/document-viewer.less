@@ -1,13 +1,14 @@
 .zoom-buttons {
 
   button {
+    &:extend(.hide-text);
+
     display: inline-block;
     cursor: pointer;
     background-repeat: no-repeat;
     background-position: center;
     background-color: @white;
     border: 1px solid @light-gray;
-    color: transparent !important;
     overflow: hidden;
     .border-radius(0);
 
@@ -34,9 +35,33 @@
 }
 
 .document-image {
+  display: block;
   margin: 10px;
   max-width: 100%;
+  position: relative;
+  img {
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    zoom:1;
+  }
   &.small-image {
     max-width: 150px;
+  }
+  zoom:1;
+  background-color: @light-black;
+  width: auto;
+  max-height: 850px;
+  max-width: 650px;
+  .sans-serif(bold, 45px, 85px);
+  text-align: center;
+  color: @dark-gray;
+  .image-label {
+    position: absolute;
+    bottom: 50%;
+    z-index: 0;
+    width: 100%;
   }
 }

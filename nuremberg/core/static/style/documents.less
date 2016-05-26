@@ -72,13 +72,14 @@
     height: 35px;
     width: 32px;
 
+    &:extend(.hide-text);
+
     display: inline-block;
     cursor: pointer;
     background-repeat: no-repeat;
     background-position: center;
     background-color: @white;
     border: none;
-    color: transparent !important;
     overflow: hidden;
 
     &.first-page {
@@ -105,17 +106,21 @@ hr {
 
   .main-column {
     .make-md-column(8);
+    .make-md-column-pull(4);
+    .make-md-column-offset(0);
+    height: 100%;
     height: 100vh;
     overflow: hidden;
     &.scrollable {
       overflow-y: auto;
+      overflow-x: auto;
     }
   }
   .sidebar-column {
     .make-md-column(4);
-    .make-md-column-offset(0);
+    .make-md-column-push(8);
     padding-top: 25px;
-    padding-left: 30px;
+    // padding-left: 30px;
   }
 
   h3 {

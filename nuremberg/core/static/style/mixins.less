@@ -11,3 +11,14 @@
 	-webkit-background-clip: padding-box;
 	background-clip:         padding-box;
 }
+
+.box-sizing(@boxmodel) {
+	-webkit-box-sizing: @boxmodel;
+		 -moz-box-sizing: @boxmodel;
+	box-sizing: @boxmodel;
+}
+
+.hide-text {
+  font-size: 0px !important;
+  color: transparent !important;
+}
