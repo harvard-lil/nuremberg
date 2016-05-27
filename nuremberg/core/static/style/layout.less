@@ -178,3 +178,16 @@ cite {
     content: '\2014'; // &mdash;
   }
 }
+
+.anchor {
+  display: block;
+  height: 1px;
+  margin-top: -1px;
+
+  position: relative;
+  top: -60px;
+
+  body.fixed-nav & {
+    top: -160px;
+  }
+}
