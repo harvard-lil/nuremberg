@@ -62,17 +62,25 @@ body.mockups {
   }
 }
 
+
 body {
   .center-block();
 
+  max-width: 1200px;
+  min-width: 320px;
+
   color: black;
   padding: 0px;
-  max-width: 1200px;
   border-left: 1px solid @light-gray;
   border-right: 1px solid @light-gray;
 }
 
-div, button, input, li {
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+div, button, input, li, section, footer {
   background-repeat: no-repeat;
   background-position: center;
 }

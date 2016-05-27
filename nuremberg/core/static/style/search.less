@@ -204,6 +204,19 @@ section.results {
       background-image: url('@{image_url}/documents/icon-type-text-small.png');
     }
   }
+  .inline-type {
+    display: none;
+    vertical-align: top;
+  }
+}
+
+@media (max-width: @screen-xs-min) {
+  .type-col {
+    display: none;
+  }
+  .document-row .inline-type {
+    display: inline-block;
+  }
 }
 
 .pagination-row {
