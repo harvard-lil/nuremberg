@@ -40,10 +40,17 @@ body {
   color: @white;
   border: none;
 
+
+  @media (max-width: @screen-sm-min) {
+    padding: 10px 10px;
+  }
+
   .site-brand {
     .navbar-header();
     .sans-serif(normal, 20px, 20px);
     margin-top: -1px;
+
+    margin-left: 0;
 
     div {
       display: inline-block;
@@ -64,16 +71,29 @@ body {
   ul.nav-links {
     .nav();
     .navbar-nav();
-    .pull-right();
     .sans-serif(@light, 18px, 18px);
 
-    height: 26px;
-    margin: 0;
-    margin-bottom: 13px !important;
+    height: 39px;
+    margin: 13px 0;
 
+    @media (max-width: @screen-sm-min) {
+      margin-bottom: 0;
+      height: 27px;
+      > li {
+        margin-bottom: 0px;
+      }
+    }
+    @media (min-width: @screen-sm-min) {
+      .pull-right();
+      margin-top: 0;
+      > li {
+        margin-left: 30px;
+        margin-right: 0;
+      }
+    }
     li {
       float: left;
-      margin: 0 0 0 30px;
+
       > a {
         padding: 7px 0 14px;
         line-height: 0;
@@ -92,6 +112,94 @@ body {
           cursor: pointer;
           pointer-events: none;
         }
+      }
+    }
+  }
+}
+
+@media (max-width: @screen-md-min) {
+  nav.site-nav {
+    padding-right: 15px;
+    ul.nav-links > li {
+      margin-right: 15px;
+      margin-left: 0;
+
+      &:last-child {
+        margin-right: 0px;
+      }
+      > a {
+        font-size: 18px;
+      }
+    }
+  }
+
+  @media (max-width: @screen-xs-min) {
+    nav.site-nav {
+      ul.nav-links > li {
+        > a {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}
+
+.sub-nav-header {
+  .sans-serif(@medium, 18px, 18px);
+}
+.sub-nav-padding {
+  // extra padding for fixed sub-nav headers not included in the body padding
+  height: 0;
+
+  body.fixed-nav & {
+    height: 69px;
+  }
+}
+
+nav.sub-nav {
+  a {
+    .sans-serif(@light, 18px, 20px);
+    color: @beige;
+    border: none;
+
+    &:hover {
+      color: @dark-blue;
+    }
+    &:active {
+      color: @black;
+    }
+  }
+  &.horizontal {
+    padding: 26px 50px 18px;
+
+    body.fixed-nav & {
+      background: @white;
+    }
+    li {
+      display: inline-block;
+      margin-right: 20px;
+      height: 25px;
+    }
+    @media (max-width: @screen-xs-min) {
+      padding: 8px 10px;
+      a {
+        font-size: 15px;
+      }
+      > li {
+        margin-right: 7px;
+      }
+    }
+  }
+  &.vertical {
+    li {
+      display: block;
+      width: 100%;
+      padding: 16px 0;
+
+      border-bottom: 1px solid @light-gray;
+
+      &:last-child {
+        border-bottom: none;
       }
     }
   }

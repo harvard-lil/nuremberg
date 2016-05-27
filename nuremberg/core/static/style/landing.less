@@ -25,9 +25,53 @@ nav.site-nav {
       letter-spacing: 1.2px;
     }
   }
-  .nav-links {
+  ul.nav-links {
     a {
       .sans-serif(@light, 20px, 20px);
+    }
+  }
+
+  @media (max-width: @screen-md-min) {
+    .site-brand {
+      float: none;
+    }
+    ul.nav-links {
+      margin: 0;
+      float: none !important;
+      li {
+        margin-left: 0;
+        margin-right: 14px;
+        &:last-child {
+          margin-right: 0px;
+        }
+        a {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: @screen-xs-min) {
+    ul.nav-links li a {
+      font-size: 16px;
+    }
+    .site-brand .brand-project {
+      font-size: 23px;
+    }
+  }
+
+  @media (max-width: @screen-xxs-min) {
+    ul.nav-links li {
+      margin-right: 10px;
+      &:last-child {
+        margin-right: 0px;
+      }
+      a {
+        font-size: 15px;
+      }
+    }
+    .site-brand .brand-project {
+      font-size: 21px;
     }
   }
 }
@@ -39,7 +83,7 @@ section {
     background-color: @black;
     position: relative;
     background-image: url('@{image_url}/landing/landing-hero-fade.jpg');
-    background-position: top;
+    background-position: top center;
     background-attachment: fixed;
   }
 
@@ -47,16 +91,32 @@ section {
     .make-md-column(8.5);
     .make-md-column-offset(2);
 
+    padding: 0px;
     margin-top: 53px;
 
     h1 {
-      margin: 25px 0 10px;
       .serif-headline(bold, 38px, 46px);
+      margin: 25px 0 10px;
+
+
+      @media (max-width: @screen-xs-min) {
+        .serif-headline(bold, 31px, 40px);
+      }
+      @media (max-width: @screen-xxs-min) {
+        .serif-headline(bold, 29px, 38px);
+      }
     }
     h2 {
+      .sans-serif(normal, 22px, 30px);
       color: #B4CCCD;
       margin: 10px 0 20px;
-      .sans-serif(normal, 22px, 30px);
+
+      @media (max-width: @screen-xs-min) {
+        .sans-serif(normal, 20px, 26px);
+      }
+      @media (max-width: @screen-xxs-min) {
+        .sans-serif(normal, 18px, 23px);
+      }
     }
   }
 
@@ -83,6 +143,7 @@ section {
 
       label {
         margin-left: 10px;
+        white-space: nowrap;
       }
       input[type=checkbox] {
         width: 14px;
@@ -91,8 +152,13 @@ section {
       }
     }
     legend {
-      display: inline-block;
+      display: block;
+      width: 100%;
       color: @light-gray;
+      @media (min-width: @screen-sm-min) {
+        display: inline-block;
+        width: inherit;
+      }
     }
   }
 

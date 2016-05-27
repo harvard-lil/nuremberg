@@ -3,6 +3,8 @@
 <tr class="document-row {% if document.personal_authors.count <= 2 %}extra-padding{% endif %}">
   <td>
     <p class="trial-flags">
+      <div class="inline-type document-type-icon type-{{document.images.first.image_type.name|slugify}}">
+      {{document.images.first.image_type.name}}</div>
       {% for case in document.cases.all %}
         <span class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</span>
       {% endfor %}
@@ -44,7 +46,7 @@
         {% endif %}
       </h5>
   </td>
-  <td>
+  <td class="type-col">
     <div class="document-type-icon type-{{document.images.first.image_type.name|slugify}}">
     {{document.images.first.image_type.name}}</div>
   </td>
