@@ -15,8 +15,29 @@ modulejs.define('documents', function () {
   //   }
   // });
 
-  $('#document-viewport').addClass('dragscroll');
-  window.dragscroll.reset();
+  var isMouseDown = false,
+      lastY = 0,
+      lastX = 0;
+
+  $viewport = $('#document-viewport').on('mousedown', function(e){
+    isMouseDown = true;
+    lastY = e.clientY;
+    lastX = e.clientX;
+    return false;
+  });
+
+  $viewport.mousemove(function(e){
+    if(isMouseDown === true){
+     $viewport.scrollTop($viewport.scrollTop() + (lastY - e.clientY));
+     $viewport.scrollLeft($viewport.scrollLeft() + (lastX - e.clientX));
+     lastY = e.clientY;
+     lastX = e.clientX;
+    }
+  });
+
+  $(document).mouseup(function(){
+    isMouseDown = false;
+  });
 
   $('.clear-search').on('click', function (e) {
     e.preventDefault();
