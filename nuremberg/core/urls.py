@@ -1,5 +1,6 @@
 from django.conf.urls import include, url
 from django.contrib import admin
+from httpproxy.views import HttpProxy
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -7,6 +8,9 @@ urlpatterns = [
     url(r'^documents/', include('nuremberg.documents.urls')),
     url(r'^search/', include('nuremberg.search.urls')),
     url(r'^', include('nuremberg.content.urls')),
+    url(r'^proxy_image/(?P<url>.*)$',
+        HttpProxy.as_view(base_url='http://s3.amazonaws.com/nuremberg-dev'),
+)
 ]
 
 handler400 = 'nuremberg.core.views.handler400'

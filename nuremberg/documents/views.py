@@ -8,4 +8,7 @@ class Show(View):
     def get(self, request, document_id, *args, **kwargs):
         document = Document.objects.get(id=document_id)
         query = request.GET.get('query', None)
-        return render(request, self.template_name, {'document': document, 'query': query})
+        return render(request, self.template_name,
+            {'document': document,
+            'query': query,
+        })

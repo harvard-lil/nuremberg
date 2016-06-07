@@ -1,43 +1,22 @@
-modulejs.define('documents', function () {
-  // $('#document-viewport').on('mousewheel', function (event) {
-  //   var direction = event.originalEvent.wheelDeltaY;
-  //   var $viewport = $('#document-viewport');
-  //   var scrollTop = $(document).scrollTop();
-  //   var scrollBottom = scrollTop + $(window).height();
-  //   var viewportTop = $viewport.offset().top;
-  //   var viewportBottom = viewportTop + $viewport.height();
-  //   if ((direction < 0 && scrollBottom >= viewportBottom)
-  //     || (direction > 0 && scrollTop <= viewportTop))
-  //   {
-  //     $('#document-viewport').addClass('scrollable').focus();
-  //   } else {
-  //     $('#document-viewport').removeClass('scrollable');
-  //   }
-  // });
+modulejs.define('documents', ['DocumentViewport', 'DocumentTools'], function (DocumentViewport, DocumentTools) {
+  var viewportView = new DocumentViewport;
+  var toolbarView = new DocumentTools({el: $('.document-tools')});
+  var overlayView = new DocumentTools({el: $('.document-tools-overlay')});
 
-  var isMouseDown = false,
-      lastY = 0,
-      lastX = 0;
+  if (location.hash) {
+      var match = location.hash.match(/page-(\d)+/);
+      if (match)
+        viewportView.goToPage(match[1]);
+  }
 
-  $viewport = $('#document-viewport').on('mousedown', function(e){
-    isMouseDown = true;
-    lastY = e.clientY;
-    lastX = e.clientX;
-    return false;
-  });
+  toolbarView.on('zoomIn', viewportView.zoomIn);
+  toolbarView.on('zoomOut', viewportView.zoomOut);
+  toolbarView.on('goToPage', viewportView.goToPage);
 
-  $viewport.mousemove(function(e){
-    if(isMouseDown === true){
-     $viewport.scrollTop($viewport.scrollTop() + (lastY - e.clientY));
-     $viewport.scrollLeft($viewport.scrollLeft() + (lastX - e.clientX));
-     lastY = e.clientY;
-     lastX = e.clientX;
-    }
-  });
+  overlayView.on('setTool', viewportView.setTool);
+  overlayView.on('toggleExpand', viewportView.toggleExpand);
 
-  $(document).mouseup(function(){
-    isMouseDown = false;
-  });
+  viewportView.on('currentPage', toolbarView.setPage);
 
   $('.clear-search').on('click', function (e) {
     e.preventDefault();

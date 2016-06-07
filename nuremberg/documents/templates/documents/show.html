@@ -1,11 +1,30 @@
 {% extends "base.html" %}
-{% load search_url %}
+{% load search_url static %}
 
 {% block title %} Document Viewer - {{document.title}} {% endblock %}
 
 {% block body_class %}document-viewer{% endblock %}
 
 {% block javascript_module %}documents{% endblock %}
+
+{% block javascript %}
+{# quickly stop full-resolution images from loading uncontrolled #}
+<!-- <script>
+  var imgs = document.getElementsByTagName('img');
+  for (var i = 0; i < imgs.length; i++) {
+    var img = imgs[i];
+    var thumbURL = img.getAttribute('data-thumb-url');
+    if (thumbURL != null) {
+      img.setAttribute('data-screen-url', img.src);
+      img.src = '';
+      img.src = '{% static 'images/blank.gif' %}';
+      img.parentElement.className += ' loading hidden';
+    }
+  }
+  console.log("cancelled image downloads");
+</script> -->
+{{block.super}}
+{% endblock %}
 
 {% block content %}
 <section class="theme-light flush">
@@ -40,8 +59,9 @@
       <div class="page-buttons">
         {% block page_selection %}
           <select>
-            {% for image_url in document.image_urls %}
-              <option value="page-{{forloop.counter}}">Page {{forloop.counter}}</option>
+            {# {% for image in document.images %}#}
+            {% for image in document.images.all %}
+              <option value="{{forloop.counter}}">Page {{forloop.counter}}</option>
             {% endfor %}
           </select>
         {% endblock %}
@@ -129,25 +149,39 @@
         </p>
       {% endif %}
     </div>
-    <div id="document-viewport" class="main-column scrollable">
-      {% block viewport %}
-        {% for image in document.images_screen %}
-          <div class="document-image {% if not image.url %}image-missing{% endif %}" id="page-{{image.page_number}}" style="width: {{image.width}}px; height: {{image.height}}px;">
-            {% if image.url %}
-              <img src="{{image.url}}" width="{{image.width}}" height="{{image.height}}"/>
-                <div class="image-label">
-                  Page {{image.page_number}}
-                  <br />
-                  Loading...
-                </div>
-            {% else %}
-              <div class="image-label">
-                Missing Page {{image.page_number}}
+    <div id="document-viewport" class="main-column">
+      <div class="viewport-content scrollable">
+        {% block viewport %}
+          {# {% for image in document.images_screen %}#}
+          <noscript>
+            Viewing images requires JavaScript.
+            <a href="?noscript">Click here to download images.</a>
+          </noscript>
+          <div class="document-image-layout">
+            {% for image in document.images.all %}
+              <div data-screen-url="{{image.local_url}}?{{ forloop.counter }}" data-thumb-url="{{image.thumb_url}}?{{ forloop.counter }}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image loading {% if not image.url %}image-missing{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
+                {% if image.url %}
+                  <noscript><img src="{{image.local_url}}?{{ forloop.counter }}" /></noscript>
+                  <div class="image-label">
+                    {{image.page_number}}
+                  </div>
+                {% else %}
+                  <div class="image-label">
+                    Missing Page {{image.page_number}}
+                  </div>
+                {% endif %}
               </div>
-            {% endif %}
+            {% endfor %}
           </div>
-        {% endfor %}
-      {% endblock %}
+        {% endblock %}
+      </div>
+      <div class="document-tools-overlay">
+        <div class="tool-buttons">
+          <button class="magnify">magnify</button>
+          <button class="scroll">scroll</button>
+          <button class="expand">expand</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
