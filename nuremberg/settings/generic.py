@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'nuremberg.documents',
     'nuremberg.transcripts',
     'nuremberg.search',
+
+    'httpproxy',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -55,6 +57,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
 ]
 
 ROOT_URLCONF = 'nuremberg.core.urls'

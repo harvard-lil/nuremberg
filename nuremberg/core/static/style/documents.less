@@ -108,6 +108,19 @@ hr {
   margin: 12px 0 0;
 }
 
+.viewport-content {
+  html.touchevents & {
+    height: inherit;
+
+    background-color: @white;
+    overflow: visible;
+  }
+
+  height: 1000px;
+  height: 100vh;
+  overflow: scroll;
+}
+
 .sidebar-layout {
   margin-top: 50px;
 
@@ -116,21 +129,9 @@ hr {
     .make-md-column-pull(4);
     .make-md-column-offset(0);
 
-    height: 1000px;
-    height: 100vh;
-    overflow: auto;
-
-    html.touchevents & {
-      height: inherit;
-
-      background-color: @white;
-      overflow: visible;
-    }
-
-    &.scrollable {
-      // overflow: auto;
-    }
+    position: relative;
   }
+
   .sidebar-column {
     .make-md-column(4);
     .make-md-column-push(8);

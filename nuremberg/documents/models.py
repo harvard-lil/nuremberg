@@ -66,6 +66,12 @@ class DocumentImage(models.Model):
 
     image_type = models.ForeignKey('DocumentImageType')
 
+    def thumb_url(self):
+        return self.local_url().replace('image_cache/', 'image_cache/thumb/')
+
+    def local_url(self):
+        return self.url.replace('http://nuremberg.law.harvard.edu/imagedir/HLSL_NMT01/', '/proxy_image/')
+
     def image_tag(self):
         return '<a href="{0}"><img src="{0}" width=100 /></a>'.format(self.url)
     image_tag.allow_tags = True
