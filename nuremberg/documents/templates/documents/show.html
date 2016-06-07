@@ -89,6 +89,10 @@
           <span class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</span>
         {% endfor %}
       </p>
+      <div class="print-controls">
+        <button class="print-document">Print</button>
+        <div class="print-loading hide">Downloading images for printing... <span class="progress"></span></div>
+      </div>
       <h3>{{document.title}}</h3>
       <h5>{{document.literal_title}}</h5>
       {% block document_details %}
@@ -152,11 +156,6 @@
     <div id="document-viewport" class="main-column">
       <div class="viewport-content scrollable">
         {% block viewport %}
-          {# {% for image in document.images_screen %}#}
-          <noscript>
-            Viewing images requires JavaScript.
-            <a href="?noscript">Click here to download images.</a>
-          </noscript>
           <div class="document-image-layout">
             {% for image in document.images.all %}
               <div data-screen-url="{{image.local_url}}?{{ forloop.counter }}" data-thumb-url="{{image.thumb_url}}?{{ forloop.counter }}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image loading {% if not image.url %}image-missing{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">

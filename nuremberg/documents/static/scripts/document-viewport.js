@@ -513,6 +513,18 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
         this.model.set('currentImage', image);
       }
     },
+
+    hardloadAll: function (size) {
+      var view = this;
+      size = size || 'screen';
+      this.model.attributes.images.each(function (image) {
+        image.hardload(size);
+      });
+    },
+
+    zoomToFit: function () {
+      this.pageScale(1);
+    }
   });
 
   DraggingMixin.mixin(View);

@@ -163,3 +163,26 @@ hr {
     text-transform: uppercase;
   }
 }
+
+.print-controls {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  .print-document {
+    .sans-serif(@light, 14px, 24px);
+    height: 24px;
+    padding-right: 28px;
+
+    background-image: url('@{image_url}/icon-print.png');
+    background-position: right;
+
+    opacity: 0.5;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.printed-document-summary {
+  display: none;
+}

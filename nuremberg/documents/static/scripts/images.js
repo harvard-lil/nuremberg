@@ -39,6 +39,20 @@ modulejs.define('Images', function () {
         }
       },
 
+      hardload: function (size) {
+        var sizes = ['thumb', 'half', 'screen', 'full'];
+        var url;
+        for (var i = sizes.indexOf(size); i < sizes.length; i++) {
+          url = this.attributes.urls[sizes[i]];
+          if (url)
+            break;
+        }
+
+        this.attributes.cache[size] = this.attributes.cache[size] || url;
+        this.set('url', this.attributes.cache[size]);
+        this.set('preloaded', this.attributes.cache[size]);
+      },
+
       preloadImage: function (size) {
         var model = this;
 
@@ -85,6 +99,9 @@ modulejs.define('Images', function () {
             model.set('loader', null);
           };
         });
+        this.attributes.loader.fail(function (err, response) {
+          console.log('loading error', err, model)
+        });
       }
     }),
 
@@ -101,6 +118,7 @@ modulejs.define('Images', function () {
         this.$el.find('img').css({
           'border-bottom-width': aspectRatio * 5 + 'px'
         })
+        .toggleClass('aspect-ratio-wide', aspectRatio < 11/8.5);
 
         view.model.on('change:preloaded', function () {
           view.$el.toggleClass('loading', !view.model.attributes.preloaded);
