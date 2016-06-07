@@ -104,10 +104,14 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
             previous.set('current', false);
 
           if (image !== view.model.attributes.firstVisible) {
-            if (view.$el.scrollTop() > image.attributes.bounds.top || view.$el.scrollTop() + view.$el.height() < image.attributes.bounds.bottom)
+            if (Modernizr.touchevents) {
+              $(window).scrollTop(image.attributes.$el.offset().top);
+            } else {
+              if (view.$el.scrollTop() > image.attributes.bounds.top || view.$el.scrollTop() + view.$el.height() < image.attributes.bounds.bottom)
               view.$el.scrollTop(image.attributes.bounds.top);
-            if (view.$el.scrollLeft() > image.attributes.$el.position().left || view.$el.scrollLeft() + view.$el.width() < image.attributes.$el.position().left + image.attributes.$el.width())
+              if (view.$el.scrollLeft() > image.attributes.$el.position().left || view.$el.scrollLeft() + view.$el.width() < image.attributes.$el.position().left + image.attributes.$el.width())
               view.$el.scrollLeft(image.attributes.$el.position().left);
+            }
           }
 
           view.trigger('currentPage', image.attributes.page);
@@ -162,7 +166,9 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
         }
       });
 
-      this.model.set('tool', 'scroll');
+      if (!Modernizr.touchevents) {
+        this.model.set('tool', 'scroll');
+      }
 
       this.imageCSSRule = document.styleSheets[0].cssRules[
         document.styleSheets[0].insertRule("body.document-viewer #document-viewport .document-image { width: 100% !important; height: auto !important; }", 0)
@@ -513,6 +519,18 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
         this.model.set('currentImage', image);
       }
     },
+
+    hardloadAll: function (size) {
+      var view = this;
+      size = size || 'screen';
+      this.model.attributes.images.each(function (image) {
+        image.hardload(size);
+      });
+    },
+
+    zoomToFit: function () {
+      this.pageScale(1);
+    }
   });
 
   DraggingMixin.mixin(View);

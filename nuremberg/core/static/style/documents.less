@@ -108,13 +108,19 @@ hr {
   margin: 12px 0 0;
 }
 
-.viewport-content {
-  html.touchevents & {
+html.touchevents & {
+  .viewport-content, #document-viewport{
     height: inherit;
 
     background-color: @white;
     overflow: visible;
+  };
+  .document-tools-overlay, .zoom-buttons {
+    display: none;
   }
+}
+
+.viewport-content {
 
   height: 1000px;
   height: 100vh;
@@ -162,4 +168,27 @@ hr {
     color: @gray;
     text-transform: uppercase;
   }
+}
+
+.print-controls {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  .print-document {
+    .sans-serif(@light, 14px, 24px);
+    height: 24px;
+    padding-right: 28px;
+
+    background-image: url('@{image_url}/icon-print.png');
+    background-position: right;
+
+    opacity: 0.5;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.printed-document-summary {
+  display: none;
 }

@@ -18,6 +18,26 @@ modulejs.define('documents', ['DocumentViewport', 'DocumentTools'], function (Do
 
   viewportView.on('currentPage', toolbarView.setPage);
 
+  $('.print-document').on('click', function () {
+    $('.print-document').addClass('hide');
+    $('.print-loading').removeClass('hide');
+    var loaded = 0;
+    var total = viewportView.$el.find('img').length;
+    $('.print-loading .progress').text(loaded + "/" + total + " loaded");
+    viewportView.hardloadAll();
+    viewportView.$el.imagesLoaded()
+    .done(function () {
+      viewportView.zoomToFit();
+      window.print();
+      $('.print-document').removeClass('hide');
+      $('.print-loading').addClass('hide');
+    })
+    .progress(function () {
+      loaded += 1;
+      $('.print-loading .progress').text(loaded + "/" + total + " loaded");
+    })
+  });
+
   $('.clear-search').on('click', function (e) {
     e.preventDefault();
     $(this).closest('form').find('input[type="search"]').val('');
