@@ -12,7 +12,7 @@ modulejs.define('DocumentTools', function () {
       this.model.attributes.lastPage = view.$el.find('option').last().val();
 
       this.on('goToPage', function (page) {
-        view.model.set('page', page);
+        view.model.set('page', Math.min(Math.max(page, view.model.attributes.firstPage), view.model.attributes.lastPage));
         if (view.$el.find('option[value='+page+']').length)
           view.$el.find('select').val(page);
       });

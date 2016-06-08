@@ -45,6 +45,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
 
       this.smoothZoom = _.throttle(this.smoothZoom, 25);
 
+
       var $imgs = this.$el.find('.document-image');
       this.model = new ViewModel({ images: (new ImageCollection).scan($imgs) });
 
@@ -52,7 +53,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
         return new ImageView({ model: image[0], el: image[1] });
       });
 
-      this.totalPages = this.imageViews.length;
+      this.model.attributes.id = this.$el.data('document-id');
+      this.model.attributes.totalPages = this.imageViews.length;
 
       this.pagePlaceholder = $('<div></div>').css({
         display: 'inline-block',
@@ -272,8 +274,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
         return;
 
       return {
-        x: page.el.offsetLeft,
-        y: page.el.offsetTop
+        x: page.$el[0].offsetLeft,
+        y: page.$el[0].offsetTop
       };
     },
 
@@ -286,7 +288,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
 
       if (scaleDelta < 1) {
         // zoom out
-        if (this.model.attributes.scale < 1/this.totalPages || $('.document-image-layout').height() <= $viewport[0].clientHeight) {
+        if (this.model.attributes.scale < 1/this.model.attributes.totalPages || $('.document-image-layout').height() <= $viewport[0].clientHeight) {
           this.model.attributes.scale = this.model.previous('scale');
           return;
         }
@@ -301,7 +303,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
           if (oldLane >= (newLanes-1)/2) {
             oldLane = newLanes - (newLanes - 1 - oldLane);
           }
-          if (newLanes > 2 && this.totalPages > 3) {
+          if (newLanes > 2 && this.model.attributes.totalPages > 3) {
             this.laneOffset = (oldLane - newLane + newLanes) % newLanes;
             this.pagePlaceholder.css({width: 100 * this.model.attributes.scale * this.laneOffset + '%'});
           }
@@ -491,6 +493,34 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
       this.model.attributes.images.each(function (image) {
         image.hardload(size);
       });
+    },
+
+    preloadRange: function (fromPage, toPage) {
+      var view = this;
+      var size = size || 'screen';
+      var promise = $.Deferred()
+      fromPage -= 1;
+      toPage -= 1;
+      var total = toPage - fromPage + 1;
+      var loaded = 0;
+      var complete = function () {
+        promise.notify();
+        loaded += 1;
+        if (loaded == total) {
+          promise.resolve();
+        }
+      };
+      this.model.attributes.images.each(function (image, n) {
+        if (n >= fromPage && n <= toPage) {
+          image.preloadImage(size);
+          if (image.attributes.preloaded) {
+            complete();
+          } else {
+            image.once('change:preloaded', complete);
+          }
+        }
+      });
+      return promise;
     },
 
     zoomToFit: function () {
