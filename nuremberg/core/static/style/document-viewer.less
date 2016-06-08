@@ -60,9 +60,10 @@
       bottom: 0;
       z-index: 100;
       background-color: fade(@black, 75%);
-      border: 50px solid transparent;
+      border: 30px solid transparent;
+      border-top-width: 50px;
 
-      .transition(~"top 0.3s, left 0.3s, right 0.3s, bottom 0.3s, border-width 0.3s, background-color 0.3s");
+      .transition(~"top 0.3s, left 0.3s, right 0.3s, bottom 0.3s, border-width 0.3s, border-top-width 0.3s, background-color 0.3s");
     }
 }
 
@@ -211,7 +212,7 @@
     .sans-serif(@medium, inherit, inherit);
 
     padding: 0;
-    background-color: transparent !important;
+    background-color: transparent;
 
     position: absolute;
     bottom: 50%;
@@ -221,16 +222,16 @@
     color: @dark-gray;
     text-shadow: none;
 
+    .transition(~"none");
+
     &::before {
       content: "Page ";
-      position: static !important;
-      border: none !important;
     }
   }
-  .image-label {
+  &.loaded .image-label {
     .sans-serif(@light, 18px, 18px);
 
-    padding: 4px 10px 4px 30px;
+    padding: 4px 10px 4px 10px;
 
     position: absolute;
     bottom: 11px;
@@ -241,20 +242,20 @@
     text-shadow: -1px 0 white, 1px 0 white, 0 1px white, 0 -1px white;
 
     opacity: 1;
-    .transition(~"opacity 0.3s, background-color 0.3s, color 0.3s, box-shadow 0.3s");
+    .transition(~"opacity 0.3s, background-color 0.3s, color 0.3s, padding-left 0.3s");
 
     &:hover {
       opacity: 0.1;
     }
 
     &::before {
-      .transition(~"border-right-color 0.3s");
+      .transition(~"border-right-color 0.3s, border-right-width 0.3s");
 
       content: ' ';
       width: 26px;
       height: 26px;
 
-      border-right: 15px solid transparent;
+      border-right: 0px solid transparent;
       border-bottom: 13px solid transparent;
       border-top: 13px solid transparent;
 
@@ -278,16 +279,17 @@
       top: -6px;
     }
   }
-  &.current .image-label {
+  &.loaded.current .image-label {
     background-color: @dark-blue;
     color: white;
     font-weight: @medium;
     text-shadow: none;
     border-bottom-right-radius: 3px;
+    padding-left: 30px;
 
-    // box-shadow: -2px -2px 13px -3px fade(@black, 50%);
     &::before {
       border-right-color: @dark-blue;
+      border-right-width: 15px;
     }
     &::after {
       border-left-color: darken(@dark-blue, 15%);

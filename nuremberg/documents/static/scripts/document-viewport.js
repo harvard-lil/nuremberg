@@ -70,6 +70,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
         return new ImageView({ model: image[0], el: image[1] });
       });
 
+      this.totalPages = this.imageViews.length;
+
       this.pagePlaceholder = $('<div></div>').css({
         display: 'inline-block',
         width: 0,
@@ -118,13 +120,16 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
         },
         'change:expand': function () {
           if (view.model.attributes.expand) {
+            var rect = view.el.getBoundingClientRect();
             this.expandingCSS = {
               position: 'fixed',
-              left: view.$el.offset().left+'px',
-              top: view.$el.offset().top+'px',
-              right: $(window).width() - (view.$el.offset().left + view.$el.width())+'px',
-              bottom: Math.max(0, $(window).height() - (view.$el.offset().top + view.$el.height()))+'px',
+              left: Math.max(0, rect.left),
+              top: Math.max(0, rect.top),
+              right: $(window).width() - Math.max(0, rect.right),
+              bottom: $(window).height() - Math.max(0, rect.bottom),
               'border-width': 0,
+              'border-top-width': 0,
+              'background-color': 'transparent',
             };
             view.$el.css(this.expandingCSS);
             view.$el.addClass('expanded');
@@ -221,14 +226,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
 
       if (e.type == 'dblclick') {
         if (this.model.attributes.viewScale >= 1/this.model.attributes.scale) {
-          var scaleDelta = 1/this.model.attributes.viewScale;
-          var scaleOrigin = {
-            x: $viewport.scrollLeft(),
-            y: $viewport.scrollTop()
-          };
-          this.viewScale(this.model.attributes.viewScale, false, scaleOrigin);
-          this.model.set('viewScale', 1);
-          this.viewScale(1, true, scaleOrigin);
+          scale = 1;
+          this.smoothZoom(scale, scaleOrigin, page);
         } else {
           this.model.set('viewScale', 1/this.model.attributes.scale);
           this.viewScale(1/this.model.attributes.scale, true, {x: page.$el.position().left, y: page.$el.position().top});
@@ -244,8 +243,13 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
           }
         } else if (e.which === 3) {
           if (this.model.attributes.viewScale > 1) {
-            scale = 1/1.5 * this.model.attributes.viewScale;
-            this.smoothZoom(scale, scaleOrigin, page);
+            if (this.model.attributes.scale < 1) {
+              scale = 1;
+              this.smoothZoom(scale, scaleOrigin, page);
+            } else {
+              scale = 1/1.5 * this.model.attributes.viewScale;
+              this.smoothZoom(scale, scaleOrigin, page);
+            }
           } else {
             scale = 1/(this.scaleRatio() + 1);
             this.zoomToPage(page, scale);
@@ -260,43 +264,19 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
     smoothZoom: function (viewScale, scaleOrigin, pinnedPage) {
       var $viewport = $('.viewport-content');
 
-      this.model.set('viewScale', Math.min(10, Math.max(0.25, viewScale)));
+      this.model.set('viewScale', Math.min(10, Math.max(1, viewScale)));
 
       if (this.model.attributes.viewScale != this.model.previous('viewScale')) {
-        if (this.model.attributes.viewScale < 1) {
-          // var totalScaleRatio = this.scaleRatio(this.model.attributes.viewScale * this.model.attributes.scale);
-          // if (totalScaleRatio < 5) {
-          //   this.model.attributes.scale = 1/(totalScaleRatio + 1);
-          //   this.model.attributes.viewScale = 1/(totalScaleRatio * this.model.attributes.scale);
-          //   if (pinnedPage && pinnedPage.length) {
-          //     var hoveredOffset = {
-          //       x: $viewport.scrollTop() - pinnedPage.position().top,
-          //       y: $viewport.scrollLeft() - pinnedPage.position().left,
-          //     };
-          //   }
-          //
-          //   this.pageScale(this.model.attributes.scale);
-          //   this.viewScale(this.model.attributes.viewScale, false);
-          //   if (hoveredOffset) {
-          //     $viewport.scrollTop(pinnedPage.position().top + hoveredOffset.x);
-          //     $viewport.scrollLeft(pinnedPage.position().left + hoveredOffset.y);
-          //   }
-          // } else {
-            this.model.set('viewScale', 1);
-            this.viewScale(this.model.attributes.viewScale, false);
-          // }
-        } else {
-          scaleDelta = this.model.attributes.viewScale / this.model.previous('viewScale');
-          this.currentOrigin = this.currentOrigin || {
-            x: $viewport.scrollLeft(),
-            y: $viewport.scrollTop()
-          };
-          var targetOrigin = {
-            x: Math.max(0, this.currentOrigin.x + scaleOrigin.x - scaleOrigin.x / scaleDelta),
-            y: Math.max(0, this.currentOrigin.y + scaleOrigin.y - scaleOrigin.y / scaleDelta),
-          };
-          this.viewScale(this.model.attributes.viewScale, true, targetOrigin);
-        }
+        scaleDelta = this.model.attributes.viewScale / this.model.previous('viewScale');
+        this.currentOrigin = this.currentOrigin || {
+          x: $viewport.scrollLeft(),
+          y: $viewport.scrollTop()
+        };
+        var targetOrigin = {
+          x: Math.max(0, this.currentOrigin.x + scaleOrigin.x - scaleOrigin.x / scaleDelta),
+          y: Math.max(0, this.currentOrigin.y + scaleOrigin.y - scaleOrigin.y / scaleDelta),
+        };
+        this.viewScale(this.model.attributes.viewScale, true, targetOrigin);
       }
     },
 
@@ -325,27 +305,33 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
 
       if (scaleDelta < 1) {
         // zoom out
+        if (this.model.attributes.scale < 1/this.totalPages || $('.document-image-layout').height() <= $viewport[0].clientHeight) {
+          this.model.attributes.scale = this.model.previous('scale');
+          return;
+        }
+
         if (page) {
           var topOffset = Math.max(0, page.$el.position().top - this.$el.scrollTop());
-
+          var oldLanes = this.scaleRatio(this.model.previous('scale'));
+          var newLanes = this.scaleRatio();
           var pageIndex = parseInt(page.$el.data('page')) - 1;
-          var oldLane = (pageIndex + (this.laneOffset || 0)) % this.scaleRatio(this.model.previous('scale'));
-          var newLane = pageIndex % this.scaleRatio();
-          if (oldLane >= (this.scaleRatio()-1)/2) {
-            oldLane = this.scaleRatio() - (this.scaleRatio() - 1 - oldLane);
+          var oldLane = (pageIndex + (this.laneOffset || 0)) % oldLanes;
+          var newLane = pageIndex % newLanes;
+          if (oldLane >= (newLanes-1)/2) {
+            oldLane = newLanes - (newLanes - 1 - oldLane);
           }
-          if (this.scaleRatio() > 2) {
-            this.laneOffset = (oldLane - newLane + this.scaleRatio()) % this.scaleRatio();
+          if (newLanes > 2 && this.totalPages > 3) {
+            this.laneOffset = (oldLane - newLane + newLanes) % newLanes;
             this.pagePlaceholder.css({width: 100 * this.model.attributes.scale * this.laneOffset + '%'});
           }
         } else {
-          this.laneOffset = (oldLane - newLane + this.scaleRatio()) % this.scaleRatio();
+          this.laneOffset = (oldLane - newLane + newLanes) % newLanes;
           this.pagePlaceholder.css({width: 0});
         }
         this.pageScale(this.model.attributes.scale);
         if (page) {
           var pageOrigin = view.pinnedPageOrigin(page);
-          if (oldLane >= (this.scaleRatio()-1)/2 || this.scaleRatio() == 2 && newLane == 1) {
+          if (oldLane >= (newLanes-1)/2 || newLanes == 2 && newLane == 1) {
             pageOrigin.x = this.$el.width() - this.$el.width() * scaleDelta;
           } else if (page) {
             pageOrigin.x = 0;
@@ -392,10 +378,6 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
       var $viewport = $('.viewport-content');
       var duration = 300;
       if (!scaleOrigin) {
-        // scaleOrigin = {
-        //   x: $viewport.width()/2,
-        //   y: $viewport.height()/2,
-        // };
         if (scale >= 1) {
           scaleOrigin = {
             x: $viewport.scrollLeft(),
@@ -418,6 +400,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
           width: 100 * scale + '%',
           left: (- transformedOrigin.x + $viewport.scrollLeft()) + 'px',
           top: (- transformedOrigin.y + $viewport.scrollTop()) + 'px',
+          // 'margin-bottom': Math.max(0, (transformedOrigin.y + $viewport[0].clientHeight * scaleDelta) - $('.document-image-layout').height()) + 'px',
+          margin: '0 100% 100% 0',
           transition: animate ? 'width '+duration+'ms, height '+duration+'ms, left '+duration+'ms, top '+duration+'ms' : 'none',
         });
         if (this.zoomTimeout) {
@@ -429,8 +413,10 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
           $('.document-image-layout').css({
             left: 0,
             top: 0,
-            'margin-bottom': Math.max(0, (transformedOrigin.y + $viewport.height()) - $('.document-image-layout').height()) + 'px',
+            margin: 0,
+            'margin-bottom': Math.max(0, (transformedOrigin.y + $viewport[0].clientHeight) - $('.document-image-layout').height()) + 'px',
             transition: 'none',
+
           });
           $viewport.scrollLeft(transformedOrigin.x);
           $viewport.scrollTop(transformedOrigin.y);

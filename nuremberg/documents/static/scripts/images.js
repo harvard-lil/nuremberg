@@ -99,9 +99,6 @@ modulejs.define('Images', function () {
             model.set('loader', null);
           };
         });
-        this.attributes.loader.fail(function (err, response) {
-          console.log('loading error', err, model)
-        });
       }
     }),
 
@@ -122,6 +119,7 @@ modulejs.define('Images', function () {
 
         view.model.on('change:preloaded', function () {
           view.$el.toggleClass('loading', !view.model.attributes.preloaded);
+          view.$el.toggleClass('loaded', !!view.model.attributes.preloaded);
           if (view.model.attributes.preloaded && view.model.attributes.preloaded !== view.model.previous('preloaded'))
             $img.attr('src', view.model.attributes.url);
         });
