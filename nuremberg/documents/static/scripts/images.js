@@ -20,23 +20,25 @@ modulejs.define('Images', function () {
 
       handleVisible: function () {
         var model = this;
-        if (this.get('visible')) {
-          var scale = this.attributes.scale;
-          if (scale < 0.25) {
-            this.preloadImage('thumb');
-          } else if (scale < 0.50) {
-            this.preloadImage('half');
-          } else if (scale < 1.50) {
-            this.preloadImage('screen');
+        _.defer(function () {
+          if (model.get('visible')) {
+            var scale = model.attributes.scale;
+            if (scale < 0.25) {
+              model.preloadImage('thumb');
+            } else if (scale < 0.50) {
+              model.preloadImage('half');
+            } else if (scale < 1.50) {
+              model.preloadImage('screen');
+            } else {
+              model.preloadImage('full');
+            }
           } else {
-            this.preloadImage('full');
+            if (model.attributes.loader) {
+              model.attributes.loader.abort();
+              model.set('loader', null);
+            }
           }
-        } else {
-          if (this.attributes.loader) {
-            this.attributes.loader.abort();
-            model.set('loader', null);
-          }
-        }
+        });
       },
 
       hardload: function (size) {

@@ -11,10 +11,6 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
     },
 
     initialize: function () {
-      this.on({
-        'change:bounds': this.testVisible,
-        // 'change:scale': this.scaleImages,
-      });
     },
 
     testVisible: function () {
@@ -29,7 +25,9 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
         var imageBounds = image.attributes.bounds;
         // console.log('testing image', imageBounds.top, imageBounds.bottom, 'scroll', bounds.top, bounds.bottom, 'pass', imageBounds.top < bounds.bottom, imageBounds.bottom > bounds.top);
         image.attributes.scale = model.attributes.scale;
-        image.set('visible', imageBounds.top - bounds.bottom < 1000 && imageBounds.bottom - bounds.top > -1000);
+        var isVisible = imageBounds.top - bounds.bottom < 1000 && imageBounds.bottom - bounds.top > -1000
+        if (isVisible !== image.attributes.visible)
+          image.set('visible', isVisible);
         if (!firstVisible && bounds.top <= Math.max(imageBounds.bottom - 60, 0)) {
           firstVisible = image;
         }
@@ -37,29 +35,13 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
       if (firstVisible)
         this.trigger('firstVisible', firstVisible);
     },
-
-    scaleImages: function () {
-      var model = this;
-      var scale = this.get('scale');
-
-      this.attributes.images.each(function (image) {
-        image.set('scale', scale);
-        image.attributes.visible = false;
-      });
-
-      var scrollHeight = $('.viewport-content')[0].scrollHeight;
-      var scrollTop = $('.viewport-content').scrollTop() + $('.viewport-content').height()/2;
-      setTimeout(function () {
-        model.attributes.images.resetBounds();
-        $('.viewport-content').scrollTop((scrollTop / scrollHeight) * $('.viewport-content')[0].scrollHeight - $('.viewport-content').height()/2);
-      }, 300);
-    },
   });
 
   var View = Backbone.View.extend({
     initialize: function () {
       var view = this;
-      _.bindAll(this, 'setBounds', 'zoomIn', 'zoomOut', 'goToPage', 'render', 'setTool', 'smoothZoom', 'wheelZoom', 'pageZoom', 'toggleExpand');
+      this.recalculateVisible = _.debounce(this.recalculateVisible, 100);
+      _.bindAll(this, 'setBounds', 'zoomIn', 'zoomOut', 'goToPage', 'render', 'setTool', 'smoothZoom', 'wheelZoom', 'pageZoom', 'toggleExpand', 'recalculateVisible');
 
       this.smoothZoom = _.throttle(this.smoothZoom, 25);
 
@@ -135,10 +117,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
             view.$el.addClass('expanded');
             _.defer(function () {
               view.$el.removeAttr('style');
-              _.defer(function () {
-                view.model.attributes.images.resetBounds();
-                view.setBounds();
-              });
+              _.defer(view.recalculateVisible());
             })
           } else {
             view.$el.css(this.expandingCSS);
@@ -146,10 +125,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
               view.$el.removeClass('expanded', view.model.attributes.expand);
               view.$el.removeAttr('style');
 
-              _.defer(function () {
-                view.model.attributes.images.resetBounds();
-                view.setBounds();
-              });
+              _.defer(view.recalculateVisible());
             }, 300);
           }
         },
@@ -179,15 +155,20 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
         document.styleSheets[0].insertRule("body.document-viewer #document-viewport .document-image { width: 100% !important; height: auto !important; }", 0)
       ];
 
-      $(window).on('resize', this.setBounds);
-      this.model.attributes.images.resetBounds();
-      this.setBounds();
+      $(window).on('resize', this.recalculateVisible);
+      this.recalculateVisible();
     },
 
     el: '.viewport-content',
 
     events: {
-      'scroll': 'setBounds',
+      'scroll': 'recalculateVisible',
+    },
+
+    recalculateVisible: function () {
+      this.model.attributes.images.resetBounds();
+      this.setBounds();
+      this.model.testVisible();
     },
 
     setTool: function (tool) {
@@ -280,19 +261,19 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
       }
     },
 
-    setBounds: _.throttle(function (e) {
+    setBounds: function (e) {
       var bounds = {top: this.$el.scrollTop()};
       bounds.bottom = bounds.top + this.$el.height();
       this.model.set('bounds', bounds);
-    }, 100),
+    },
 
     pinnedPageOrigin: function (page) {
       if (!page)
         return;
 
       return {
-        x: page.$el.position().left,
-        y: page.$el.position().top
+        x: page.el.offsetLeft,
+        y: page.el.offsetTop
       };
     },
 
@@ -366,8 +347,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
       setTimeout(function () {
         view.model.attributes.viewScale = 1;
         view.model.attributes.skipTest = false;
-        view.model.attributes.images.resetBounds();
-        view.model.testVisible();
+        view.recalculateVisible();
       }, 300);
     },
     viewScale: function (scale, animate, scaleOrigin) {
@@ -420,8 +400,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
           });
           $viewport.scrollLeft(transformedOrigin.x);
           $viewport.scrollTop(transformedOrigin.y);
-          view.model.attributes.images.resetBounds();
-          view.model.testVisible();
+          view.recalculateVisible();
         }, duration);
       } else {
         $('.document-image-layout').css({
