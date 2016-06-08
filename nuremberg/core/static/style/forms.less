@@ -100,7 +100,7 @@ button.clear-search {
   cursor: pointer;
 }
 
-input[type=text], .text-input {
+input[type=text], input[type=number], .text-input {
   .sans-serif(normal, 14px, 20px);
   .box-sizing(content-box);
   .border-radius(3px);
@@ -113,6 +113,11 @@ input[type=text], .text-input {
   background-color: @white;
   border: 1px solid @light-gray;
   color: @black;
+
+  -moz-appearance: textfield;
+  &::-webkit-inner-spin-button, &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
 }
 
 select {

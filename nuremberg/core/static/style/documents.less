@@ -174,10 +174,16 @@ html.touchevents & {
   position: absolute;
   top: 20px;
   right: 10px;
+  background-color: white;
+  > div {
+    height: 24px;
+    margin-bottom: 5px;
+  }
   .print-document {
     .sans-serif(@light, 14px, 24px);
     height: 24px;
     padding-right: 28px;
+    float: right;
 
     background-image: url('@{image_url}/icon-print.png');
     background-position: right;
@@ -186,6 +192,36 @@ html.touchevents & {
     &:hover {
       opacity: 1;
     }
+  }
+  .download-pdf {
+    .print-document();
+    padding-right: 28px;
+    float: right;
+    clear: both;
+    background-image: url('@{image_url}/icon-download.png');
+  }
+  .download-options {
+    .transition(~"max-width 0.3s");
+    max-width: 250px;
+    float: right;
+    clear: both;
+
+    text-align: right;
+    overflow: hidden;
+    white-space: nowrap;
+
+    &.hide {
+      display:block;
+      max-width: 0px;
+    }
+  }
+  input.page-range {
+    width: 25px;
+    padding: 4px;
+  }
+  .do-download {
+    .sans-serif(normal, 14px, 10px);
+    margin-left: 5px;
   }
 }
 

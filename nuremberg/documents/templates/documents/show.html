@@ -61,7 +61,9 @@
           <select>
             {# {% for image in document.images %}#}
             {% for image in document.images.all %}
-              <option value="{{forloop.counter}}">Page {{forloop.counter}}</option>
+              <option value="{{image.page_number}}">Sequence No. {{image.page_number}}
+                {% if image.physical_page_number %}  (p. {{image.physical_page_number}}){% endif %}
+              </option>
             {% endfor %}
           </select>
         {% endblock %}
@@ -88,10 +90,24 @@
         {% for case in document.cases.all %}
           <span class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</span>
         {% endfor %}
+        &nbsp;
       </p>
       <div class="print-controls">
-        <button class="print-document">Print</button>
-        <div class="print-loading hide">Downloading images for printing... <span class="progress"></span></div>
+        <div>
+          <button class="print-document">Print</button>
+          <div class="print-loading hide">Downloading images for printing... <span class="progress"></span></div>
+        </div>
+        <div>
+          <button class="download-pdf">PDF</button>
+          <div class="download-options hide">
+            Page
+            <input type="number" class="page-range" name="from-page" min="1" max="{{document.image_count}}"/>
+            to
+            <input type="number" class="page-range" name="to-page" min="1" max="{{document.image_count}}"/>
+            <a class="do-download">Save PDF</a>
+          </div>
+          <div class="pdf-loading hide">Downloading images for PDF... <span class="progress"></span></div>
+        </div>
       </div>
       <h3>{{document.title}}</h3>
       <h5>{{document.literal_title}}</h5>
@@ -132,7 +148,11 @@
         {% endif %}
         <br />
         <p>
-          <strong>Language of text:</strong>
+          <strong>Total Pages:</strong>
+          {{document.image_count}}
+        </p>
+        <p>
+          <strong>Language of Text:</strong>
           {{document.language.name}}
         </p>
         <p>
@@ -145,7 +165,7 @@
         </p>
       {% endblock %}
       {% if document.activities.count %}
-        <h6>Trial Activites</h6>
+        <h6>Trial Activities</h6>
         <p>
           {% for activity in document.activities.all %}
               <a class="tag-button" href="{% search_url activity.short_name %}">{{activity.short_name}}</a>
@@ -154,7 +174,7 @@
       {% endif %}
     </div>
     <div id="document-viewport" class="main-column">
-      <div class="viewport-content scrollable">
+      <div class="viewport-content scrollable" data-document-id="{{document.id}}">
         {% block viewport %}
           <div class="document-image-layout">
             {% for image in document.images.all %}
@@ -166,7 +186,7 @@
                   </div>
                 {% else %}
                   <div class="image-label">
-                    Missing Page {{image.page_number}}
+                    Missing Image No. {{image.page_number}}
                   </div>
                 {% endif %}
               </div>
