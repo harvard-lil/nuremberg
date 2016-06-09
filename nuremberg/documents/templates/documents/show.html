@@ -8,21 +8,6 @@
 {% block javascript_module %}documents{% endblock %}
 
 {% block javascript %}
-{# quickly stop full-resolution images from loading uncontrolled #}
-<!-- <script>
-  var imgs = document.getElementsByTagName('img');
-  for (var i = 0; i < imgs.length; i++) {
-    var img = imgs[i];
-    var thumbURL = img.getAttribute('data-thumb-url');
-    if (thumbURL != null) {
-      img.setAttribute('data-screen-url', img.src);
-      img.src = '';
-      img.src = '{% static 'images/blank.gif' %}';
-      img.parentElement.className += ' loading hidden';
-    }
-  }
-  console.log("cancelled image downloads");
-</script> -->
 {{block.super}}
 {% endblock %}
 
@@ -181,7 +166,7 @@
         {% block viewport %}
           <div class="document-image-layout">
             {% for image in document.images.all %}
-              <div data-screen-url="{{image.local_url}}?{{ forloop.counter }}" data-thumb-url="{{image.thumb_url}}?{{ forloop.counter }}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image loading {% if not image.url %}image-missing{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
+              <div data-screen-url="{{image.local_url}}?{{ forloop.counter }}" data-thumb-url="{{image.thumb_url}}?{{ forloop.counter }}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image loaded {% if not image.url %}image-missing{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
                 {% if image.url %}
                   <noscript><img src="{{image.local_url}}?{{ forloop.counter }}" /></noscript>
                   <div class="image-label">
