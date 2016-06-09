@@ -26,13 +26,6 @@ class Document(models.Model):
         # Try to extract the "genre term" from the descriptive title
         return self.title.split(' ')[0]
 
-    def image_urls(self):
-        # This is how the existing site generates page URLs, just concats doc ID with presumed page no.
-        image_number = 1
-        while image_number <= self.image_count:
-            yield "{}/{}{:05d}{:03d}.jpg".format(IMAGE_URL_ROOT, "HLSL_NUR_", self.id, image_number)
-            image_number += 1
-
     class Meta:
         managed = False
         db_table = 'tblDoc'
@@ -66,11 +59,22 @@ class DocumentImage(models.Model):
 
     image_type = models.ForeignKey('DocumentImageType')
 
-    def thumb_url(self):
-        return self.local_url().replace('image_cache/', 'image_cache/thumb/')
+    def find_url(self, scale):
+        if self.scale == scale:
+            return url
+        else:
+            scaled = self.document.images.filter(page_number=self.page_number, scale=scale).first()
+            if scaled:
+                return scaled.url
+            else:
+                return None
 
-    def local_url(self):
-        return self.url.replace('http://nuremberg.law.harvard.edu/imagedir/HLSL_NMT01/', '/proxy_image/')
+    def thumb_url(self):
+        return self.find_url(self.THUMB)
+    def screen_url(self):
+        return self.find_url(self.SCREEN)
+    def full_url(self):
+        return self.find_url(self.FULL)
 
     def image_tag(self):
         return '<a href="{0}"><img src="{0}" width=100 /></a>'.format(self.url)

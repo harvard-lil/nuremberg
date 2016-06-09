@@ -10,7 +10,10 @@ modulejs.define('Images', function () {
       initialize: function () {
         _.bindAll(this, 'handleVisible', 'xhrProgress');
 
-        this.on('change:visible', this.handleVisible);
+        this.on({
+          'change:visible': this.handleVisible,
+          'change:scale': this.handleVisible
+        });
         this.attributes.cache = {};
       },
 
@@ -23,14 +26,12 @@ modulejs.define('Images', function () {
         _.defer(function () {
           if (model.get('visible')) {
             var scale = model.attributes.scale;
-            if (scale < 0.25) {
-              model.preloadImage('thumb');
-            } else if (scale < 0.50) {
-              model.preloadImage('half');
-            } else if (scale < 1.50) {
-              model.preloadImage('screen');
-            } else {
+            if (model.attributes.$el.width() > model.attributes.size.width) {
               model.preloadImage('full');
+            } else if (model.attributes.$el.width() < 300) {
+              model.preloadImage('thumb');
+            } else {
+              model.preloadImage('screen');
             }
           } else {
             if (model.attributes.loader) {
@@ -56,9 +57,18 @@ modulejs.define('Images', function () {
       },
 
       preloadImage: function (size) {
+        console.log('preloading', size);
+        if (this.attributes.loader) {
+          if (this.attributes.loader.size == size) {
+            return;
+          } else {
+            this.attributes.loader.abort();
+          }
+        }
+
         var model = this;
 
-        var sizes = ['thumb', 'half', 'screen', 'full'];
+        var sizes = ['thumb', 'screen', 'full'];
         var cached;
         for (var i = sizes.indexOf(size); i < sizes.length; i++) {
           cached = cached || this.attributes.cache[sizes[i]];
@@ -74,6 +84,7 @@ modulejs.define('Images', function () {
 
         model.set('preloaded', null);
 
+        sizes = ['thumb', 'screen', 'full', 'screen', 'thumb'];
         var url;
         for (var i = sizes.indexOf(size); i < sizes.length; i++) {
           url = model.attributes.urls[sizes[i]];
@@ -90,6 +101,7 @@ modulejs.define('Images', function () {
           }
         }));
 
+        this.attributes.loader.size = size;
         this.attributes.loader.then(function (response) {
           var reader = new FileReader;
           reader.readAsDataURL(response)
@@ -100,6 +112,11 @@ modulejs.define('Images', function () {
             model.set('preloaded', size);
             model.set('loader', null);
           };
+        })
+        .fail(function (error) {
+          model.set('loader', null);
+          if (error.statusText !== 'abort')
+            console.log("error downloading image", url, error)
         });
       }
     }),
@@ -120,6 +137,7 @@ modulejs.define('Images', function () {
         .toggleClass('aspect-ratio-wide', aspectRatio < 11/8.5);
 
         view.model.on('change:preloaded', function () {
+          view.$el.toggleClass('rendered-thumb', !view.model.attributes.preloaded && view.model.previous('preloaded') == 'thumb');
           view.$el.toggleClass('loading', !view.model.attributes.preloaded);
           view.$el.toggleClass('loaded', !!view.model.attributes.preloaded);
           if (view.model.attributes.preloaded && view.model.attributes.preloaded !== view.model.previous('preloaded'))
@@ -162,12 +180,9 @@ modulejs.define('Images', function () {
             $el: $container,
             page: $container.data('page'),
             urls: {
-              full: $container.data('screen-url'),
+              full: $container.data('full-url'),
               screen: $container.data('screen-url'),
-              // half: $container.data('screen-url'),
-              // thumb: $container.data('screen-url'),
-              // half: '/static/image_cache/HLSL_NUR_00001001.jpg',
-              // thumb: '/static/image_cache/HLSL_NUR_00001001.jpg',
+              thumb: $container.data('thumb-url'),
             },
             size: {
               width: parseInt($container.data('width')),

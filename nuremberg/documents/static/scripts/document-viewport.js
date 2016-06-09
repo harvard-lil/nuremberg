@@ -24,8 +24,10 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
       this.attributes.images.each(function (image) {
         var imageBounds = image.attributes.bounds;
         // console.log('testing image', imageBounds.top, imageBounds.bottom, 'scroll', bounds.top, bounds.bottom, 'pass', imageBounds.top < bounds.bottom, imageBounds.bottom > bounds.top);
-        image.attributes.scale = model.attributes.scale;
         var isVisible = imageBounds.top - bounds.bottom < 1000 && imageBounds.bottom - bounds.top > -1000
+        if (isVisible) {
+          image.set('scale', model.attributes.scale * model.attributes.viewScale);
+        }
         if (isVisible !== image.attributes.visible)
           image.set('visible', isVisible);
         if (!firstVisible && bounds.top <= Math.max(imageBounds.bottom - 60, 0)) {

@@ -45,7 +45,7 @@
         {% block page_selection %}
           <select>
             {# {% for image in document.images %}#}
-            {% for image in document.images.all %}
+            {% for image in document.images_screen %}
               <option value="{{image.page_number}}">Sequence No. {{image.page_number}}
                 {% if image.physical_page_number %}  (p. {{image.physical_page_number}}){% endif %}
               </option>
@@ -165,10 +165,10 @@
       <div class="viewport-content scrollable" data-document-id="{{document.id}}">
         {% block viewport %}
           <div class="document-image-layout">
-            {% for image in document.images.all %}
-              <div data-screen-url="{{image.local_url}}?{{ forloop.counter }}" data-thumb-url="{{image.thumb_url}}?{{ forloop.counter }}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image loaded {% if not image.url %}image-missing{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
+            {% for image in document.images_screen %}
+              <div data-screen-url="{{image.url}}" data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image loaded {% if not image.url %}image-missing{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
                 {% if image.url %}
-                  <noscript><img src="{{image.local_url}}?{{ forloop.counter }}" /></noscript>
+                  <noscript><img src="{{image.url}}" /></noscript>
                   <div class="image-label">
                     {{image.page_number}}
                   </div>

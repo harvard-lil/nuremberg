@@ -186,8 +186,10 @@
     border-right: 5px solid transparent;
     border-bottom: 10px solid transparent;
   }
-  &.loading img {
+  &.loading.rendered-thumb img {
     .filter(blur(3px));
+  }
+  &.loading img {
     z-index: 0;
   }
   &.hidden img {
