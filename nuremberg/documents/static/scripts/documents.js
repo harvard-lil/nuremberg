@@ -86,7 +86,7 @@ modulejs.define('documents', ['DocumentViewport', 'DocumentTools'], function (Do
         for (var i = fromPage - 1; i <= toPage - 1; i++) {
           var image = images[i];
           pdf.addPage(image.attributes.size.width / res, image.attributes.size.height / res);
-          pdf.addImage(image.attributes.cache['screen'], 'JPEG', 0, 0, image.attributes.size.width / res, image.attributes.size.height / res);
+          pdf.addImage(image.attributes.cache['full'] || image.attributes.cache['screen'], 'JPEG', 0, 0, image.attributes.size.width / res, image.attributes.size.height / res);
 
         }
         if (toPage === fromPage) {
