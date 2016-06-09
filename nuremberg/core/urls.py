@@ -8,9 +8,10 @@ urlpatterns = [
     url(r'^documents/', include('nuremberg.documents.urls')),
     url(r'^search/', include('nuremberg.search.urls')),
     url(r'^', include('nuremberg.content.urls')),
+    url(r'^proxy_image/printing/(?P<url>.*)$',
+        HttpProxy.as_view(base_url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing')),
     url(r'^proxy_image/(?P<url>.*)$',
-        HttpProxy.as_view(base_url='http://s3.amazonaws.com/nuremberg-dev'),
-)
+        HttpProxy.as_view(base_url='http://s3.amazonaws.com/nuremberg-dev')),
 ]
 
 handler400 = 'nuremberg.core.views.handler400'
