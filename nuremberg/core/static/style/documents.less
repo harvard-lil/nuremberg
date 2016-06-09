@@ -77,7 +77,7 @@
     margin: 0 5px;
   }
 
-  button {
+  button, a.download-page {
     &:extend(.hide-text);
 
     display: inline-block;
@@ -100,6 +100,10 @@
     }
     &.last-page {
       background-image: url('@{image_url}/icon-last-page.png');
+    }
+    &.download-page {
+      margin-left: 10px;
+      background-image: url('@{image_url}/icon-download-page.png');
     }
   }
 }
