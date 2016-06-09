@@ -18,6 +18,12 @@ modulejs.define('documents', ['DocumentViewport', 'DocumentTools'], function (Do
 
   viewportView.on('currentPage', toolbarView.setPage);
 
+
+  viewportView.on('currentPage', function () {
+    toolbarView.setPageDownload(viewportView.model.attributes.currentImage.attributes.urls.full,
+    'HLSL Nuremberg Document #' + viewportView.model.attributes.id + ' page ' + viewportView.model.attributes.currentImage.attributes.page + '.jpg');
+  });
+
   $('.print-document').on('click', function () {
     $('.print-document').addClass('hide');
     $('.print-loading').removeClass('hide');

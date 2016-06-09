@@ -33,6 +33,11 @@ modulejs.define('DocumentTools', function () {
     setPage: function (page) {
       this.model.set('page', page);
       this.$el.find('select').val(page);
+    },
+    setPageDownload: function (url, filename) {
+      this.$el.find('.download-page')
+      .attr('href', url)
+      .attr('download', filename);
     }
   });
 });
