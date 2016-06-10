@@ -20,7 +20,7 @@ modulejs.define('documents', ['DocumentViewport', 'DocumentTools'], function (Do
 
 
   viewportView.on('currentPage', function () {
-    toolbarView.setPageDownload(viewportView.model.attributes.currentImage.attributes.urls.full,
+    toolbarView.setPageDownload(viewportView.model.attributes.currentImage.attributes.urls.full || viewportView.model.attributes.currentImage.attributes.urls.screen,
     'HLSL Nuremberg Document #' + viewportView.model.attributes.id + ' page ' + viewportView.model.attributes.currentImage.attributes.page + '.jpg');
   });
 

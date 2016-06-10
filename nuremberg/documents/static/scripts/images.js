@@ -28,7 +28,7 @@ modulejs.define('Images', function () {
             var scale = model.attributes.scale;
             if (model.attributes.$el.width() > model.attributes.size.width) {
               model.preloadImage('full');
-            } else if (model.attributes.$el.width() < 300) {
+            } else if (model.attributes.$el.width() < 250) {
               model.preloadImage('thumb');
             } else {
               model.preloadImage('screen');
