@@ -44,9 +44,9 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
       },
 
       preloadImage: function (size) {
-        console.log('preloading', size);
         if (this.attributes.loader) {
           if (this.attributes.loader.size == size) {
+            DownloadQueue.refresh(this.attributes.loader);
             return;
           } else {
             this.attributes.loader.cancel();
@@ -89,7 +89,6 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
           var reader = new FileReader;
           reader.readAsDataURL(response)
           reader.onload = function () {
-            // return;
             model.get('cache')[size] = reader.result;
             model.set('url', reader.result);
             model.set('preloaded', size);
@@ -98,8 +97,6 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
         })
         .fail(function (error) {
           model.set('loader', null);
-          if (error.statusText !== 'abort')
-            console.log("error downloading image", url, error)
         });
       }
     }),
@@ -128,7 +125,8 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
         });
         view.model.on('change:loader', function () {
           if (view.model.attributes.loader) {
-            view.$el.find('.image-label').append($('<div class="loading-indicator">Loading... <span class="progress"></span></div>'));
+            if (!view.$el.find('.image-label .loading-indicator').length)
+              view.$el.find('.image-label').append($('<div class="loading-indicator">Loading... <span class="progress"></span></div>'));
           } else {
             view.$el.find('.loading-indicator').remove();
           }
@@ -150,6 +148,10 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
         view.model.on('change:current', function () {
           view.$el.toggleClass('current', view.model.get('current'));
         });
+
+
+        // queue up all thumbnails, if nothing else is going on
+        this.model.preloadImage('thumb');
       }
     }),
 
@@ -160,6 +162,7 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
         $imgs.each(function () {
           var $container = $(this);
           coll.add(new Images.Model({
+            el: this,
             $el: $container,
             page: $container.data('page'),
             urls: {
@@ -171,22 +174,9 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
               width: parseInt($container.data('width')),
               height: parseInt($container.data('height'))
             },
-            screenBounds: {
-              top: $container.position().top + scrollTop,
-              bottom: $container.position().top + $container.height() + scrollTop,
-            },
           }));
         });
         return this;
-      },
-
-      resetBounds: function () {
-        this.each(function (model) {
-          model.attributes.bounds = {
-            top: model.attributes.$el.position().top,
-            bottom: model.attributes.$el.position().top + model.attributes.$el.height(),
-          };
-        });
       },
     }),
   };

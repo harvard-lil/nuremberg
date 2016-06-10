@@ -13,9 +13,12 @@ modulejs.define('DownloadQueue', function () {
     this.state = 'queued';
     this.url = url;
     this.promise = $.Deferred();
+    this.promise.request = this;
     this.promise.cancel = function () {
       if (request.state === 'active') {
         request.xhr.abort();
+      } else {
+        request.state = 'cancelled';
       }
     };
   };
@@ -80,6 +83,13 @@ modulejs.define('DownloadQueue', function () {
       return request.promise;
     },
 
+    refresh: function (promise) {
+      var request = promise.request;
+      if (request.state === 'queued') {
+        this.moveToFront(request);
+      }
+    },
+
     activate: function (request) {
       if (this.activeCount >= concurrency)
         return;
@@ -101,8 +111,14 @@ modulejs.define('DownloadQueue', function () {
     },
 
     activateNext: function () {
-      if (this.queued && this.activeCount < concurrency)
-        this.activate(this.queued);
+      if (this.queued && this.activeCount < concurrency) {
+        if (this.queued.state === 'cancelled') {
+          this.remove(this.queued);
+          this.activateNext()
+        } else {
+          this.activate(this.queued);
+        }
+      }
     },
 
     addToFront: function (request) {
@@ -139,6 +155,8 @@ modulejs.define('DownloadQueue', function () {
 
         if (this.queued === request)
           this.queued = next;
+        if (this.front === request)
+          this.front = next;
         if (next)
           next.prev = prev;
         if (prev)

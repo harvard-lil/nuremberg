@@ -162,7 +162,7 @@
         {% block viewport %}
           <div class="document-image-layout">
             {% for image in document.images_screen %}
-              <div data-screen-url="{{image.url}}" data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image loaded {% if not image.url %}image-missing{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
+              <div data-screen-url="{{image.url}}" data-thumb-url="{{image.thumb_url|default_if_none:""}}"  data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image loaded {% if not image.url %}image-missing{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
                 {% if image.url %}
                   <noscript><img src="{{image.url}}" /></noscript>
                   <div class="image-label">

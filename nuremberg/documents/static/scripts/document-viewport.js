@@ -12,40 +12,16 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
 
     initialize: function () {
     },
-
-    testVisible: function () {
-      if (this.attributes.skipTest)
-        return;
-
-      var model = this;
-      var bounds = this.get('bounds');
-
-      DownloadQueue.resetPriority();
-
-      var firstVisible;
-      this.attributes.images.each(function (image) {
-        var imageBounds = image.attributes.bounds;
-        // console.log('testing image', imageBounds.top, imageBounds.bottom, 'scroll', bounds.top, bounds.bottom, 'pass', imageBounds.top < bounds.bottom, imageBounds.bottom > bounds.top);
-        var isVisible = imageBounds.top - bounds.bottom < 1000 && imageBounds.bottom - bounds.top > -1000
-        if (isVisible) {
-          image.set('scale', model.attributes.scale * model.attributes.viewScale);
-        }
-        if (isVisible !== image.attributes.visible)
-          image.set('visible', isVisible);
-        if (!firstVisible && bounds.top <= Math.max(imageBounds.bottom - 60, 0)) {
-          firstVisible = image;
-        }
-      });
-      if (firstVisible)
-        this.trigger('firstVisible', firstVisible);
-    },
   });
 
   var View = Backbone.View.extend({
+    options: {
+      preloadRange: 200,
+    },
     initialize: function () {
       var view = this;
       this.recalculateVisible = _.debounce(this.recalculateVisible, 100);
-      _.bindAll(this, 'setBounds', 'zoomIn', 'zoomOut', 'goToPage', 'render', 'setTool', 'smoothZoom', 'wheelZoom', 'pageZoom', 'toggleExpand', 'recalculateVisible');
+      _.bindAll(this, 'zoomIn', 'zoomOut', 'goToPage', 'render', 'setTool', 'smoothZoom', 'wheelZoom', 'pageZoom', 'toggleExpand', 'recalculateVisible');
 
       this.smoothZoom = _.throttle(this.smoothZoom, 25);
 
@@ -81,7 +57,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       this.model.on({
         'firstVisible': function (firstVisible) {
           this.attributes.firstVisible = firstVisible;
-          if (!this.attributes.currentImage || (this.attributes.currentImage.attributes.bounds.bottom > view.$el.scrollTop() + view.$el.height() || this.attributes.currentImage.attributes.bounds.top  < view.$el.scrollTop()))
+          if (!this.attributes.currentImage || (this.attributes.currentImage.attributes.$el[0].offsetBottom > view.$el.scrollTop() + view.$el.height() || this.attributes.currentImage.attributes.$el[0].offsetTop  < view.$el.scrollTop()))
             this.set('currentImage', firstVisible);
         },
         'change:currentImage': function () {
@@ -95,12 +71,12 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
 
           if (image !== view.model.attributes.firstVisible) {
             if (Modernizr.touchevents) {
-              $(window).scrollTop(image.attributes.$el.offset().top);
+              $(window).scrollTop(image.attributes.el.offsetTop);
             } else {
-              if (view.$el.scrollTop() > image.attributes.bounds.top || view.$el.scrollTop() + view.$el.height() < image.attributes.bounds.bottom)
-              view.$el.scrollTop(image.attributes.bounds.top);
-              if (view.$el.scrollLeft() > image.attributes.$el.position().left || view.$el.scrollLeft() + view.$el.width() < image.attributes.$el.position().left + image.attributes.$el.width())
-              view.$el.scrollLeft(image.attributes.$el.position().left);
+              if (view.$el.scrollTop() > image.attributes.el.offsetTop || view.$el.scrollTop() + view.$el.height() < image.attributes.el.offsetTop + image.attributes.el.offsetHeight)
+              view.$el.scrollTop(image.attributes.el.offsetTop);
+              if (view.$el.scrollLeft() > image.attributes.el.offsetLeft || view.$el.scrollLeft() + view.$el.width() < image.attributes.el.offsetLeft + image.attributes.el.offsetWidth)
+              view.$el.scrollLeft(image.attributes.el.offsetLeft);
             }
           }
 
@@ -172,9 +148,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     },
 
     recalculateVisible: function () {
-      this.model.attributes.images.resetBounds();
-      this.setBounds();
-      this.model.testVisible();
+      this.testVisible();
     },
 
     setTool: function (tool) {
@@ -265,12 +239,6 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         };
         this.viewScale(this.model.attributes.viewScale, true, targetOrigin);
       }
-    },
-
-    setBounds: function (e) {
-      var bounds = {top: this.$el.scrollTop()};
-      bounds.bottom = bounds.top + this.$el.height();
-      this.model.set('bounds', bounds);
     },
 
     pinnedPageOrigin: function (page) {
@@ -529,7 +497,102 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
 
     zoomToFit: function () {
       this.pageScale(1);
-    }
+    },
+
+
+
+    findVisible: function (first, last, bounds) {
+      // binary search to find any visible page
+      if (first > last)
+        return null;
+
+      var midpoint = Math.floor((last + first) / 2);
+      var testPage = this.imageViews[midpoint];
+
+      var testBounds = {
+        left: testPage.el.offsetLeft,
+        top: testPage.el.offsetTop,
+      }
+      testBounds.bottom = testBounds.top + testPage.el.offsetHeight;
+      testBounds.right = testBounds.left + testPage.el.offsetWidth;
+
+      if (bounds.top > testBounds.bottom) {
+        // too high, search after midpoint
+        return this.findVisible(midpoint + 1, last, bounds);
+      } else if (bounds.bottom < testBounds.top) {
+        // too low, search before midpoint
+        return this.findVisible(first, midpoint - 1, bounds)
+      } else {
+        // to make scanning logic simpler, just load whole rows
+        //
+        // if (bounds.right < testBounds.left) {
+        //   // too left, search after midpoint
+        //   return this.findVisible(midpoint + 1, last, bounds);
+        // } else if (bounds.left > testBounds.right) {
+        //   // too right, search before midpoint
+        //   return this.findVisible(first, midpoint - 1, bounds)
+        // } else {
+          // overlapping, this is visible
+          return midpoint;
+        // }
+      }
+    },
+
+    isVisible: function (n, bounds) {
+      return this.findVisible(n, n, bounds) !== null;
+    },
+
+    testVisible: function () {
+      var model = this.model;
+      if (this.model.attributes.skipTest)
+        return;
+
+
+      DownloadQueue.resetPriority();
+
+      var $parent = this.$el;
+      if (Modernizr.touchevents) {
+        $parent = $(window);
+      }
+
+      var bounds = {
+        top: $parent.scrollTop(),
+        left: $parent.scrollLeft()
+      }
+      bounds.right = bounds.left + $parent.width();
+      bounds.bottom = bounds.top + $parent.height();
+
+      bounds.top -= this.options.preloadRange;
+      bounds.bottom += this.options.preloadRange;
+
+      var visibleIndex = this.findVisible(0, this.imageViews.length - 1, bounds);
+
+      var firstVisible = visibleIndex, lastVisible = visibleIndex;
+
+      for (var i = visibleIndex - 1; i >= 0; i--) {
+        if (!this.isVisible(i, bounds))
+          break;
+        firstVisible = i;
+      }
+      for (var i = visibleIndex + 1; i < this.model.attributes.totalPages; i++) {
+        if (!this.isVisible(i, bounds))
+          break;
+        lastVisible = i;
+      }
+
+      var model = this.model;
+
+      this.model.attributes.images.each(function (image, n) {
+        if (n >= firstVisible && n <= lastVisible) {
+          image.set('scale', model.attributes.scale * model.attributes.viewScale);
+          image.set('visible', true);
+        } else {
+          image.set('visible', false);
+        }
+      });
+      if (firstVisible)
+        this.trigger('firstVisible', firstVisible);
+    },
   });
 
   DraggingMixin.mixin(View);
