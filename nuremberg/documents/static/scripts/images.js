@@ -55,7 +55,16 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
 
         var model = this;
 
-        var sizes = ['thumb', 'screen', 'full'];
+        var sizes = ['thumb', 'screen', 'full', 'screen', 'thumb'];
+        var url;
+        for (var i = sizes.indexOf(size); i < sizes.length; i++) {
+          size = sizes[i];
+          url = model.attributes.urls[size];
+          if (url)
+          break;
+        }
+
+        sizes = ['thumb', 'screen', 'full'];
         var cached;
         for (var i = sizes.indexOf(size); i < sizes.length; i++) {
           cached = cached || this.attributes.cache[sizes[i]];
@@ -71,13 +80,6 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
 
         model.set('preloaded', null);
 
-        sizes = ['thumb', 'screen', 'full', 'screen', 'thumb'];
-        var url;
-        for (var i = sizes.indexOf(size); i < sizes.length; i++) {
-          url = model.attributes.urls[sizes[i]];
-          if (url)
-            break;
-        }
 
         this.set('loader', DownloadQueue.download(url));
 
