@@ -1,4 +1,4 @@
-modulejs.define('Images', function () {
+modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
   var Images = {
     Model: Backbone.Model.extend({
       defaults: {
@@ -8,7 +8,7 @@ modulejs.define('Images', function () {
         loader: null
       },
       initialize: function () {
-        _.bindAll(this, 'handleVisible', 'xhrProgress');
+        _.bindAll(this, 'handleVisible', 'downloadProgress');
 
         this.on({
           'change:visible': this.handleVisible,
@@ -17,7 +17,7 @@ modulejs.define('Images', function () {
         this.attributes.cache = {};
       },
 
-      xhrProgress: function (e) {
+      downloadProgress: function (e) {
         this.set('percentLoaded', (e.loaded / (e.total || 150 * 1024)) * 100);
       },
 
@@ -28,47 +28,43 @@ modulejs.define('Images', function () {
             var scale = model.attributes.scale;
             if (model.attributes.$el.width() > model.attributes.size.width) {
               model.preloadImage('full');
-            } else if (model.attributes.$el.width() < 300) {
+            } else if (model.attributes.$el.width() < 250) {
               model.preloadImage('thumb');
             } else {
               model.preloadImage('screen');
             }
           } else {
             if (model.attributes.loader) {
-              model.attributes.loader.abort();
-              model.set('loader', null);
+              // aborting is handled by queue now
+              // model.attributes.loader.abort();
+              // model.set('loader', null);
             }
           }
         });
       },
 
-      hardload: function (size) {
-        var sizes = ['thumb', 'half', 'screen', 'full'];
-        var url;
-        for (var i = sizes.indexOf(size); i < sizes.length; i++) {
-          url = this.attributes.urls[sizes[i]];
-          if (url)
-            break;
-        }
-
-        this.attributes.cache[size] = this.attributes.cache[size] || url;
-        this.set('url', this.attributes.cache[size]);
-        this.set('preloaded', this.attributes.cache[size]);
-      },
-
       preloadImage: function (size) {
-        console.log('preloading', size);
         if (this.attributes.loader) {
           if (this.attributes.loader.size == size) {
+            DownloadQueue.refresh(this.attributes.loader);
             return;
           } else {
-            this.attributes.loader.abort();
+            this.attributes.loader.cancel();
           }
         }
 
         var model = this;
 
-        var sizes = ['thumb', 'screen', 'full'];
+        var sizes = ['thumb', 'screen', 'full', 'screen', 'thumb'];
+        var url;
+        for (var i = sizes.indexOf(size); i < sizes.length; i++) {
+          size = sizes[i];
+          url = model.attributes.urls[size];
+          if (url)
+          break;
+        }
+
+        sizes = ['thumb', 'screen', 'full'];
         var cached;
         for (var i = sizes.indexOf(size); i < sizes.length; i++) {
           cached = cached || this.attributes.cache[sizes[i]];
@@ -84,29 +80,17 @@ modulejs.define('Images', function () {
 
         model.set('preloaded', null);
 
-        sizes = ['thumb', 'screen', 'full', 'screen', 'thumb'];
-        var url;
-        for (var i = sizes.indexOf(size); i < sizes.length; i++) {
-          url = model.attributes.urls[sizes[i]];
-          if (url)
-            break;
-        }
 
-        this.set('loader', $.ajax({
-          dataType: 'native',
-          url: url,
-          xhrFields: {
-            responseType: 'blob',
-            onprogress: this.xhrProgress,
-          }
-        }));
+        this.set('loader', DownloadQueue.download(url));
+
 
         this.attributes.loader.size = size;
-        this.attributes.loader.then(function (response) {
+        this.attributes.loader
+        .progress(this.downloadProgress)
+        .then(function (response) {
           var reader = new FileReader;
           reader.readAsDataURL(response)
           reader.onload = function () {
-            // return;
             model.get('cache')[size] = reader.result;
             model.set('url', reader.result);
             model.set('preloaded', size);
@@ -115,8 +99,6 @@ modulejs.define('Images', function () {
         })
         .fail(function (error) {
           model.set('loader', null);
-          if (error.statusText !== 'abort')
-            console.log("error downloading image", url, error)
         });
       }
     }),
@@ -145,7 +127,8 @@ modulejs.define('Images', function () {
         });
         view.model.on('change:loader', function () {
           if (view.model.attributes.loader) {
-            view.$el.find('.image-label').append($('<div class="loading-indicator">Loading... <span class="progress"></span></div>'));
+            if (!view.$el.find('.image-label .loading-indicator').length)
+              view.$el.find('.image-label').append($('<div class="loading-indicator">Loading... <span class="progress"></span></div>'));
           } else {
             view.$el.find('.loading-indicator').remove();
           }
@@ -167,6 +150,10 @@ modulejs.define('Images', function () {
         view.model.on('change:current', function () {
           view.$el.toggleClass('current', view.model.get('current'));
         });
+
+
+        // queue up all thumbnails, if nothing else is going on
+        this.model.preloadImage('thumb');
       }
     }),
 
@@ -177,6 +164,7 @@ modulejs.define('Images', function () {
         $imgs.each(function () {
           var $container = $(this);
           coll.add(new Images.Model({
+            el: this,
             $el: $container,
             page: $container.data('page'),
             urls: {
@@ -188,22 +176,9 @@ modulejs.define('Images', function () {
               width: parseInt($container.data('width')),
               height: parseInt($container.data('height'))
             },
-            screenBounds: {
-              top: $container.position().top + scrollTop,
-              bottom: $container.position().top + $container.height() + scrollTop,
-            },
           }));
         });
         return this;
-      },
-
-      resetBounds: function () {
-        this.each(function (model) {
-          model.attributes.bounds = {
-            top: model.attributes.$el.position().top,
-            bottom: model.attributes.$el.position().top + model.attributes.$el.height(),
-          };
-        });
       },
     }),
   };

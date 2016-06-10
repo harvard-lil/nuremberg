@@ -49,15 +49,18 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE_CLASSES = [
-    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.http.ConditionalGetMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'nuremberg.core.urls'
@@ -74,6 +77,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'nuremberg.core.middlewares.context_processors.show_mockups',
+                'nuremberg.core.middlewares.context_processors.settings_variables',
             ],
         },
     },
