@@ -14,13 +14,16 @@ class Document(models.Model):
     language = models.ForeignKey('DocumentLanguage', db_column='DocLanguageID')
     source = models.ForeignKey('DocumentSource', db_column='DocVersionID')
 
+    def page_range(self):
+        return range(1, self.image_count)
+
     def images_screen(self):
-        return self.images.filter(scale=DocumentImage.SCREEN)
+        return (image for image in self.images.all() if image.scale == DocumentImage.SCREEN)
 
     def date(self):
         date = self.dates.first()
         if date:
-            return self.dates.first().as_date()
+            return date.as_date()
 
     def slug(self):
         # Try to extract the "genre term" from the descriptive title
@@ -63,7 +66,9 @@ class DocumentImage(models.Model):
         if self.scale == scale:
             return url
         else:
-            scaled = self.document.images.filter(page_number=self.page_number, scale=scale).first()
+            images = self.document.images.all()
+            filter = (image for image in images if image.page_number == self.page_number and image.scale == scale)
+            scaled = next(filter, None)
             if scaled:
                 return scaled.url
             else:
@@ -175,8 +180,8 @@ class DocumentGroupAuthor(models.Model):
 
     documents = models.ManyToManyField(Document, related_name='group_authors', through='DocumentsToGroupAuthors', through_fields=('author', 'document'))
 
-    def full_name(self):
-        return name.split(' (')[0]
+    def short_name(self):
+        return self.name.split(' (')[0]
 
     class Meta:
         managed = False

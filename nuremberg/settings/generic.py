@@ -74,6 +74,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'nuremberg.core.middlewares.context_processors.show_mockups',
+                'nuremberg.core.middlewares.context_processors.settings_variables',
             ],
         },
     },

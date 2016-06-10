@@ -44,11 +44,8 @@
       <div class="page-buttons">
         {% block page_selection %}
           <select>
-            {# {% for image in document.images %}#}
-            {% for image in document.images_screen %}
-              <option value="{{image.page_number}}">Sequence No. {{image.page_number}}
-                {% if image.physical_page_number %}  (p. {{image.physical_page_number}}){% endif %}
-              </option>
+            {% for page in document.page_range %}
+              <option value="{{page}}">Sequence No. {{page}} </option>
             {% endfor %}
           </select>
         {% endblock %}
@@ -97,39 +94,46 @@
       <h5>{{document.literal_title}}</h5>
       {% block document_details %}
         <p class="date">
-          {% if document.date %}
-            <a>{{document.date|date:'d F Y'}}</a>
+          {% with document.date as date %}
+          {% if date %}
+            <a>{{date|date:'d F Y'}}</a>
           {% else %}
             <a>Date Unknown</a>
           {% endif %}
+          {% endwith %}
         </p>
-        <h6>Author{{document.personal_authors.count|pluralize}}</h6>
-        {% if document.personal_authors.count %}
-          {% for author in document.personal_authors.all %}
-            <p>
-              <a href="{% search_url author.full_name %}">{{author.first_name}} {{author.last_name}}</a>
-              ({{author.title}})
-            </p>
-          {% endfor %}
-        {% else %}
+        {% with document.personal_authors.all as personal_authors %}
+        <h6>Author{{personal_authors|length|pluralize}}</h6>
+        {% for author in personal_authors %}
+          <p>
+            <a href="{% search_url author.full_name %}">{{author.first_name}} {{author.last_name}}</a>
+            ({{author.title}})
+          </p>
+        {% empty %}
           <p> Unknown </p>
-        {% endif %}
-        {% if document.group_authors.count %}
-          <h6>Institutional Author{{document.group_authors.count|pluralize}}</h6>
-          {% for author in document.group_authors.all %}
+        {% endfor %}
+        {% endwith %}
+        {% with document.group_authors.all as group_authors %}
+        {% if group_authors %}
+          <h6>Institutional Author{{group_authors|length|pluralize}}</h6>
+          {% for author in group_authors %}
             <p>
               <a href="{% search_url author.short_name %}">{{author.name}}</a>
             </p>
           {% endfor %}
         {% endif %}
-        {% if document.defendants.count %}
-          <h6>Defendant{{document.defendants.count|pluralize}}</h6>
-          {% for defendant in document.defendants.all %}
+        {% endwith %}
+
+        {% with document.defendants.all as defendants %}
+        {% if defendants %}
+          <h6>Defendant{{defendants|length|pluralize}}</h6>
+          {% for defendant in defendants %}
             <p>
               <a href="{% search_url defendant.full_name %}">{{defendant.first_name}} {{defendant.last_name}}</a>
             </p>
           {% endfor %}
         {% endif %}
+        {% endwith %}
         <br />
         <p>
           <strong>Total Pages:</strong>
@@ -148,14 +152,16 @@
           {{document.id}}
         </p>
       {% endblock %}
-      {% if document.activities.count %}
+      {% with document.activities.all as activities %}
+      {% if activities %}
         <h6>Trial Activities</h6>
         <p>
-          {% for activity in document.activities.all %}
+          {% for activity in activities %}
               <a class="tag-button" href="{% search_url activity.short_name %}">{{activity.short_name}}</a>
           {% endfor %}
         </p>
       {% endif %}
+      {% endwith %}
     </div>
     <div id="document-viewport" class="main-column">
       <div class="viewport-content scrollable" data-document-id="{{document.id}}">
