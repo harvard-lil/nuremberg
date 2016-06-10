@@ -1,4 +1,4 @@
-modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Images, DraggingMixin) {
+modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue'], function (Images, DraggingMixin, DownloadQueue) {
   var ImageView = Images.View;
   var ImageModel = Images.Model;
   var ImageCollection = Images.Collection;
@@ -19,6 +19,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin'], function (Image
 
       var model = this;
       var bounds = this.get('bounds');
+
+      DownloadQueue.resetPriority();
 
       var firstVisible;
       this.attributes.images.each(function (image) {

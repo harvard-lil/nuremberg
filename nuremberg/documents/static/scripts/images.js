@@ -1,4 +1,4 @@
-modulejs.define('Images', function () {
+modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
   var Images = {
     Model: Backbone.Model.extend({
       defaults: {
@@ -8,7 +8,7 @@ modulejs.define('Images', function () {
         loader: null
       },
       initialize: function () {
-        _.bindAll(this, 'handleVisible', 'xhrProgress');
+        _.bindAll(this, 'handleVisible', 'downloadProgress');
 
         this.on({
           'change:visible': this.handleVisible,
@@ -17,7 +17,7 @@ modulejs.define('Images', function () {
         this.attributes.cache = {};
       },
 
-      xhrProgress: function (e) {
+      downloadProgress: function (e) {
         this.set('percentLoaded', (e.loaded / (e.total || 150 * 1024)) * 100);
       },
 
@@ -35,25 +35,12 @@ modulejs.define('Images', function () {
             }
           } else {
             if (model.attributes.loader) {
-              model.attributes.loader.abort();
-              model.set('loader', null);
+              // aborting is handled by queue now
+              // model.attributes.loader.abort();
+              // model.set('loader', null);
             }
           }
         });
-      },
-
-      hardload: function (size) {
-        var sizes = ['thumb', 'half', 'screen', 'full'];
-        var url;
-        for (var i = sizes.indexOf(size); i < sizes.length; i++) {
-          url = this.attributes.urls[sizes[i]];
-          if (url)
-            break;
-        }
-
-        this.attributes.cache[size] = this.attributes.cache[size] || url;
-        this.set('url', this.attributes.cache[size]);
-        this.set('preloaded', this.attributes.cache[size]);
       },
 
       preloadImage: function (size) {
@@ -62,7 +49,7 @@ modulejs.define('Images', function () {
           if (this.attributes.loader.size == size) {
             return;
           } else {
-            this.attributes.loader.abort();
+            this.attributes.loader.cancel();
           }
         }
 
@@ -92,17 +79,13 @@ modulejs.define('Images', function () {
             break;
         }
 
-        this.set('loader', $.ajax({
-          dataType: 'native',
-          url: url,
-          xhrFields: {
-            responseType: 'blob',
-            onprogress: this.xhrProgress,
-          }
-        }));
+        this.set('loader', DownloadQueue.download(url));
+
 
         this.attributes.loader.size = size;
-        this.attributes.loader.then(function (response) {
+        this.attributes.loader
+        .progress(this.downloadProgress)
+        .then(function (response) {
           var reader = new FileReader;
           reader.readAsDataURL(response)
           reader.onload = function () {
