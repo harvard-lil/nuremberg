@@ -8,5 +8,5 @@ def show_mockups(request):
 
 def settings_variables(request):
     return {
-        'COMPRESS_ENABLED': settings.COMPRESS_ENABLED
+        # 'COMPRESS_ENABLED': settings.COMPRESS_ENABLED
     }
