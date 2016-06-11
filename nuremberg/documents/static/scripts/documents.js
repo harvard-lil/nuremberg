@@ -140,10 +140,10 @@ modulejs.define('documents', ['DocumentViewport', 'DocumentTools'], function (Do
           var image = images[i];
           if (image.attributes.cache['full']) {
             url = image.attributes.cache['full']
-            res = 300;
+            // res = 300;
           } else {
             url = image.attributes.cache['screen'];
-            res = 75;
+            // res = 75;
           }
           pdf.addPage(image.attributes.size.width / res, image.attributes.size.height / res);
           pdf.addImage(url, 'JPEG', 0, 0, image.attributes.size.width / res, image.attributes.size.height / res);
