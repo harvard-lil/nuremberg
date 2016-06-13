@@ -3,12 +3,6 @@ modulejs.define('documents', ['DocumentViewport', 'DocumentTools'], function (Do
   var toolbarView = new DocumentTools({el: $('.document-tools')});
   var overlayView = new DocumentTools({el: $('.document-tools-overlay')});
 
-  if (location.hash) {
-      var match = location.hash.match(/page-(\d)+/);
-      if (match)
-        viewportView.goToPage(match[1]);
-  }
-
   toolbarView.on('zoomIn', viewportView.zoomIn);
   toolbarView.on('zoomOut', viewportView.zoomOut);
   toolbarView.on('goToPage', viewportView.goToPage);
@@ -16,13 +10,18 @@ modulejs.define('documents', ['DocumentViewport', 'DocumentTools'], function (Do
   overlayView.on('setTool', viewportView.setTool);
   overlayView.on('toggleExpand', viewportView.toggleExpand);
 
-  viewportView.on('currentPage', toolbarView.setPage);
-
-
-  viewportView.on('currentPage', function () {
+  viewportView.on('currentPage', function (page) {
+    location.hash = '#page-' + page;
+    toolbarView.setPage(page);
     toolbarView.setPageDownload(viewportView.model.attributes.currentImage.attributes.urls.full || viewportView.model.attributes.currentImage.attributes.urls.screen,
     'HLSL Nuremberg Document #' + viewportView.model.attributes.id + ' page ' + viewportView.model.attributes.currentImage.attributes.page + '.jpg');
   });
+
+  if (location.hash) {
+    var match = location.hash.match(/page-(\d+)/);
+    if (match)
+    viewportView.goToPage(match[1]);
+  }
 
   $('.print-document').on('click', function () {
     $('.print-document').addClass('hide');

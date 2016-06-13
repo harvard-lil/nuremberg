@@ -20,7 +20,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     },
     initialize: function () {
       var view = this;
-      this.recalculateVisible = _.debounce(this.recalculateVisible, 100);
+      this.recalculateVisible = _.debounce(this.recalculateVisible, 50);
       _.bindAll(this, 'zoomIn', 'zoomOut', 'goToPage', 'render', 'setTool', 'smoothZoom', 'wheelZoom', 'pageZoom', 'toggleExpand', 'recalculateVisible');
 
       this.smoothZoom = _.throttle(this.smoothZoom, 25);
@@ -57,8 +57,13 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       this.model.on({
         'firstVisible': function (firstVisible) {
           this.attributes.firstVisible = firstVisible;
-          if (!this.attributes.currentImage || (this.attributes.currentImage.attributes.$el[0].offsetBottom > view.$el.scrollTop() + view.$el.height() || this.attributes.currentImage.attributes.$el[0].offsetTop  < view.$el.scrollTop()))
+          console.log('first visible', firstVisible.attributes.page)
+          if (!this.attributes.currentImage ||
+            this.attributes.currentImage.attributes.$el[0].offsetTop + this.attributes.currentImage.attributes.$el[0].offsetHeight > view.$el.scrollTop() + view.$el.height() ||
+            this.attributes.currentImage.attributes.$el[0].offsetTop  < view.$el.scrollTop()
+          ) {
             this.set('currentImage', firstVisible);
+          }
         },
         'change:currentImage': function () {
           var image = view.model.get('currentImage');
@@ -68,6 +73,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
           image.set('current', true);
           if (previous)
             previous.set('current', false);
+          console.log('current image', image.attributes.page)
 
           if (image !== view.model.attributes.firstVisible) {
             if (Modernizr.touchevents) {
@@ -137,15 +143,12 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         document.styleSheets[0].insertRule("body.document-viewer #document-viewport .document-image { width: 100% !important; height: auto !important; }", 0)
       ];
 
+      this.$el.on('scroll', this.recalculateVisible);
       $(window).on('resize', this.recalculateVisible);
       this.recalculateVisible();
     },
 
     el: '.viewport-content',
-
-    events: {
-      'scroll': 'recalculateVisible',
-    },
 
     recalculateVisible: function () {
       this.testVisible();
@@ -434,10 +437,10 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     zoomIn: function () {
       var scale = this.model.attributes.scale * this.model.attributes.viewScale;
       if (scale < 1) {
+        var firstVisible = this.model.attributes.firstVisible;
         scale = 1/(this.scaleRatio(scale) - 1);
-        this.zoomToPage({$el: this.model.attributes.firstVisible.attributes.$el}, scale);
+        this.zoomToPage(_.find(this.imageViews, function (view) {return view.model === firstVisible}), scale);
       } else {
-        scale /= 0.75;
         scale = 1.5 * this.model.attributes.viewScale;
         this.smoothZoom(scale, {x: this.$el.width()/2, y: this.$el.height()/2});
       }
@@ -445,8 +448,9 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     zoomOut: function () {
       var scale = this.model.attributes.scale * this.model.attributes.viewScale;
       if (scale <= 1) {
+        var firstVisible = this.model.attributes.firstVisible;
         scale = 1/Math.min(10, this.scaleRatio(scale) + 1);
-        this.zoomToPage({$el: this.model.attributes.firstVisible.attributes.$el}, scale);
+        this.zoomToPage(_.find(this.imageViews, function (view) {return view.model === firstVisible}), scale);
       } else {
         scale = 1/1.5 * this.model.attributes.viewScale;
         this.smoothZoom(scale, {x: this.$el.width()/2, y: this.$el.height()/2});
@@ -455,6 +459,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     goToPage: function (page) {
       var image = this.model.attributes.images.find(function (i) { return i.attributes.page == page; });
       if (image) {
+        this.model.attributes.firstVisible = null;
         this.model.set('currentImage', image);
       }
     },
@@ -547,7 +552,6 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       if (this.model.attributes.skipTest)
         return;
 
-
       DownloadQueue.resetPriority();
 
       var $parent = this.$el;
@@ -590,8 +594,21 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
           image.set('visible', false);
         }
       });
-      if (firstVisible)
-        this.trigger('firstVisible', firstVisible);
+      if (firstVisible !== null) {
+        var testPage = this.imageViews[firstVisible];
+        bounds.top += this.options.preloadRange;
+        bounds.bottom -= this.options.preloadRange;
+        var testBounds = {
+          top: testPage.el.offsetTop,
+        }
+        testBounds.bottom = testBounds.top = testBounds.top + testPage.el.offsetHeight / 2;
+        if (testBounds.top > bounds.bottom) {
+          firstVisible = Math.max(0, firstVisible - this.scaleRatio());
+        } else if (testBounds.bottom < bounds.top) {
+          firstVisible = Math.min(this.model.attributes.totalPages - 1, firstVisible + this.scaleRatio());
+        }
+        this.model.trigger('firstVisible', this.imageViews[firstVisible].model);
+      }
     },
   });
 

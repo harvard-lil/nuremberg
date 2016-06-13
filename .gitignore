@@ -1,6 +1,9 @@
 __pycache__
+!.gitkeep
+/screenshots/*
 /static
 .cache
 coverage
 debug.txt
+/*.log
 venv

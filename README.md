@@ -98,6 +98,15 @@ py.test
 
 Pytest is configured in `pytest.ini` to run all files named `tests.py`.
 
+There is also a Selenium/PhantomJS suite to test the behavior of the document viewer front-end. These tests take a while to run, don't produce coverage data, and are relatively unreliable, so they aren't run as part of the default suite. However they are still useful, as they exercise the full stack all the way through image downloading and preloading. They can be run explicitly when necessary:
+
+```bash
+py.test nuremberg/documents/browser_tests.py
+```
+
+The browser tests require PhantomJS to be installed (`npm install -g phantomjs`), and they generate screenshots in `/screenshots` to aid in debugging.
+
+
 #### Coverage
 
 Running the test suite will print a code coverage report to the terminal, as well as an interactive HTML report in `coverage/index.html`. Template code is included in the report. Coverage settings are configured in `.coveragerc`.
