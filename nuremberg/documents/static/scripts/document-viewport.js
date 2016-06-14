@@ -263,8 +263,12 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     },
 
     pinnedPageOrigin: function (page) {
-      if (!page)
-        return;
+      if (!page) {
+        return {
+          x: this.$viewport.scrollLeft(),
+          y: this.$viewport.scrollTop()
+        };
+      }
 
       return {
         x: page.$el[0].offsetLeft,
