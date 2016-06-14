@@ -10,6 +10,12 @@ DATABASES['default'] = {
   'HOST': 'localhost',
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 STATIC_PRECOMPILER_COMPILERS = (
     ('static_precompiler.compilers.LESS', {
       "executable": "lessc",

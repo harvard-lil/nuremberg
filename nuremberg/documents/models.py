@@ -15,7 +15,7 @@ class Document(models.Model):
     source = models.ForeignKey('DocumentSource', db_column='DocVersionID')
 
     def page_range(self):
-        return range(1, self.image_count)
+        return range(1, self.image_count + 1)
 
     def images_screen(self):
         return (image for image in self.images.all() if image.scale == DocumentImage.SCREEN)
@@ -89,6 +89,7 @@ class DocumentImage(models.Model):
         return "#{} Page {} {} {}x{}".format(self.document.id, self.page_number, self.scale, self.width, self.height)
 
     class Meta:
+        managed = False
         ordering = ['page_number']
 
 
