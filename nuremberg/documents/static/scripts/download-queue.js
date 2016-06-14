@@ -1,7 +1,11 @@
 modulejs.define('DownloadQueue', function () {
   // download queue
   // conceptually this is a stack of queues, reorderable as a doubly-linked list with two priority pointers
-  // queued proceeds lifo, for the backlog
+  //
+  // the document view sends a reset signal when the viewport changes to indicate that new
+  // images should supercede ones requested previously
+  //
+  // queued pointer proceeds lifo, for the backlog
   // front pointer proceeds fifo, for images queued at the same time
 
   var concurrency = 5;
@@ -173,7 +177,7 @@ modulejs.define('DownloadQueue', function () {
     },
 
     testInterrupt: function () {
-      // todo, interrupt active request if it's not very far along
+      // TODO: interrupt an active request, if it's not very far along, to make room for a fresh one
     }
   };
 

@@ -1,4 +1,6 @@
 modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
+  // the image view and model are encapsulate functionality specific to a single page,
+  // mainly pre-loading and rendering the appropriate URL when page visibliity changes
   var Images = {
     Model: Backbone.Model.extend({
       defaults: {
@@ -150,7 +152,6 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
         view.model.on('change:current', function () {
           view.$el.toggleClass('current', view.model.get('current'));
         });
-
 
         // queue up all thumbnails, if nothing else is going on
         this.model.preloadImage('thumb');

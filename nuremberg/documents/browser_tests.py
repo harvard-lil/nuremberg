@@ -104,6 +104,7 @@ def test_page_navigation(document, viewport, preloaded):
     sleep(0.1)
     document.save_screenshot('screenshots/tenth-page.png')
     int(document.execute_script("return arguments[0].scrollTop;", viewport)).should.be.within(offsetTop-25, offsetTop+25)
+    document.find_element_by_css_selector('.page-buttons .download-page').get_attribute('href').should.contain('00001010.jpg')
 
 
 def test_pdf_generation(document, preloaded):

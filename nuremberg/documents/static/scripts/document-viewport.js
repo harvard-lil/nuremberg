@@ -3,6 +3,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
   var ImageModel = Images.Model;
   var ImageCollection = Images.Collection;
 
+  // The view model is just a handy container to track changes to relevant view parameters.
+  // All document data is baked in to the HTML template
   var ViewModel = Backbone.Model.extend({
     defaults: {
       scale: 1,
@@ -14,50 +16,46 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     },
   });
 
+  // This view is the core of the document viewer functionality. It manages everything to do with
+  // scrolling, zooming, and navigating pages.
   var View = Backbone.View.extend({
     options: {
       preloadRange: 200,
     },
     initialize: function () {
       var view = this;
-      this.recalculateVisible = _.debounce(this.recalculateVisible, 50);
-      _.bindAll(this, 'zoomIn', 'zoomOut', 'goToPage', 'render', 'setTool', 'smoothZoom', 'wheelZoom', 'pageZoom', 'toggleExpand', 'recalculateVisible');
+      _.bindAll(this, 'zoomIn', 'zoomOut', 'goToPage', 'render', 'setTool', 'smoothZoom', 'wheelZoom', 'magnifyTool', 'toggleExpand', 'recalculateVisible');
 
+      // throttle heavy calls
+      this.recalculateVisible = _.debounce(this.recalculateVisible, 50);
       this.smoothZoom = _.throttle(this.smoothZoom, 25);
 
-
+      // scan all document images into the viewmodel
       var $imgs = this.$el.find('.document-image');
       this.model = new ViewModel({ images: (new ImageCollection).scan($imgs) });
-
       this.imageViews = _.map(_.zip(this.model.attributes.images.models, $imgs), function (image) {
         return new ImageView({ model: image[0], el: image[1] });
       });
 
+      // stash document data
       this.model.attributes.id = this.$el.data('document-id');
       this.model.attributes.totalPages = this.imageViews.length;
 
+      // set up convenience elements
+      this.$viewport = this.$el;
+      this.$layout = this.$el.find('.document-image-layout');
       this.pagePlaceholder = $('<div></div>').css({
         display: 'inline-block',
         width: 0,
-        height: '10px',
-      });
-      this.$el.find('.document-image-layout').prepend(this.pagePlaceholder);
+        height: '1px',
+      }).prependTo( this.$layout );
 
-      var $viewport = $('.viewport-content');
-      this.imageViews.forEach(function (imageView) {
-        imageView.on('zoom', function () {
-          if (view.model.attributes.scale == 1) {
-            view.zoomToPage(imageView, 1/4)
-          } else {
-            view.zoomToPage(imageView, 1);
-          }
-        });
-      });
-
+      // set up viewmodel events
       this.model.on({
         'firstVisible': function (firstVisible) {
+          // handle a new page scrolling into view
           this.attributes.firstVisible = firstVisible;
-          console.log('first visible', firstVisible.attributes.page)
+          // only change the current page if the old current page is now hidden
           if (!this.attributes.currentImage ||
             this.attributes.currentImage.attributes.$el[0].offsetTop + this.attributes.currentImage.attributes.$el[0].offsetHeight > view.$el.scrollTop() + view.$el.height() ||
             this.attributes.currentImage.attributes.$el[0].offsetTop  < view.$el.scrollTop()
@@ -66,6 +64,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
           }
         },
         'change:currentImage': function () {
+          // handle an update to the current image
           var image = view.model.get('currentImage');
           var previous = view.model.previous('currentImage');
           if (!image)
@@ -73,8 +72,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
           image.set('current', true);
           if (previous)
             previous.set('current', false);
-          console.log('current image', image.attributes.page)
 
+          // don't move to the current page if we already scrolled to it
           if (image !== view.model.attributes.firstVisible) {
             if (Modernizr.touchevents) {
               $(window).scrollTop(image.attributes.el.offsetTop);
@@ -86,9 +85,11 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
             }
           }
 
+          // broadcast the update
           view.trigger('currentPage', image.attributes.page);
         },
         'change:expand': function () {
+          // animate switching to and from the fixed full-screen viewport
           if (view.model.attributes.expand) {
             var rect = view.el.getBoundingClientRect();
             this.expandingCSS = {
@@ -105,7 +106,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
             view.$el.addClass('expanded');
             _.defer(function () {
               view.$el.removeAttr('style');
-              _.defer(view.recalculateVisible());
+              view.recalculateVisible();
             })
           } else {
             view.$el.css(this.expandingCSS);
@@ -113,24 +114,28 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
               view.$el.removeClass('expanded', view.model.attributes.expand);
               view.$el.removeAttr('style');
 
-              _.defer(view.recalculateVisible());
+              _.defer(view.recalculateVisible);
             }, 300);
           }
         },
         'change:tool': function () {
+          // bind events based on tool selection
+
+          // unbind all
           view.$el.removeClass('tool-magnify tool-scroll');
           view.$el.off('mousewheel', view.wheelZoom);
-          view.$el.off('click', view.pageZoom);
-          view.$el.off('contextmenu', view.pageZoom);
-          view.$el.off('dblclick', view.pageZoom);
+          view.$el.off('click', view.magnifyTool);
+          view.$el.off('contextmenu', view.magnifyTool);
+          view.$el.off('dblclick', view.magnifyTool);
+
           if (view.model.attributes.tool === 'magnify') {
             view.$el.addClass('tool-magnify');
             view.$el.on('mousewheel', view.wheelZoom);
-            view.$el.on('dblclick', view.pageZoom);
+            view.$el.on('dblclick', view.magnifyTool);
           } else {
             view.$el.addClass('tool-scroll');
-            view.$el.on('click', view.pageZoom);
-            view.$el.on('contextmenu', view.pageZoom);
+            view.$el.on('click', view.magnifyTool);
+            view.$el.on('contextmenu', view.magnifyTool);
           }
         }
       });
@@ -151,32 +156,36 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     el: '.viewport-content',
 
     recalculateVisible: function () {
+      // throttled function to test all pages for visibility
       this.testVisible();
     },
 
     setTool: function (tool) {
+      // used by tool buttons
       this.model.set('tool', tool);
     },
 
     toggleExpand: function (tool) {
+      // used to maximize viewport
       this.model.set('expand', !this.model.attributes.expand);
     },
 
     wheelZoom: function (e) {
+      // Event handler for the scroll-to-zoom tool.
       e.preventDefault();
       var scaleOrigin = {x: e.offsetX, y: e.offsetY};
       var scaleDelta = (1 + Math.min(1, Math.max(-1, e.deltaY)) * 0.1);
       var hoveredPage = $(e.target).closest('.document-image');
-      this.smoothZoom(this.model.attributes.viewScale * scaleDelta, scaleOrigin, hoveredPage);
+      this.smoothZoom(this.model.attributes.viewScale * scaleDelta, scaleOrigin);
     },
 
-    pageZoom: function (e) {
+    magnifyTool: function (e) {
+      // Event handler for the default scroll-to-scroll page-zoom tool.
       e.preventDefault();
-      var $viewport = $('.viewport-content');
 
       var scaleOrigin = {
-        x: e.pageX - $viewport.offset().left,
-        y: e.pageY - $viewport.offset().top
+        x: e.pageX - this.$viewport.offset().left,
+        y: e.pageY - this.$viewport.offset().top
       };
 
       var scale;
@@ -184,62 +193,71 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       var $page = $(e.target).closest('.document-image');
       var page = _.find(this.imageViews, function (imageView) { return imageView.el === $page[0]; });
       if (page) {
+        // select the chosen page
         this.model.attributes.firstVisible = page.model;
         this.model.set('currentImage', page.model);
       }
 
+      // this mode is used in smooth zoom mode to focus on a page. never zooms to page
       if (e.type == 'dblclick') {
         if (this.model.attributes.viewScale >= 1/this.model.attributes.scale) {
           scale = 1;
-          this.smoothZoom(scale, scaleOrigin, page);
+          this.smoothZoom(scale, scaleOrigin);
         } else {
           this.model.set('viewScale', 1/this.model.attributes.scale);
           this.viewScale(1/this.model.attributes.scale, true, {x: page.$el.position().left, y: page.$el.position().top});
         }
       } else {
-        if (e.which === 1) {
+        if (e.which === 1 && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+          // on left-click, view scale for 100% and page zoom under 100%
           if (this.model.attributes.scale == 1) {
             scale = 1.5 * this.model.attributes.viewScale;
-            this.smoothZoom(scale, scaleOrigin, page);
+            this.smoothZoom(scale, scaleOrigin);
           } else {
             scale = 1;
             this.zoomToPage(page, scale);
           }
-        } else if (e.which === 3) {
+        } else if (e.which === 3 || e.ctrlKey || e.metaKey || e.shiftKey) {
+          // on right-click, reset zoom if zoomed in on multiple columns,
+          // zoom out if zoomed in on one column, add more columns otherwise
           if (this.model.attributes.viewScale > 1) {
             if (this.model.attributes.scale < 1) {
               scale = 1;
-              this.smoothZoom(scale, scaleOrigin, page);
+              this.smoothZoom(scale, scaleOrigin);
             } else {
               scale = 1/1.5 * this.model.attributes.viewScale;
-              this.smoothZoom(scale, scaleOrigin, page);
+              this.smoothZoom(scale, scaleOrigin);
             }
           } else {
             scale = 1/(this.scaleRatio() + 1);
             this.zoomToPage(page, scale);
           }
-        } else {
-          return;
         }
       }
 
     },
 
-    smoothZoom: function (viewScale, scaleOrigin, pinnedPage) {
-      var $viewport = $('.viewport-content');
+    smoothZoom: function (viewScale, scaleOrigin) {
+      // This is the behavior of the scroll-to-zoom mode. It maintains the number of page columns,
+      // and smoothly zooms in and out.
 
+      // Cap view scale.
+      // TODO: fix this to be aware of any page scale applied
       this.model.set('viewScale', Math.min(10, Math.max(1, viewScale)));
 
       if (this.model.attributes.viewScale != this.model.previous('viewScale')) {
+        // Calculate the view scale origin necessary to maintain the perceived scale point at the mouse position
         scaleDelta = this.model.attributes.viewScale / this.model.previous('viewScale');
         this.currentOrigin = this.currentOrigin || {
-          x: $viewport.scrollLeft(),
-          y: $viewport.scrollTop()
+          x: this.$viewport.scrollLeft(),
+          y: this.$viewport.scrollTop()
         };
         var targetOrigin = {
           x: Math.max(0, this.currentOrigin.x + scaleOrigin.x - scaleOrigin.x / scaleDelta),
           y: Math.max(0, this.currentOrigin.y + scaleOrigin.y - scaleOrigin.y / scaleDelta),
         };
+
+        // animate the scale change
         this.viewScale(this.model.attributes.viewScale, true, targetOrigin);
       }
     },
@@ -255,7 +273,12 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     },
 
     zoomToPage: function (page, scale) {
-      var $viewport = $('.viewport-content');
+      // This is the behavior of the scroll-mode zoom, which keeps pages fit to the viewport width
+      // by adding columns. It works with or without a "target" page to center the zooming on.
+
+      // All animation happens in "view scale", which is complicated, but it stops pages from visibly
+      // bouncing around when the number of columns changes.
+
       var view = this;
 
       this.model.set('scale', scale);
@@ -263,31 +286,42 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
 
       if (scaleDelta < 1) {
         // zoom out
-        if (this.model.attributes.scale < 1/this.model.attributes.totalPages || $('.document-image-layout').height() <= $viewport[0].clientHeight) {
+
+        // Don't let pages become smaller than necessary to fit all in the viewport
+        if (this.model.attributes.scale < 1/this.model.attributes.totalPages || $('.document-image-layout').height() <= this.$viewport[0].clientHeight) {
           this.model.attributes.scale = this.model.previous('scale');
           return;
         }
 
         if (page) {
+          // Calculate the offset needed to keep the target page in the same perceived column,
+          // and apply that width to the placeholder element.
           var topOffset = Math.max(0, page.$el.position().top - this.$el.scrollTop());
           var oldLanes = this.scaleRatio(this.model.previous('scale'));
           var newLanes = this.scaleRatio();
           var pageIndex = parseInt(page.$el.data('page')) - 1;
           var oldLane = (pageIndex + (this.laneOffset || 0)) % oldLanes;
           var newLane = pageIndex % newLanes;
+
+          // The column is automatically justified to whichever column is closest, minimizing perceived movement.
           if (oldLane >= (newLanes-1)/2) {
             oldLane = newLanes - (newLanes - 1 - oldLane);
           }
+          // Only make the offset when necessary to avoid perceived movement.
           if (newLanes > 2 && this.model.attributes.totalPages > 3) {
             this.laneOffset = (oldLane - newLane + newLanes) % newLanes;
             this.pagePlaceholder.css({width: 100 * this.model.attributes.scale * this.laneOffset + '%'});
           }
         } else {
-          this.laneOffset = (oldLane - newLane + newLanes) % newLanes;
           this.pagePlaceholder.css({width: 0});
         }
+
+        // To zoom out:
+        // 1. adjust page scale to new number of lanes
         this.pageScale(this.model.attributes.scale);
+
         if (page) {
+          // If we have a page, attempt to keep its zoom consistent to the side of the viewport it is on
           var pageOrigin = view.pinnedPageOrigin(page);
           if (oldLane >= (newLanes-1)/2 || newLanes == 2 && newLane == 1) {
             pageOrigin.x = this.$el.width() - this.$el.width() * scaleDelta;
@@ -298,143 +332,137 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         } else {
           pageOrigin = {x: 0, y: 0};
         }
+
+        // 2. instantly anti-scale to remove the perceived page scale
         view.viewScale(1/scaleDelta, false, pageOrigin);
         _.defer(function () {
+          // 3. animate the view scale to visibly zoom out (next tick, to animate)
           view.viewScale(1, true, {x: 0, y: pageOrigin.y / scaleDelta});
         });
       } else if (scaleDelta > 1) {
-        // zoom in
+        // Zooming in is simpler since we always zoom straight to 100%:
+        // 1. animate the view scale in to 100%
         var pageOrigin = this.pinnedPageOrigin(page);
         this.viewScale(scaleDelta, true, pageOrigin);
         this.model.attributes.scaleOrigin = null;
         setTimeout(function () {
+          // reset other values for 1 column
           view.pagePlaceholder.css({width: '0%'});
           view.laneOffset = 0;
-          $viewport.scrollTop(0);
-          $viewport.scrollLeft(0);
+          view.$viewport.scrollTop(0);
+          view.$viewport.scrollLeft(0);
+          // 2. instantly remove the view scale
           view.viewScale(1, false, {x: 0, y: 0});
+          // 3. replace it with page scale of a single column
           view.pageScale(view.model.attributes.scale);
           if (page) {
-            $viewport.scrollTop(page.$el.position().top);
-            $viewport.scrollLeft(page.$el.position().left);
+            // 4. re-adjust scroll position to keep the zoomed page in view
+            view.$viewport.scrollTop(page.$el.position().top);
+            view.$viewport.scrollLeft(page.$el.position().left);
           }
         }, 300);
       }
 
+
       setTimeout(function () {
+        // At the end of a page zoom, we always have no view scaling.
+        // Recalculate visible pages after a delay.
         view.model.attributes.viewScale = 1;
-        view.model.attributes.skipTest = false;
         view.recalculateVisible();
       }, 300);
     },
+
     viewScale: function (scale, animate, scaleOrigin) {
+      // View scale is a uniform scaling factor applied to the entire page layout. It is the only
+      // animated scaling.
+
+      // TODO: Desynchronized transitions causes visible shaking while scaling. This could be fixed
+      // by pre-scaling width, then animating a CSS transform instead.
+
       var view = this;
       var scaleDelta = scale / (this.prevViewScale || 1);
       this.prevViewScale = scale;
-
-      var $viewport = $('.viewport-content');
       var duration = 300;
-      if (!scaleOrigin) {
-        if (scale >= 1) {
-          scaleOrigin = {
-            x: $viewport.scrollLeft(),
-            y: $viewport.scrollTop()
-          };
-        } else {
-          scaleOrigin = {
-            x: 0,
-            y: 0,
-          };
-        }
-      }
+
+      // scaleOrigin is the layout-space coordinates that will end up at the top-left of the viewport
+      // a proper scale origin might be nicer, but this interface is used by more callers
       var transformedOrigin = {
         x: scaleOrigin.x * scaleDelta,
         y: scaleOrigin.y * scaleDelta
       };
       if (animate) {
+        // to animate:
+        // 0. store the current origin so future smooth zooms don't interrupt this transition
         this.currentOrigin = transformedOrigin;
+
+        // 1. set the target scale and origin offset,
         $('.document-image-layout').css({
           width: 100 * scale + '%',
-          left: (- transformedOrigin.x + $viewport.scrollLeft()) + 'px',
-          top: (- transformedOrigin.y + $viewport.scrollTop()) + 'px',
-          // 'margin-bottom': Math.max(0, (transformedOrigin.y + $viewport[0].clientHeight * scaleDelta) - $('.document-image-layout').height()) + 'px',
+          left: (- transformedOrigin.x + this.$viewport.scrollLeft()) + 'px',
+          top: (- transformedOrigin.y + this.$viewport.scrollTop()) + 'px',
+          // add extra margin to avoid forced movement at the layout boundaries before scaling completes
           margin: '0 100% 100% 0',
           transition: animate ? 'width '+duration+'ms, height '+duration+'ms, left '+duration+'ms, top '+duration+'ms' : 'none',
         });
+
+        // only do one transition at a time
         if (this.zoomTimeout) {
           clearTimeout(this.zoomTimeout);
         }
+        // 2. wait for transition to complete
         this.zoomTimeout = setTimeout(function () {
+          // clear the current animation
           view.zoomTimeout = null;
           view.currentOrigin = null;
+
+          // reset the origin offset, and apply it as a scroll offset instead
           $('.document-image-layout').css({
             left: 0,
             top: 0,
             margin: 0,
-            'margin-bottom': Math.max(0, (transformedOrigin.y + $viewport[0].clientHeight) - $('.document-image-layout').height()) + 'px',
+            // add extra margin needed to avoid a jump when switching to scroll offset
+            'margin-bottom': Math.max(0, (transformedOrigin.y + view.$viewport[0].clientHeight) - $('.document-image-layout').height()) + 'px',
             transition: 'none',
-
           });
-          $viewport.scrollLeft(transformedOrigin.x);
-          $viewport.scrollTop(transformedOrigin.y);
+          view.$viewport.scrollLeft(transformedOrigin.x);
+          view.$viewport.scrollTop(transformedOrigin.y);
+
+          // recalculate visible pages with the new scroll coordinates
           view.recalculateVisible();
         }, duration);
       } else {
+        // if not animating, this is a call to pre-set the scale and origin for a future transition
         $('.document-image-layout').css({
           width: 100 * scale + '%',
-          left: (- transformedOrigin.x + $viewport.scrollLeft()) + 'px',
-          top: (- transformedOrigin.y + $viewport.scrollTop()) + 'px',
+          left: (- transformedOrigin.x + this.$viewport.scrollLeft()) + 'px',
+          top: (- transformedOrigin.y + this.$viewport.scrollTop()) + 'px',
           transition: 'none',
         });
       }
     },
     pageScale: function (scale) {
+      // Page scale controls the number of visible page columns, and is never animated.
       var $viewport = $('.viewport-content');
 
+      // apply individual scale as a CSS rule rather than to each page individually
       if (this.imageCSSRule) {
+        // TODO: font-size is not animated properly during view scaling...
         this.imageCSSRule.style.setProperty('font-size', 48 * scale + 'px', 'important');
         this.imageCSSRule.style.setProperty('line-height', 64 * scale + 'px', 'important');
         this.imageCSSRule.style.setProperty('height', 'auto', 'important');
         this.imageCSSRule.style.setProperty('width', 100 * scale + '%', 'important');
-        // this.imageCSSRule.style.setProperty('border-width', 25 * scale + 'px', 'important');
-
-        if (this.scaleRatio() != this.renderedScaleRatio) {
-          // this.layoutImages();
-          this.renderedScaleRatio = this.scaleRatio();
-        }
       }
     },
 
-    layoutImages: function () {
-      var view = this;
-      var top = 0, maxWidth = 0;
-      var lanes = this.scaleRatio();
-      var lane = 1, row = 1;
-      this.imageViews.forEach(function (imageView, n) {
-        var myLane = lane;
-        var myTop = top;
-        setTimeout(function () {
-          imageView.$el.css({
-            position: 'absolute',
-            left: 100/lanes * (myLane - 1) + '%',
-            top: myTop + 'px',
-          });
-        }, 50 * row);
-        lane += 1;
-        if (lane > lanes) {
-          row += 1;
-          lane = 1;
-          top += imageView.model.attributes.size.height * view.model.attributes.scale + 10;
-        }
-        maxWidth = Math.max(maxWidth, imageView.model.attributes.size.width);
-      });
-    },
-
     scaleRatio: function (scale) {
+      // return the current or provided scale as a number of visible columns
       scale = scale || this.model.attributes.scale;
       return Math.min(10, Math.max(1, Math.floor(1/scale)));
     },
+
     zoomIn: function () {
+      // behavior of the "zoom in" button
+      // Page zoom over 100%, smooth zoom under 100%
       var scale = this.model.attributes.scale * this.model.attributes.viewScale;
       if (scale < 1) {
         var firstVisible = this.model.attributes.firstVisible;
@@ -445,7 +473,10 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         this.smoothZoom(scale, {x: this.$el.width()/2, y: this.$el.height()/2});
       }
     },
+
     zoomOut: function () {
+      // behavior of the "zoom out" button
+      // Page zoom over 100%, smooth zoom under 100%
       var scale = this.model.attributes.scale * this.model.attributes.viewScale;
       if (scale <= 1) {
         var firstVisible = this.model.attributes.firstVisible;
@@ -456,7 +487,9 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         this.smoothZoom(scale, {x: this.$el.width()/2, y: this.$el.height()/2});
       }
     },
+
     goToPage: function (page) {
+      // bring the provided page number into view, used by page selection tools
       var image = this.model.attributes.images.find(function (i) { return i.attributes.page == page; });
       if (image) {
         this.model.attributes.firstVisible = null;
@@ -464,15 +497,10 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       }
     },
 
-    hardloadAll: function (size) {
-      var view = this;
-      size = size || 'screen';
-      this.model.attributes.images.each(function (image) {
-        image.hardload(size);
-      });
-    },
-
     preloadRange: function (fromPage, toPage) {
+      // force preloading of the specified page numbers, and return a promise providing load progress
+      // used by PDF generation
+
       var view = this;
       var size = size || 'screen';
       var promise = $.Deferred()
@@ -500,14 +528,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       return promise;
     },
 
-    zoomToFit: function () {
-      this.pageScale(1);
-    },
-
-
-
     findVisible: function (first, last, bounds) {
-      // binary search to find any visible page
+      // binary search to find any visible page, minimizes dom reads
       if (first > last)
         return null;
 
@@ -548,10 +570,9 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
     },
 
     testVisible: function () {
-      var model = this.model;
-      if (this.model.attributes.skipTest)
-        return;
+      // Scan all image views, marking which ones are currently visible in the viewport for preloading
 
+      var model = this.model;
       DownloadQueue.resetPriority();
 
       var $parent = this.$el;
@@ -559,6 +580,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         $parent = $(window);
       }
 
+      // cache viewport bounds
       var bounds = {
         top: $parent.scrollTop(),
         left: $parent.scrollLeft()
@@ -566,26 +588,33 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       bounds.right = bounds.left + $parent.width();
       bounds.bottom = bounds.top + $parent.height();
 
+      // to preload pages within a certain distance of visible
       bounds.top -= this.options.preloadRange;
       bounds.bottom += this.options.preloadRange;
 
+      // find any visible page
+      // TODO: It might save time to start looking in the currently visible page, or to do
+      // a second binary search for the viewable edges
       var visibleIndex = this.findVisible(0, this.imageViews.length - 1, bounds);
 
       var firstVisible = visibleIndex, lastVisible = visibleIndex;
 
+      // look back for the first visible page
       for (var i = visibleIndex - 1; i >= 0; i--) {
         if (!this.isVisible(i, bounds))
           break;
         firstVisible = i;
       }
+
+      // look forward for the last visible page
       for (var i = visibleIndex + 1; i < this.model.attributes.totalPages; i++) {
         if (!this.isVisible(i, bounds))
           break;
         lastVisible = i;
       }
 
-      var model = this.model;
-
+      // after finding the visible range, set all models visible in a batch to separate from the
+      // DOM reads
       this.model.attributes.images.each(function (image, n) {
         if (n >= firstVisible && n <= lastVisible) {
           image.set('scale', model.attributes.scale * model.attributes.viewScale);
@@ -594,7 +623,9 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
           image.set('visible', false);
         }
       });
+
       if (firstVisible !== null) {
+        // test to find the first page that is truly visible, not in preload range
         var testPage = this.imageViews[firstVisible];
         bounds.top += this.options.preloadRange;
         bounds.bottom -= this.options.preloadRange;
