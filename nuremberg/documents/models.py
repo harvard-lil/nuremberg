@@ -1,5 +1,7 @@
+from django.utils.text import slugify
 from django.db import models
 import datetime
+import re
 
 IMAGE_URL_ROOT="http://nuremberg.law.harvard.edu/imagedir/HLSL_NMT01"
 
@@ -27,7 +29,11 @@ class Document(models.Model):
 
     def slug(self):
         # Try to extract the "genre term" from the descriptive title
-        return self.title.split(' ')[0]
+        words = self.title.split(' ')
+        n = 4
+        while n < len(words) and words[n-1] in ('a', 'an', 'the', 'in', 'of', 'to', 'at', 'on', 'and', 'for'):
+            n += 1
+        return slugify(' '.join(words[:n]))
 
     class Meta:
         managed = False
@@ -139,6 +145,8 @@ class DocumentDate(models.Model):
     year = models.IntegerField(db_column='DocYear')
 
     def as_date(self):
+        if not (self.year and self.month and self.day):
+            return None
         if self.year == 0 or self.month == 13 or self.day >= 32:
             return None
         if self.month == 2 and self.day == 29 and (self.year % 4) != 0:
@@ -159,7 +167,10 @@ class DocumentPersonalAuthor(models.Model):
     documents = models.ManyToManyField(Document, related_name='personal_authors', through='DocumentsToPersonalAuthors', through_fields=('author', 'document'))
 
     def full_name(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        if self.first_name and self.last_name:
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name or self.last_name or 'Unknown'
 
     class Meta:
         managed = False
@@ -207,7 +218,10 @@ class DocumentDefendant(models.Model):
     documents = models.ManyToManyField(Document, related_name='defendants', through='DocumentsToDefendants', through_fields=('defendant', 'document'))
 
     def full_name(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        if self.first_name and self.last_name:
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name or self.last_name or 'Unknown'
 
     class Meta:
         managed = False
@@ -229,7 +243,7 @@ class DocumentCase(models.Model):
     name = models.CharField(max_length=100, db_column='Case_temp')
 
     @property
-    def short_name(self):
+    def tag_name(self):
         # cheating for now
         if self.id == 1:
             return 'IMT'
@@ -237,6 +251,9 @@ class DocumentCase(models.Model):
             return 'Other'
         else:
             return 'NMT {}'.format(self.id-1)
+
+    def short_name(self):
+        return self.name.split(' -')[0].replace('.', ':').replace(' 0', ' ')
 
     documents = models.ManyToManyField(Document, related_name='cases', through='DocumentsToCases', through_fields=('case', 'document'))
 

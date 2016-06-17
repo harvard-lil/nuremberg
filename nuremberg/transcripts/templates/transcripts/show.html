@@ -1,8 +1,10 @@
-{% extends "documents/show.html" %}
+{% extends "documents/base.html" %}
 
-{% block title %} Transcript Viewer - {{document.title}} {% endblock %}
+{% block title %} Transcript Viewer - {{transcript.title}} {% endblock %}
 
 {% block body_class %}transcript-viewer{% endblock %}
+t
+{% block javascript_module %}transcripts{% endblock %}
 
 {% block document_controls %}
   <div class="zoom-buttons pull-left">
@@ -13,6 +15,7 @@
     </select>
   </div>
 {% endblock %}
+{% block tools_overlay %}{% endblock %}
 
 {% block page_selection %}
   <label>
@@ -23,10 +26,29 @@
 
 {% block viewport %}
   <div class="transcript-text">
-    {{ document.text|safe }}
+    {{ pages.joined_text|safe }}
   </div>
 {% endblock %}
 
-{% block document_details %}
-
+{% block document_info %}
+<div class="material-icon small material-documents"></div>
+<p class="trial-flags">
+    <span class="trial-flag trial-{{transcript.case.tag_name|slugify}}">{{transcript.case.tag_name}}</span>
+  &nbsp;
+</p>
+<div class="print-controls">
+  <div>
+    <button class="download-pdf">PDF</button>
+    <div class="download-options hide">
+      Page
+      <input type="number" class="page-range" name="from-page" min="1" max="{{document.image_count}}"/>
+      to
+      <input type="number" class="page-range" name="to-page" min="1" max="{{document.image_count}}"/>
+      <a class="do-download">Save PDF</a>
+    </div>
+    <div class="pdf-loading hide">Downloading images for PDF... <span class="progress"></span></div>
+  </div>
+</div>
+<h3>{{transcript.title}}</h3>
+<h5>{{transcript.description}}</h5>
 {% endblock %}

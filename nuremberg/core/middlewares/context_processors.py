@@ -7,6 +7,9 @@ def show_mockups(request):
         return {'show_mockup': False}
 
 def settings_variables(request):
-    return {
-        # 'COMPRESS_ENABLED': settings.COMPRESS_ENABLED
-    }
+    if not settings.COMPRESS_ENABLED:
+        return {
+            'COMPRESS_ENABLED': settings.COMPRESS_ENABLED
+        }
+    else:
+        return {}

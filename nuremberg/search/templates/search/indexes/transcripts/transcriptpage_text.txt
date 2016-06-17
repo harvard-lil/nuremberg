@@ -1,0 +1,12 @@
+{{ object.text|safe }}
+
+{# this is a sentinel value used to hide these terms from highlighting snippets #}
+<end of text>
+
+{{ object.transcript.case.short_name }}
+Page {{ object.page_label }}
+{% if object.date %}
+  {{object.date|date:'d F Y'}}
+{% else %}
+  Date Unknown
+{% endif %}

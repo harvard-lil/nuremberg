@@ -29,6 +29,7 @@ To run the app in a development environment, you'll need:
 - Python 3.5
 - Python dependencies
 - MySQL
+- Solr 4
 
 #### Python
 
@@ -72,6 +73,22 @@ Again, if you want to run the test suite, you should do the same for the test da
 mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test_nuremberg_dev"
 mysql -uroot -e "GRANT ALL ON test_nuremberg_dev.* TO nuremberg"
 mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
+```
+
+#### Solr
+
+Solr is needed for the Haystack search engine to run. The app is developed against Solr 4.10.4 -- Solr 5, the latest version, is incompatible with Haystack. Make sure it's installed and configured in the appropriate `settings/` file.
+
+If you make changes to `search_indexes.py`, you will need to update the Solr schema by running:
+
+```bash
+manage.py build_solr_schema --filename=/location/of/solr/schema.xml
+```
+
+You will then need to update the `schema.xml` file in the production Solr instance. Then update the index itself:
+
+```bash
+manage.py rebuild_search_index
 ```
 
 #### Run the server

@@ -1,4 +1,5 @@
 {% extends "transcripts/show.html" %}
+{% load search_url %}
 
 {% block title %} Search in Transcript - {{document.title}} {% endblock %}
 
@@ -6,16 +7,21 @@
 
 {% block viewport %}
   <div class="search-results">
-    {% for result in results %}
+    {% for result in page_obj.object_list %}
       <div class="result-row">
-        <a class="teaser" href="{% url 'transcripts:show' document.id %}">Page {{result.page}} </a>
-        <div class="occurrence-count">{{result.count}} occurences</div>
-        <p>
-          {{ result.text|safe }}
-        </p>
+        <a class="teaser" href="{% url 'transcripts:show' transcript_id=result.transcript_id slug=result.slug %}?seq={{ result.seq_number }}">Page {{result.seq_number}} </a>
+        <div class="occurrence-count">{{ result.highlighted.text|length }} occurences</div>
+          <p>
+            <span class="ellipsis">[ ... ]</span>
+            {% for snippet in result.highlighted.text|slice:":2" %}
+              {{ snippet|trim_snippet }}
+              <span class="ellipsis">[ ... ]</span>
+            {% endfor %}
+          </p>
       </div>
     {% empty %}
       No results found.
     {% endfor %}
   </div>
+  {% include 'search/pagination.html' %}
 {% endblock %}

@@ -12,15 +12,23 @@
     display: block;
     margin: 10px 0 0;
   }
-  strong {
+  .speaker {
     .sans-serif(bold, 18px, 30px);
+  }
+  .heading {
+    .sans-serif(@medium, 20px, 35px);
+  }
+  .subheading {
+    .serif-text(normal, 18px, 35px);
+    font-style: italic;
   }
 }
 
 .page-handle {
   .sans-serif(@light, 11px, 11px);
 
-  width: 100px;
+  // width: 100px;
+  margin-left: 20px;
   float: right;
 
   color: @dark-gray;
@@ -28,6 +36,6 @@
   text-align: right;
 }
 .page-number {
-  padding: 7px 0 6px 7px;
+  padding: 7px 7px 6px;
   border-left: 3px dotted @light-gray;
 }

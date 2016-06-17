@@ -16,12 +16,12 @@
   {% block document_tools %}
     {% if query %}
       <div class="document-tools">
-        <form class="document-search-inline" action='{% url 'transcripts:search' document.id %}' method='GET'>
+        <form class="document-search-inline" method='GET'>
           {% include 'search/search-bar.html' %}
-          {% if results %}
-            <label><strong>{{results|length}}</strong> results in this transcript</label>
-            <a>Order by Page</a>
-            <a class="active">Order by Relevance</a>
+          {% if page_obj %}
+            <label><strong>{{ paginator.count }}</strong> pages with results</label>
+            <a href="{% sort_results 'page' %}" {% if form.sort_results == 'page' %}class="active"{% endif %}>Order by Page</a>
+            <a href="{% sort_results 'relevance' %}" {% if form.sort_results == 'relevance' %}class="active"{% endif %}>Order by Relevance</a>
           {% endif %}
         </form>
         <div class="return-link">
@@ -73,7 +73,7 @@
       <div class="material-icon small material-documents"></div>
       <p class="trial-flags">
         {% for case in document.cases.all %}
-          <span class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</span>
+          <span class="trial-flag trial-{{case.tag_name|slugify}}">{{case.tag_name}}</span>
         {% endfor %}
         &nbsp;
       </p>
@@ -184,13 +184,15 @@
           </div>
         {% endblock %}
       </div>
-      <div class="document-tools-overlay">
-        <div class="tool-buttons">
-          <button class="magnify">magnify</button>
-          <button class="scroll">scroll</button>
-          <button class="expand">expand</button>
+      {% block tools_overlay %}
+        <div class="document-tools-overlay">
+          <div class="tool-buttons">
+            <button class="magnify">magnify</button>
+            <button class="scroll">scroll</button>
+            <button class="expand">expand</button>
+          </div>
         </div>
-      </div>
+      {% endblock %}
     </div>
   </div>
 </section>
