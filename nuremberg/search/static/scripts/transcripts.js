@@ -99,7 +99,7 @@ modulejs.define('transcript-viewer', function () {
       return;
     loading = true;
     $.get({
-      url: '',
+      url: location.pathname,
       data: {
         from_seq: toSeq,
         to_seq: Math.min(totalPages, toSeq + batchSize),
@@ -124,7 +124,7 @@ modulejs.define('transcript-viewer', function () {
     return;
     loading = true;
     $.get({
-      url: '',
+      url: location.pathname,
       data: {
         from_seq: Math.max(1, fromSeq - batchSize),
         to_seq: fromSeq,
@@ -150,7 +150,7 @@ modulejs.define('transcript-viewer', function () {
     loading = true;
     $text.empty();
     $.get({
-      url: '',
+      url: location.pathname,
       data: options
     })
     .then(function (data) {
