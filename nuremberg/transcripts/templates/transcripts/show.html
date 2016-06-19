@@ -1,32 +1,69 @@
-{% extends "documents/show.html" %}
+{% extends "documents/base.html" %}
 
-{% block title %} Transcript Viewer - {{document.title}} {% endblock %}
+{% block title %} Transcript Viewer - {{transcript.title}} {% endblock %}
 
 {% block body_class %}transcript-viewer{% endblock %}
+t
+{% block javascript_module %}transcript-viewer{% endblock %}
 
 {% block document_controls %}
   <div class="zoom-buttons pull-left">
     <select class="select-date">
-      <option>21 November 1946</option>
-      <option>5 December 1946</option>
-      <option>9 December 1946</option>
+      {% for date in dates %}
+        <option value="{{ date|date:'Y-m-d' }}" {% if date == current_page.date %}selected{% endif %}>{{ date|date:'d F Y' }}</option>
+      {% endfor %}
     </select>
   </div>
 {% endblock %}
+{% block tools_overlay %}{% endblock %}
 
 {% block page_selection %}
-  <label>
-    Go to page:
-    <input type="text" />
-  </label>
+  <form class="go-to-page">
+    <input type="hidden" name="seq" value="{{ seq }}"
+    <label>
+      Go to page:
+      <input type="number" name="page" value="{{ current_page.page_number|default:"" }}"/>
+    </label>
+  </form>
 {% endblock %}
 
 {% block viewport %}
-  <div class="transcript-text">
-    {{ document.text|safe }}
+  <div class="transcript-controls above">
+    <noscript>
+      <a href="?seq={{ seq|add:"-10" }}">Read more before this</a>
+    </noscript>
+    <div class="end-indicator"> Loading... </div>
+  </div>
+  <div class="transcript-text" data-total-pages="{{ total_pages }}" data-seq="{{ seq }}" data-from-seq="{{ joiner.from_seq }}" data-to-seq="{{ joiner.to_seq }}">
+    {{ joiner.html|safe }}
+  </div>
+  <div class="transcript-controls below">
+    <noscript>
+      <a href="?seq={{ seq|add:"10" }}">Read more after this</a>
+    </noscript>
+    <div class="end-indicator"> Loading... </div>
   </div>
 {% endblock %}
 
-{% block document_details %}
-
+{% block document_info %}
+<div class="material-icon small material-documents"></div>
+<p class="trial-flags">
+    <span class="trial-flag trial-{{transcript.case.tag_name|slugify}}">{{transcript.case.tag_name}}</span>
+  &nbsp;
+</p>
+<div class="print-controls">
+  <div>
+    <button class="download-pdf">PDF</button>
+    <div class="download-options hide">
+      Page
+      <input type="number" class="page-range" name="from-page" min="1" max="{{document.image_count}}"/>
+      to
+      <input type="number" class="page-range" name="to-page" min="1" max="{{document.image_count}}"/>
+      <a class="do-download">Save PDF</a>
+    </div>
+    <div class="pdf-loading hide">Downloading images for PDF... <span class="progress"></span></div>
+  </div>
+</div>
+<h3>{{transcript.title}}</h3>
+<h5>{{transcript.description}}</h5>
 {% endblock %}

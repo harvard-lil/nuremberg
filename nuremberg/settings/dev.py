@@ -10,6 +10,14 @@ DATABASES['default'] = {
   'HOST': 'localhost',
 }
 
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'ENGINE': 'nuremberg.search.lib.solr_grouping_backend.GroupedSolrEngine',
+        'URL': 'http://127.0.0.1:8983/solr/nuremberg_dev'
+    },
+}
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',

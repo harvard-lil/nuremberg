@@ -1,5 +1,7 @@
+from django.utils.text import slugify
 from django.db import models
 import datetime
+import re
 
 IMAGE_URL_ROOT="http://nuremberg.law.harvard.edu/imagedir/HLSL_NMT01"
 
@@ -27,7 +29,11 @@ class Document(models.Model):
 
     def slug(self):
         # Try to extract the "genre term" from the descriptive title
-        return self.title.split(' ')[0]
+        words = self.title.split(' ')
+        n = 4
+        while n < len(words) and words[n-1] in ('a', 'an', 'the', 'in', 'of', 'to', 'at', 'on', 'and', 'for'):
+            n += 1
+        return slugify(' '.join(words[:n]))
 
     class Meta:
         managed = False
@@ -139,6 +145,8 @@ class DocumentDate(models.Model):
     year = models.IntegerField(db_column='DocYear')
 
     def as_date(self):
+        if not (self.year and self.month and self.day):
+            return None
         if self.year == 0 or self.month == 13 or self.day >= 32:
             return None
         if self.month == 2 and self.day == 29 and (self.year % 4) != 0:
@@ -159,7 +167,10 @@ class DocumentPersonalAuthor(models.Model):
     documents = models.ManyToManyField(Document, related_name='personal_authors', through='DocumentsToPersonalAuthors', through_fields=('author', 'document'))
 
     def full_name(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        if self.first_name and self.last_name:
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name or self.last_name or 'Unknown'
 
     class Meta:
         managed = False
@@ -207,7 +218,10 @@ class DocumentDefendant(models.Model):
     documents = models.ManyToManyField(Document, related_name='defendants', through='DocumentsToDefendants', through_fields=('defendant', 'document'))
 
     def full_name(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        if self.first_name and self.last_name:
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name or self.last_name or 'Unknown'
 
     class Meta:
         managed = False
@@ -229,7 +243,7 @@ class DocumentCase(models.Model):
     name = models.CharField(max_length=100, db_column='Case_temp')
 
     @property
-    def short_name(self):
+    def tag_name(self):
         # cheating for now
         if self.id == 1:
             return 'IMT'
@@ -237,6 +251,9 @@ class DocumentCase(models.Model):
             return 'Other'
         else:
             return 'NMT {}'.format(self.id-1)
+
+    def short_name(self):
+        return self.name.split(' -')[0].replace('.', ':').replace(' 0', ' ')
 
     documents = models.ManyToManyField(Document, related_name='cases', through='DocumentsToCases', through_fields=('case', 'document'))
 
@@ -277,3 +294,53 @@ class DocumentsToActivities(models.Model):
     class Meta:
         managed = False
         db_table = 'tblActivitiesList'
+
+
+class DocumentEvidencePrefix(models.Model):
+    id = models.AutoField(db_column='NMTCodeID', primary_key=True)  # Field name made lowercase.
+    code = models.CharField(db_column='NMTCode', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tblNMTCodes'
+
+
+class DocumentEvidenceCode(models.Model):
+    id = models.AutoField(db_column='NMTListID', primary_key=True)  # Field name made lowercase.
+    prefix = models.ForeignKey(DocumentEvidencePrefix, db_column='NMTListCodeID')  # Field name made lowercase.
+    document = models.ForeignKey(Document, related_name='evidence_codes', db_column='DocID')
+    number = models.IntegerField(db_column='NMTNo', blank=True, null=True)  # Field name made lowercase.
+    suffix = models.CharField(db_column='NMTNoText', max_length=25, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tblNMTList'
+
+class DocumentExhibitCode(models.Model):
+    id = models.AutoField(db_column='CasesListID', primary_key=True)  # Field name made lowercase.
+    document = models.ForeignKey(Document, related_name='exhibit_codes', db_column='DocID')
+
+    case = models.ForeignKey(DocumentCase, db_column='DocCaseID')
+    prosecution_number = models.IntegerField(db_column='ProsExhNo', blank=True, null=True)  # Field name made lowercase.
+    prosecution_suffix = models.CharField(db_column='ProsExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    prosecution_doc_book_number = models.IntegerField(db_column='ProsDocBkNo', blank=True, null=True)  # Field name made lowercase.
+    prosecution_doc_book_suffix = models.CharField(db_column='ProsDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    defense_name_id = models.IntegerField(db_column='DefExhNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_name = models.CharField(db_column='DefExhName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    defense_number = models.IntegerField(db_column='DefExhNo', blank=True, null=True)  # Field name made lowercase.
+    defense_suffix = models.CharField(db_column='DefExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    defense_doc_name_id = models.IntegerField(db_column='DefDocNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_name = models.CharField(db_column='DefDocName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+
+    defense_doc_number = models.IntegerField(db_column='DefDocNo', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_suffix = models.CharField(db_column='DefDocNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_name_id = models.IntegerField(db_column='DefDocBkNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_name = models.CharField(db_column='DefDocBkName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_number = models.IntegerField(db_column='DefDocBkNo', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_suffix = models.CharField(db_column='DefDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tblCasesList'

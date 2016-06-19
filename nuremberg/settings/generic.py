@@ -35,17 +35,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'static_precompiler',
-    'compressor',
-
     'nuremberg',
     'nuremberg.core',
     'nuremberg.content',
     'nuremberg.documents',
     'nuremberg.transcripts',
     'nuremberg.search',
+    'compressor',
 
+    'haystack',
     'httpproxy',
+    'static_precompiler',
 ]
 
 MIDDLEWARE_CLASSES = [

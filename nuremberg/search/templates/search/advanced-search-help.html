@@ -1,0 +1,68 @@
+{% load search_url %}
+
+<div class="advanced-search-help hide">
+  <h4>Advanced Search Terms
+  <a class="hide-advanced-search">Hide</a>
+  </h4>
+  <p>
+    Most advanced queries can be made naturally. For example, to find English-language documents about
+    Erhard Milch relating to treatment of workers in 1944, search for:
+  </p>
+  <p>
+    <span class="example-search">workers Erhard Milch english 1944</span>
+    <a href="{% search_url 'workers Milch english 1944' %}">Search</a>
+  </p>
+  <p>
+    By default, documents that contain all keywords in any field are
+    found. Our data can sometimes be incomplete, so you should usually try a more general
+    search first. The filtering options shown on the left will let you narrow down the results.
+  </p>
+  <p>
+    However, you can also define specific fields to use for keyword search.
+    For example, to restrict your search to documents written by Milch, search for:
+  </p>
+  <p>
+    <span class="example-search">workers english 1944 author:Erhard Milch</span>
+    <a href="{% search_url 'workers english 1944 author:Milch' %}">Search</a>
+  </p>
+  <p>
+    Or to include documents used in Milch's prosecution, but written by someone else, you can exclude a field using the minus sign:
+  </p>
+  <p>
+    <span class="example-search">workers english 1944 defendant:milch -author:milch</span>
+    <a href="{% search_url 'workers english 1944 defendant:milch -author:milch' %}">Search</a>
+  <p>
+    You can search for any number of exact phrase matches in or out of a field
+    by quoting the phrase to be searched, such as:
+  </p>
+  <p>
+    <span class="example-search">"international law"</span>
+    <a href="{% search_url '"international law"' %}">Search</a>
+  <p>
+    Field search can include several keywords. If you want to search across all fields after adding a fielded search, you can use the special "all" field, so these are equivalent:
+  </p>
+  <p>
+    <span class="example-search">"international law" trial:NMT 4</span>
+    <a href="{% search_url '"international law" trial:NMT 4' %}">Search</a>
+  </p>
+  <p>
+    <span class="example-search">trial:NMT 4 all:"international law"</span>
+    <a href="{% search_url 'trial:NMT 4 all:"international law"' %}">Search</a>
+  </p>
+  <p>
+    For many fields, we have incomplete data, and you can specify only documents without a field
+    using the special keyword "unknown" or "none":
+  </p>
+  <p>
+    <span class="example-search">workers date:unknown</span>
+    <a href="{% search_url 'workers date:unknown' %}">Search</a>
+  </p>
+  <p>
+    <span class="example-search">instructions trial:none</span>
+    <a href="{% search_url 'instructions trial:none' %}">Search</a>
+  </p>
+  <p>
+    You can search within any field listed in the filters to the left. Valid field names are:
+    type, trial, author, defendant, date, language, source
+</div>
+</div>

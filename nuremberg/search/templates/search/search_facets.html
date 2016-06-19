@@ -1,0 +1,55 @@
+{% load search_url %}
+
+{% for facet in labeled_facets %}
+  {% if facet.label == 'Date' %}
+    <nav class="facet">
+      <h5>Date</h5>
+      <div class="collapse">Hide</div>
+      {% for value in facet.counts %}
+        <p class="{% if forloop.counter > 5 %}hide{% endif %}">
+          {{value.0|default:"Unknown"}}
+          <a href="{% add_facet facet.field value.0 %}"> ({{value.1}}) </a>
+        </p>
+      {% empty %}
+        <p> No data </p>
+      {% endfor %}
+      {% if facet.counts|length > 5 %}
+        <p>
+          <a class="show-all">{{facet.counts|length|add:"-5"}} more</a>
+        </p>
+      {% endif %}
+      <p> Range: </p>
+      <form class="date-filter-form">
+        <p class="date-filter">
+            <input type="number" name="year_min" value="{{ form.date_range.0|default:"1923" }}"/>
+            to
+            <input type="number" name="year_max" value="{{ form.date_range.1|default:"1940" }}" />
+            <button class="go-button">Filter</button>
+        </p>
+    </form>
+      <div class="date-slider">
+        <div class="ui-slider"></div>
+        <div class="start-year">1898</div>
+        <div class="end-year">1948</div>
+      </div>
+    </nav>
+  {% else %}
+    <nav class="facet">
+      <h5>{{facet.label}}</h5>
+      <div class="collapse">Hide</div>
+      {% for value in facet.counts %}
+        <p class="{% if forloop.counter > 5 %}hide{% endif %}">
+          {{value.0|default:"Unknown"}}
+          <a href="{% add_facet facet.field value.0 %}"> ({{value.1}}) </a>
+        </p>
+      {% empty %}
+        <p> No data </p>
+      {% endfor %}
+      {% if facet.counts|length > 5 %}
+        <p>
+          <a class="show-all">{{facet.counts|length|add:"-5"}} more</a>
+        </p>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% endfor %}

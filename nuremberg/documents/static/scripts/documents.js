@@ -11,14 +11,23 @@ modulejs.define('documents', ['DocumentViewport', 'DocumentTools', 'DownloadPDF'
   overlayView.on('toggleExpand', viewportView.toggleExpand);
 
   viewportView.on('currentPage', function (page) {
-    location.hash = '#page-' + page;
+    if (page == 1) {
+      var pageHash = '#p.1';
+    } else {
+      pageHash = '#p.' + page;
+    }
+    if (history) {
+      history.replaceState(undefined, undefined, pageHash);
+    } else {
+      location.hash = pageHash;
+    }
     toolbarView.setPage(page);
     toolbarView.setPageDownload(viewportView.model.attributes.currentImage.attributes.urls.full || viewportView.model.attributes.currentImage.attributes.urls.screen,
     'HLSL Nuremberg Document #' + viewportView.model.attributes.id + ' page ' + viewportView.model.attributes.currentImage.attributes.page + '.jpg');
   });
 
   if (location.hash) {
-    var match = location.hash.match(/page-(\d+)/);
+    var match = location.hash.match(/p\.(\d+)/);
     if (match)
     viewportView.goToPage(match[1]);
   }
