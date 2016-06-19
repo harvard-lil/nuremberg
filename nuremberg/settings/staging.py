@@ -16,7 +16,7 @@ del DATABASES['default']['OPTIONS']['reconnect'] # not supported by mysqlclient 
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'nuremberg.search.lib.solr_grouping_backend.GroupedSolrEngine',
-        'URL': os.environ.get('WEBSOLR_URL', ''),
+        'URL': os.environ.get('OPENSOLR_URL', ''),
     },
 }
 
