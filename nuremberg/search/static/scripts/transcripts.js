@@ -87,15 +87,17 @@ modulejs.define('transcript-viewer', function () {
     $viewport.find('.below .end-indicator').text('End of transcript');
   }
 
-  var loadingBelow = false;
+  var loading = false;
   var loadBelow = function () {
-    if (loading || loadingBelow)
-      return;
-    loadingBelow = true;
     if (toSeq >= totalPages) {
       $viewport.find('.below .end-indicator').text('End of transcript');
       return;
+    } else {
+      $viewport.find('.below .end-indicator').text('Loading...');
     }
+    if (loading)
+      return;
+    loading = true;
     $.get({
       url: '',
       data: {
@@ -107,19 +109,20 @@ modulejs.define('transcript-viewer', function () {
     .then(function (data) {
       toSeq = data.to_seq;
       $text.append($(data.html));
-      loadingBelow = false;
+      loading = false;
     })
   };
 
-  var loadingAbove = false;
   var loadAbove = function () {
-    if (loading || loadingAbove)
-      return;
-    loadingAbove = true;
     if (fromSeq <= 1) {
-      $viewport.find('.above .end-indicator').text('Beginning of transcript')
+      $viewport.find('.above .end-indicator').text('Beginning of transcript');
       return;
+    } else {
+      $viewport.find('.above .end-indicator').text('Loading...');
     }
+    if (loading)
+    return;
+    loading = true;
     $.get({
       url: '',
       data: {
@@ -134,12 +137,11 @@ modulejs.define('transcript-viewer', function () {
       container.append($(data.html));
       $text.prepend(container);
       $viewport.scrollTop($viewport.scrollTop() + container.height() + 29);
-      loadingAbove = false;
+      loading = false;
     })
   };
 
 
-  var loading = false;
   var loadFromScratch = function (options) {
     if (loading)
       return;
