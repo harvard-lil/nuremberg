@@ -3,10 +3,9 @@ from nuremberg.documents.models import Document
 from nuremberg.transcripts.models import TranscriptPage
 
 class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
-    sentinel = '\x03'
     text = indexes.CharField(document=True, use_template=True)
     material_type = indexes.CharField(default='Transcript', faceted=True)
-    grouping_key = indexes.CharField()
+    grouping_key = indexes.FacetField(facet_for='grouping_key')
 
     slug = indexes.CharField(model_attr='transcript__slug', indexed=False)
     transcript_id = indexes.CharField(model_attr='transcript__id')
@@ -28,28 +27,38 @@ class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
     case_names = indexes.CharField(model_attr='transcript__case__short_name')
     case_tags = indexes.CharField(model_attr='transcript__case__tag_name')
 
+    evidence_codes = indexes.MultiValueField(null=True)
+    exhibit_codes = indexes.MultiValueField(null=True)
+
     def get_model(self):
         return TranscriptPage
 
     def get_updated_field(self):
         return 'updated_at'
 
-    def prepare_grouping_key(self, document):
-        # This is a hack to group transcripts but not documents in a single query.
-        # Transcripts get a group key, documents get a unique key.
+    def prepare_grouping_key(self, page):
+        # This is a hack to group transcripts but not pages in a single query.
+        # Transcripts get a group key, pages get a unique key.
         # This can be changed to make grouping work on volume or something else.
-        return 'Transcript_{}'.format(document.transcript.id)
+        return 'Transcript_{}'.format(page.transcript.id)
 
-    def prepare_date(self, document):
-        if document.date:
-            return document.date.strftime('%d %B %Y')
+    def prepare_date(self, page):
+        if page.date:
+            return page.date.strftime('%d %B %Y')
 
-    def prepare_date_year(self, document):
-        if document.date:
-            return document.date.year
+    def prepare_date_year(self, page):
+        if page.date:
+            return page.date.year
 
-    def prepare_defendants(self, document):
+    def prepare_defendants(self, page):
         return []
 
-    def prepare_authors(self, document):
+    def prepare_authors(self, page):
         return []
+
+
+    def prepare_evidence_codes(self, page):
+        return page.extract_evidence_codes()
+
+    def prepare_exhibit_codes(self, page):
+        return page.extract_exhibit_codes()

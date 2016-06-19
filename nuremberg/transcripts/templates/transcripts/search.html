@@ -3,13 +3,15 @@
 
 {% block title %} Search in Transcript - {{document.title}} {% endblock %}
 
+{% block javascript_module %}{% endblock %}
 {% block body_class %}transcript-search{% endblock %}
+{% block document-nav %}{% endblock %}
 
 {% block viewport %}
   <div class="search-results">
     {% for result in page_obj.object_list %}
       <div class="result-row">
-        <a class="teaser" href="{% url 'transcripts:show' transcript_id=result.transcript_id slug=result.slug %}?seq={{ result.seq_number }}">Page {{result.seq_number}} </a>
+        <a class="teaser" href="{% url 'transcripts:show' transcript_id=result.transcript_id slug=result.slug %}?seq={{ result.seq_number }}">Page {{result.page_label|default:"Unlabeled"}} </a>
         <div class="occurrence-count">{{ result.highlighted.text|length }} occurences</div>
           <p>
             <span class="ellipsis">[ ... ]</span>

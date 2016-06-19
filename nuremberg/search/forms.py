@@ -67,6 +67,8 @@ class FieldedSearchForm(SearchForm):
         'date': True,
         'language': True,
         'source': True,
+        'evidence': 'evidence_codes',
+        'exhibit': 'exhibit_codes',
     }
 
     def __init__(self, *args, **kwargs):

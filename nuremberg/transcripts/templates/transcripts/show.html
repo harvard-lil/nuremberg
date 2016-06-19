@@ -4,29 +4,44 @@
 
 {% block body_class %}transcript-viewer{% endblock %}
 t
-{% block javascript_module %}transcripts{% endblock %}
+{% block javascript_module %}transcript-viewer{% endblock %}
 
 {% block document_controls %}
   <div class="zoom-buttons pull-left">
     <select class="select-date">
-      <option>21 November 1946</option>
-      <option>5 December 1946</option>
-      <option>9 December 1946</option>
+      {% for date in dates %}
+        <option value="{{ date|date:'Y-m-d' }}" {% if date == current_page.date %}selected{% endif %}>{{ date|date:'d F Y' }}</option>
+      {% endfor %}
     </select>
   </div>
 {% endblock %}
 {% block tools_overlay %}{% endblock %}
 
 {% block page_selection %}
-  <label>
-    Go to page:
-    <input type="text" />
-  </label>
+  <form class="go-to-page">
+    <input type="hidden" name="seq" value="{{ seq }}"
+    <label>
+      Go to page:
+      <input type="number" name="page" value="{{ current_page.page_number|default:"" }}"/>
+    </label>
+  </form>
 {% endblock %}
 
 {% block viewport %}
-  <div class="transcript-text">
-    {{ pages.joined_text|safe }}
+  <div class="transcript-controls above">
+    <noscript>
+      <a href="?seq={{ seq|add:"-10" }}">Read more before this</a>
+    </noscript>
+    <div class="end-indicator"> Loading... </div>
+  </div>
+  <div class="transcript-text" data-total-pages="{{ total_pages }}" data-seq="{{ seq }}" data-from-seq="{{ joiner.from_seq }}" data-to-seq="{{ joiner.to_seq }}">
+    {{ joiner.html|safe }}
+  </div>
+  <div class="transcript-controls below">
+    <noscript>
+      <a href="?seq={{ seq|add:"10" }}">Read more after this</a>
+    </noscript>
+    <div class="end-indicator"> Loading... </div>
   </div>
 {% endblock %}
 

@@ -5,7 +5,7 @@ from nuremberg.transcripts.models import TranscriptPage
 class DocumentIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     material_type = indexes.CharField(default='Document', faceted=True)
-    grouping_key = indexes.CharField()
+    grouping_key = indexes.FacetField(facet_for='grouping_key')
 
     slug = indexes.CharField(model_attr='slug', indexed=False)
     title = indexes.CharField(model_attr='title')
@@ -21,6 +21,9 @@ class DocumentIndex(indexes.SearchIndex, indexes.Indexable):
     defendants = indexes.MultiValueField(faceted=True, null=True)
     case_names = indexes.MultiValueField(faceted=True, null=True)
     case_tags = indexes.MultiValueField(faceted=True, null=True)
+
+    evidence_codes = indexes.MultiValueField(null=True)
+    exhibit_codes = indexes.MultiValueField(null=True)
 
     def get_model(self):
         return Document
@@ -66,3 +69,15 @@ class DocumentIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_case_tags(self, document):
         return [case.tag_name for case in document.cases.all()]
+
+    def prepare_evidence_codes(self, document):
+        return ['{}-{}{}'.format(code.prefix.code, code.number, code.suffix or '') for code in document.evidence_codes.all()]
+
+    def prepare_exhibit_codes(self, document):
+        codes = []
+        for code in document.exhibit_codes.all():
+            if code.prosecution_number:
+                codes.append('Prosecution {}{}'.format(code.prosecution_number, code.prosecution_suffix or ''))
+            if code.defense_number:
+                codes.append('{} {}{}'.format(code.defense_name, code.defense_number, code.defense_suffix or ''))
+        return codes

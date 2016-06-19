@@ -294,3 +294,53 @@ class DocumentsToActivities(models.Model):
     class Meta:
         managed = False
         db_table = 'tblActivitiesList'
+
+
+class DocumentEvidencePrefix(models.Model):
+    id = models.AutoField(db_column='NMTCodeID', primary_key=True)  # Field name made lowercase.
+    code = models.CharField(db_column='NMTCode', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tblNMTCodes'
+
+
+class DocumentEvidenceCode(models.Model):
+    id = models.AutoField(db_column='NMTListID', primary_key=True)  # Field name made lowercase.
+    prefix = models.ForeignKey(DocumentEvidencePrefix, db_column='NMTListCodeID')  # Field name made lowercase.
+    document = models.ForeignKey(Document, related_name='evidence_codes', db_column='DocID')
+    number = models.IntegerField(db_column='NMTNo', blank=True, null=True)  # Field name made lowercase.
+    suffix = models.CharField(db_column='NMTNoText', max_length=25, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tblNMTList'
+
+class DocumentExhibitCode(models.Model):
+    id = models.AutoField(db_column='CasesListID', primary_key=True)  # Field name made lowercase.
+    document = models.ForeignKey(Document, related_name='exhibit_codes', db_column='DocID')
+
+    case = models.ForeignKey(DocumentCase, db_column='DocCaseID')
+    prosecution_number = models.IntegerField(db_column='ProsExhNo', blank=True, null=True)  # Field name made lowercase.
+    prosecution_suffix = models.CharField(db_column='ProsExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    prosecution_doc_book_number = models.IntegerField(db_column='ProsDocBkNo', blank=True, null=True)  # Field name made lowercase.
+    prosecution_doc_book_suffix = models.CharField(db_column='ProsDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    defense_name_id = models.IntegerField(db_column='DefExhNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_name = models.CharField(db_column='DefExhName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    defense_number = models.IntegerField(db_column='DefExhNo', blank=True, null=True)  # Field name made lowercase.
+    defense_suffix = models.CharField(db_column='DefExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    defense_doc_name_id = models.IntegerField(db_column='DefDocNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_name = models.CharField(db_column='DefDocName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+
+    defense_doc_number = models.IntegerField(db_column='DefDocNo', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_suffix = models.CharField(db_column='DefDocNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_name_id = models.IntegerField(db_column='DefDocBkNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_name = models.CharField(db_column='DefDocBkName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_number = models.IntegerField(db_column='DefDocBkNo', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_suffix = models.CharField(db_column='DefDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tblCasesList'

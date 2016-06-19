@@ -27,17 +27,17 @@ body.document-viewer, body.transcript-viewer, body.transcript-search {
 body.document-viewer {
   @import "document-viewer";
 }
-body.transcript-viewer {
-  @import "transcript-viewer";
-}
-body.transcript-search {
-  @import "transcript-search";
-}
 body.document-search {
   @import "search";
 }
+body.transcript-viewer, body.transcript-search {
+  @import "transcript-viewer";
+}
 body.document-search, body.transcript-search {
   @import "search-results";
+}
+body.transcript-search {
+  @import "transcript-search.less";
 }
 body.mockups {
   background-position: top;

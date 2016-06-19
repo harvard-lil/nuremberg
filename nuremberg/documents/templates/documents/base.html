@@ -30,37 +30,39 @@
       </div>
       <hr />
     {% endif %}
-    <div class="document-tools">
-      {% block document_controls %}
-        <div class="zoom-buttons">
-          <button class="zoom-in">
-            Zoom In
-          </button>
-          <button class="zoom-out">
-            Zoom Out
-          </button>
-        </div>
-      {% endblock %}
-      <div class="page-buttons">
-        {% block page_selection %}
+    {% block document-nav %}
+      <div class="document-tools">
+        {% block document_controls %}
+          <div class="zoom-buttons">
+            <button class="zoom-in">
+              Zoom In
+            </button>
+            <button class="zoom-out">
+              Zoom Out
+            </button>
+          </div>
         {% endblock %}
-        <button class="first-page">
-          First Page
-        </button>
-        <button class="prev-page">
-          Previous Page
-        </button>
-        <button class="next-page">
-          Next Page
-        </button>
-        <button class="last-page">
-          Last Page
-        </button>
-        <a class="download-page">
-          Download Page
-        </a>
+        <div class="page-buttons">
+          {% block page_selection %}
+          {% endblock %}
+          <button class="first-page">
+            First Page
+          </button>
+          <button class="prev-page">
+            Previous Page
+          </button>
+          <button class="next-page">
+            Next Page
+          </button>
+          <button class="last-page">
+            Last Page
+          </button>
+          <a class="download-page">
+            Download Page
+          </a>
+        </div>
       </div>
-    </div>
+    {% endblock %}
   {% endblock %}
   <hr />
   <div class="sidebar-layout">

@@ -41,6 +41,28 @@
       <strong>Language of Text:</strong>
       {{result.language}}
     </p>
+    {% if result.source %}
+      <p>
+        <strong>Source of Text:</strong>
+        {{result.source}}
+      </p>
+    {% endif %}
+    {% if result.evidence_codes|length %}
+      <p>
+        <strong>Evidence Code{{ result.evidence_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
+        {% for code in result.evidence_codes %}
+          {{code}}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </p>
+    {% endif %}
+    {% if result.exhibit_codes|length %}
+      <p>
+        <strong>Exhibit Code{{ result.exhibit_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
+        {% for code in result.exhibit_codes %}
+          {{code}}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </p>
+    {% endif %}
 
     {% if result.defendants|length %}
       <p>
