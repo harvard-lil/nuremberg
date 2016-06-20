@@ -9,7 +9,12 @@ modulejs.define('transcript-viewer', function () {
   var totalPages = $text.data('total-pages');
   var fromSeq = $text.data('from-seq');
   var toSeq = $text.data('to-seq');
+  var query = $('input[name=q]').val();
   var batchSize = 11;
+
+  $('.print-document').on('click', function () {
+    window.print();
+  });
 
   var goToSeq = function (seq) {
     currentSeq = Math.min(Math.max(seq, 1), totalPages);
@@ -72,13 +77,45 @@ modulejs.define('transcript-viewer', function () {
     if (!goToPage(page))
       loadFromScratch({page: page});
   });
-
   $('select.select-date').on('change', function () {
     var date = $(this).val();
     if (!goToDate(date))
       loadFromScratch({date: date});
   });
 
+  var highlightHtml = function (html, query) {
+    if (!query)
+      return;
+
+    // extremely dirty way to highlight search terms in html
+    // all terms that should be highlighted are between > and <
+    // This will only highlight the first match in each paragraph.
+    // This will not be perfect because our stems don't match solr's.
+
+    var terms = query
+    .replace(/\w+:.*/, '')
+    .replace(/[^\w]+/g, ' ')
+    .replace(/^\s+|\s+$/g, '')
+    .replace(/\b[a-zA-Z]{1,3}\b/g, '')
+    .replace(/(s|ing|ed|ment)\b/g, '')
+    .split(/\ +/g);
+
+    var rx = new RegExp( '>([^<>]*?)\\b('+terms.join('|')+')(s|ing|ed|ment)?\\b', 'ig');
+    return html.replace(/<\/?mark>/g, '')
+      .replace(rx, function (m, pre, term, post) {
+        return '>' + pre + '<mark>' + term + (post || '') + '</mark>';
+      });
+  };
+
+  var rehighlight = function () {
+    $text.html(highlightHtml($text.html(), query));
+  };
+
+  rehighlight();
+  $('input[name=q]').on('keyup', _.debounce(function () {
+    query = this.value;
+    rehighlight();
+  }, 100));
 
   if (fromSeq <= 1) {
     $viewport.find('.above .end-indicator').text('Beginning of transcript')
@@ -108,7 +145,7 @@ modulejs.define('transcript-viewer', function () {
     })
     .then(function (data) {
       toSeq = data.to_seq;
-      $text.append($(data.html));
+      $text.append($(highlightHtml(data.html, query)));
       loading = false;
     })
   };
@@ -134,7 +171,7 @@ modulejs.define('transcript-viewer', function () {
     .then(function (data) {
       fromSeq = data.from_seq;
       var container = $('<div></div>');
-      container.append($(data.html));
+      container.append($(highlightHtml(data.html, query)));
       $text.prepend(container);
       $viewport.scrollTop($viewport.scrollTop() + container.height() + 29);
       loading = false;
@@ -156,7 +193,7 @@ modulejs.define('transcript-viewer', function () {
     .then(function (data) {
       fromSeq = data.from_seq;
       toSeq = data.to_seq;
-      $text.append($(data.html));
+      $text.append($(highlightHtml(data.html, query)));
       if (data.seq)
         goToSeq(data.seq)
       loading = false;
@@ -206,8 +243,6 @@ modulejs.define('transcript-viewer', function () {
 
     if (currentPage)
       $('form.go-to-page input[name=page]').val(currentPage);
-
-    console.log('current', currentSeq, currentPage, currentDate);
   };
 
   $viewport.on('scroll', _.throttle(handleScroll, 300));

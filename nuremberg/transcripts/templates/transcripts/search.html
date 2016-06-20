@@ -11,7 +11,7 @@
   <div class="search-results">
     {% for result in page_obj.object_list %}
       <div class="result-row">
-        <a class="teaser" href="{% url 'transcripts:show' transcript_id=result.transcript_id slug=result.slug %}?seq={{ result.seq_number }}">Page {{result.page_label|default:"Unlabeled"}} </a>
+        <a class="teaser" href="{% url 'transcripts:show' transcript_id=result.transcript_id slug=result.slug %}?seq={{ result.seq_number }}&q={% encode_string query %}">Page {{result.page_label|default:"Unlabeled"}} </a>
         <div class="occurrence-count">{{ result.highlighted.text|length }} occurences</div>
           <p>
             <span class="ellipsis">[ ... ]</span>

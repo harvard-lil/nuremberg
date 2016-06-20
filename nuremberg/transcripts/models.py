@@ -23,6 +23,31 @@ class Transcript(models.Model):
     def dates(self):
         return self.pages.order_by().values_list('date', flat=True).distinct()
 
+
+
+    def get_seq_from_page_date(self, page_date, seq_number):
+        # find the seq number for provided date
+        # assume dates are valid since they come from selection
+        page_date = datetime.strptime(page_date, '%Y-%m-%d')
+        page = self.pages.filter(date=page_date).order_by('seq_number').first()
+        if page:
+            return page.seq_number
+        return seq_number
+
+    def get_seq_from_page_number(self, page_number, seq_number):
+        # find the seq number for provided page number
+        # we have to be a bit tricky because page numbers can repeat
+        page = self.pages.filter(page_number=page_number).extra(select={'distance': "ABS(seq_number - %s)"}, select_params=(seq_number,), order_by=('distance',)).first()
+        if page:
+            return page.seq_number
+        else:
+            # guesstimate
+            page = self.pages.filter(page_number__lte=page_number).order_by('-page_number').first()
+            if page:
+                return page.seq_number + (page_number - page.page_number)
+
+        return seq_number
+
 class TranscriptVolume(models.Model):
     transcript = models.ForeignKey(Transcript, related_name='volumes', on_delete=models.PROTECT)
 

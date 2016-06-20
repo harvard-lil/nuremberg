@@ -228,9 +228,11 @@ class TranscriptPageJoiner:
                     - {{date|date:'d F Y'}}
                 {% endif %}
                 {% if image_url %}
-                    - Image
-                    [<a class='view-image'>View</a>]
-                    [<a class='download-image' href="{{image_url}}" download="Transcript Seq {{seq}}.jpg">Download</a>]
+                    <span class="image-options">
+                        - Image
+                        [<a class='view-image'>View</a>]
+                        [<a class='download-image' href="{{image_url}}" download="Transcript Seq {{seq}}.jpg">Download</a>]
+                    </span>
                 {% endif %}
             </span>
             <span class="page-number">Page {{page_label}}</span>
