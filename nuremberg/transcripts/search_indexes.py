@@ -5,7 +5,7 @@ from nuremberg.transcripts.models import TranscriptPage
 class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     material_type = indexes.CharField(default='Transcript', faceted=True)
-    grouping_key = indexes.FacetField(facet_for='grouping_key')
+    grouping_key = indexes.FacetField(facet_for='grouping_key') # not really a facet, just an exact key
 
     slug = indexes.CharField(model_attr='transcript__slug', indexed=False)
     transcript_id = indexes.CharField(model_attr='transcript__id')
@@ -24,8 +24,8 @@ class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
 
     authors = indexes.MultiValueField(faceted=True, null=True)
     defendants = indexes.MultiValueField(faceted=True, null=True)
-    case_names = indexes.CharField(model_attr='transcript__case__short_name')
-    case_tags = indexes.CharField(model_attr='transcript__case__tag_name')
+    case_names = indexes.CharField(model_attr='transcript__case__short_name', faceted=True)
+    case_tags = indexes.CharField(model_attr='transcript__case__tag_name', faceted=True)
 
     evidence_codes = indexes.MultiValueField(null=True)
     exhibit_codes = indexes.MultiValueField(null=True)

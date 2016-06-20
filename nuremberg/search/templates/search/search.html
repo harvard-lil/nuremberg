@@ -28,7 +28,7 @@
           <p class="hint">
             Results {{page_obj.start_index}}-{{page_obj.end_index}} of {{paginator.count}} for
             <strong>
-              {{form.auto_query}}
+              {{form.auto_query|default:"*"}}
             </strong>
 
             {% for field_query in form.field_queries %}
