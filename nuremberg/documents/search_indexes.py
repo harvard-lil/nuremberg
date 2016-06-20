@@ -5,7 +5,7 @@ from nuremberg.transcripts.models import TranscriptPage
 class DocumentIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     material_type = indexes.CharField(default='Document', faceted=True)
-    grouping_key = indexes.FacetField(facet_for='grouping_key')
+    grouping_key = indexes.FacetField(facet_for='grouping_key') # not really a facet, just an exact key
 
     slug = indexes.CharField(model_attr='slug', indexed=False)
     title = indexes.CharField(model_attr='title')

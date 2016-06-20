@@ -55,7 +55,7 @@ class FieldedSearchForm(SearchForm):
         'page': 'seq_number',
     }
     search_fields = {
-        'all': 'content',
+        'all': 'text',
         'title': 'title',
         'author': 'authors',
         'authors': True,
@@ -70,22 +70,31 @@ class FieldedSearchForm(SearchForm):
         'evidence': 'evidence_codes',
         'exhibit': 'exhibit_codes',
     }
+    material_types = ('documents', 'transcripts', 'photographs')
 
     def __init__(self, *args, **kwargs):
         self.sort_results = kwargs.pop('sort_results')
         self.transcript_id = kwargs.pop('transcript_id', None)
+
         super().__init__(*args, **kwargs)
+        if 'm' in self.data:
+            included = self.data.getlist('m')
+            self.data = self.data.copy()
+            if len(included) < 3:
+                print('*'*10, 'add data', ' type:{}'.format('|'.join(included)))
+                self.data['q'] += ' type:{}'.format('|'.join(included))
 
     def search(self):
         sqs = self.searchqueryset \
         .order_by(self.sort_fields.get(self.sort_results, 'score'))
 
         if self.transcript_id:
+            # we use snippets to count "occurrences" of a match in transcript search results
             sqs = sqs.filter(material_type='Transcript', transcript_id=self.transcript_id) \
-            .highlight(**{'hl.snippets': 10, 'hl.fragsize':150, 'hl.simple.pre':'<mark>', 'hl.simple.post':'</mark>'})
+            .highlight(**{'hl.snippets': 10, 'hl.fragsize':150, 'hl.fl':'text', 'hl.requireFieldMatch':'true', 'hl.simple.pre':'<mark>', 'hl.simple.post':'</mark>'})
         else:
             sqs = sqs.group_by('grouping_key') \
-            .highlight(**{'hl.snippets': 1, 'hl.fragsize':150, 'hl.simple.pre':'<mark>', 'hl.simple.post':'</mark>'}) \
+            .highlight(**{'hl.snippets': 1, 'hl.fragsize':150, 'hl.fl':'text', 'hl.requireFieldMatch':'true', 'hl.simple.pre':'<mark>', 'hl.simple.post':'</mark>'})
 
         if not self.is_valid() or not 'q' in self.cleaned_data:
             return sqs
@@ -109,17 +118,22 @@ class FieldedSearchForm(SearchForm):
                 field_key = field
 
             if field_key:
-                if re.match(r'^\s*(none|unknown)\s*$', value, re.IGNORECASE):
-                    field_query.append('included')
-                    sqs = sqs.exclude(**{field_key: Raw('[* TO *]')})
-                else:
-                    query = AutoQuery(value)
-                    if exclude:
-                        field_query.append('excluded')
-                        sqs = sqs.exclude(**{field_key: query})
+                # the solr backend aggressively quotes OR queries, so we must build it manually
+                values = re.split(r'[|,]| OR ', value)
+                query_list = []
+                for value in values:
+                    if re.match(r'^\s*(none|unknown)\s*$', value, re.IGNORECASE):
+                        query_list.append('(-{}: [* TO *] AND *:*)'.format(field_key))
                     else:
-                        field_query.append('included')
-                        sqs = sqs.filter(**{field_key: query})
+                        # NOTE: field_key is whitelisted above
+                        query_list.append('({}:{})'.format(field_key, AutoQuery(value).prepare(sqs.query)))
+                raw_query = '({})'.format(' OR '.join(query_list))
+                if exclude:
+                    field_query.append('excluded')
+                    raw_query = 'NOT ({})'.format(raw_query)
+                else:
+                    field_query.append('included')
+                sqs = sqs.raw_search(raw_query)
             else:
                 field_query.append('ignored')
 

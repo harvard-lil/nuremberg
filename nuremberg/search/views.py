@@ -17,6 +17,7 @@ class Search(FacetedSearchView):
     form_class = DocumentSearchForm
     search_field = 'q'
     filter_field = 'f'
+    material_field = 'm'
     sort_field = 'sort'
     default_sort = 'relevance'
 
@@ -33,7 +34,7 @@ class Search(FacetedSearchView):
     facet_fields = [label[1] for label in facet_labels]
 
     def form_invalid(self, form):
-        print('form invalid queryset')
+        # override SearchView
         self.queryset = form.search()
         context = self.get_context_data(**{
             self.form_name: form,
@@ -46,13 +47,12 @@ class Search(FacetedSearchView):
         kwargs.update({
             'sort_results': self.request.GET.get(self.sort_field, self.default_sort),
             'selected_facets': self.request.GET.getlist(self.filter_field),
-            'facet_to_label': self.facet_to_label,
+            'facet_to_label': self.facet_to_label
         })
         return kwargs
 
     def get_queryset(self):
         # override FacetedSearchMixin
-        print('getting queryset')
         qs = super(FacetedSearchMixin, self).get_queryset()
         for field in self.facet_fields:
             sort = 'count'
@@ -65,7 +65,8 @@ class Search(FacetedSearchView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if not 'query' in context: context['query'] = ''
+        # allow form to pre-process the query for display
+        context['query'] = context['form'].cleaned_data.get('q')
         if context['facets']:
             labeled_facets = []
             print(self.facet_fields)
