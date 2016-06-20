@@ -139,15 +139,16 @@ class FieldedSearchForm(SearchForm):
             else:
                 field_query.append('ignored')
 
-        sqs = sqs.highlight(**{
-            'hl.snippets': highlight_snippets,
-            'hl.fragsize':150,
-            'hl.q': 'material_type:transcripts AND text:({})'.format(AutoQuery(highlight_query).prepare(sqs.query)),
-            'hl.fl':'text',
-            'hl.requireFieldMatch':'true',
-            'hl.simple.pre':'<mark>',
-            'hl.simple.post':'</mark>'
-        })
+        if highlight_query:
+            sqs = sqs.highlight(**{
+                'hl.snippets': highlight_snippets,
+                'hl.fragsize':150,
+                'hl.q': 'material_type:transcripts AND text:({})'.format(AutoQuery(highlight_query).prepare(sqs.query)),
+                'hl.fl':'text',
+                'hl.requireFieldMatch':'true',
+                'hl.simple.pre':'<mark>',
+                'hl.simple.post':'</mark>'
+            })
 
         if self.load_all:
             sqs = sqs.load_all()
