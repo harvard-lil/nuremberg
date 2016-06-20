@@ -35,7 +35,6 @@ class EmptyFacetsSearchForm(SearchForm):
                 if value == 'None':
                     sqs = sqs.narrow(u'-%s_exact:[* TO *]' % (field))
                 elif value:
-                    print('narrow query', u'%s_exact:"%s"' % (field, sqs.query.clean(value)))
                     sqs = sqs.narrow(u'%s_exact:"%s"' % (field, sqs.query.clean(value)))
 
         return sqs
@@ -81,8 +80,7 @@ class FieldedSearchForm(SearchForm):
             included = self.data.getlist('m')
             self.data = self.data.copy()
             if len(included) < 3:
-                print('*'*10, 'add data', ' type:{}'.format('|'.join(included)))
-                self.data['q'] += ' type:{}'.format('|'.join(included))
+                self.data['q'] += ' type:{}'.format(', '.join(included))
 
     def search(self):
         sqs = self.searchqueryset \
@@ -126,11 +124,11 @@ class FieldedSearchForm(SearchForm):
                         query_list.append('(-{}: [* TO *] AND *:*)'.format(field_key))
                     else:
                         # NOTE: field_key is whitelisted above
-                        query_list.append('({}:{})'.format(field_key, AutoQuery(value).prepare(sqs.query)))
+                        query_list.append('{}:({})'.format(field_key, AutoQuery(value).prepare(sqs.query)))
                 raw_query = '({})'.format(' OR '.join(query_list))
                 if exclude:
                     field_query.append('excluded')
-                    raw_query = 'NOT ({})'.format(raw_query)
+                    raw_query = 'NOT {}'.format(raw_query)
                 else:
                     field_query.append('included')
                 sqs = sqs.raw_search(raw_query)
