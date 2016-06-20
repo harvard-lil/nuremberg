@@ -87,12 +87,12 @@ class FieldedSearchForm(SearchForm):
         .order_by(self.sort_fields.get(self.sort_results, 'score'))
 
         if self.transcript_id:
-            # we use snippets to count "occurrences" of a match in transcript search results
             sqs = sqs.filter(material_type='Transcript', transcript_id=self.transcript_id) \
-            .highlight(**{'hl.snippets': 10, 'hl.fragsize':150, 'hl.fl':'text', 'hl.requireFieldMatch':'true', 'hl.simple.pre':'<mark>', 'hl.simple.post':'</mark>'})
+            # we use snippets to count "occurrences" of a match in transcript search results
+            highlight_snippets = 10
         else:
-            sqs = sqs.group_by('grouping_key') \
-            .highlight(**{'hl.snippets': 1, 'hl.fragsize':150, 'hl.fl':'text', 'hl.requireFieldMatch':'true', 'hl.simple.pre':'<mark>', 'hl.simple.post':'</mark>'})
+            sqs = sqs.group_by('grouping_key')
+            highlight_snippets = 3
 
         if not self.is_valid() or not 'q' in self.cleaned_data:
             return sqs
@@ -102,6 +102,7 @@ class FieldedSearchForm(SearchForm):
         if self.auto_query:
             sqs = sqs.filter(content=AutoQuery(self.auto_query))
 
+        highlight_query = self.auto_query
         for field_query in self.field_queries:
             (field, value) = field_query
 
@@ -116,13 +117,16 @@ class FieldedSearchForm(SearchForm):
                 field_key = field
 
             if field_key:
-                # the solr backend aggressively quotes OR queries, so we must build it manually
+                # the solr backend aggressively quotes OR queries, so we must build it manually to keep our loose keyword search
                 values = re.split(r'[|,]| OR ', value)
                 query_list = []
                 for value in values:
                     if re.match(r'^\s*(none|unknown)\s*$', value, re.IGNORECASE):
                         query_list.append('(-{}: [* TO *] AND *:*)'.format(field_key))
                     else:
+                        # to enable snippets for exhibit codes we must add them to the highlight query
+                        if field_key in ('exhibit_codes', 'evidence_codes', 'text'):
+                            highlight_query += ' ' + value
                         # NOTE: field_key is whitelisted above
                         query_list.append('{}:({})'.format(field_key, AutoQuery(value).prepare(sqs.query)))
                 raw_query = '({})'.format(' OR '.join(query_list))
@@ -134,6 +138,16 @@ class FieldedSearchForm(SearchForm):
                 sqs = sqs.raw_search(raw_query)
             else:
                 field_query.append('ignored')
+
+        sqs = sqs.highlight(**{
+            'hl.snippets': highlight_snippets,
+            'hl.fragsize':150,
+            'hl.q': 'material_type:transcripts AND text:({})'.format(AutoQuery(highlight_query).prepare(sqs.query)),
+            'hl.fl':'text',
+            'hl.requireFieldMatch':'true',
+            'hl.simple.pre':'<mark>',
+            'hl.simple.post':'</mark>'
+        })
 
         if self.load_all:
             sqs = sqs.load_all()

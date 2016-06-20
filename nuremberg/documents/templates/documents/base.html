@@ -16,7 +16,7 @@
   {% block document_tools %}
     {% if query %}
       <div class="document-tools">
-        <form class="document-search-inline" method='GET'>
+        <form class="document-search-inline" method='GET' action={% url 'search:search' %}>
           {% include 'search/search-bar.html' %}
           {% if page_obj %}
             <label><strong>{{ paginator.count }}</strong> pages with results</label>
