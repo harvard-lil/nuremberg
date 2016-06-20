@@ -96,9 +96,12 @@ modulejs.define('transcript-viewer', function () {
     .replace(/\w+:.*/, '')
     .replace(/[^\w]+/g, ' ')
     .replace(/^\s+|\s+$/g, '')
-    .replace(/\b[a-zA-Z]{1,3}\b/g, '')
+    .replace(/\b[a-zA-Z]{1,2}\b/g, '')
     .replace(/(s|ing|ed|ment)\b/g, '')
     .split(/\ +/g);
+
+    if (terms.length == 1 && terms[0] == '')
+      return html.replace(/<\/?mark>/g, '');
 
     var rx = new RegExp( '>([^<>]*?)\\b('+terms.join('|')+')(s|ing|ed|ment)?\\b', 'ig');
     return html.replace(/<\/?mark>/g, '')
