@@ -143,4 +143,25 @@ html.print {
   //   left: 0px;
   //   z-index: 10;
   // }
+  .end-indicator {
+    display: none;
+  }
+  .page-handle {
+    padding-top: 25px;
+    page-break-after: avoid;
+    .page-details {
+      display: inline;
+      .image-options {
+        display: none;
+      }
+    }
+  }
+  .transcript-text {
+    page-break-before: always;
+  }
+  mark {
+    background-color: inherit;
+    padding: inherit;
+    margin: inherit;
+  }
 }
