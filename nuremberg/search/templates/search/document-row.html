@@ -25,11 +25,17 @@
             {% for snippet in result.highlighted.text %}
               {{ snippet|trim_snippet }}
               <span class="ellipsis">[ ... ]</span>
+            {% empty %}
+              {{ result.text|slice:":150"|trim_snippet }}
             {% endfor %}
           {% else %}
             {% for document in group.documents %}
               <span class="ellipsis">[ ... p. {{document.seq_number}} ]</span>
-              {{ document.highlighted.text.0|trim_snippet }}
+              {% if document.highlighted %}
+                {{ document.highlighted.text.0|trim_snippet }}
+              {% else %}
+                {{ document.text|slice:":150"|trim_snippet }}
+              {% endif %}
             {% endfor %}
           {% endif %}
           <span class="ellipsis">[ ... ]</span>
