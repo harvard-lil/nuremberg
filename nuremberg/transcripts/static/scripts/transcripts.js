@@ -85,7 +85,7 @@ modulejs.define('transcript-viewer', function () {
 
   var highlightHtml = function (html, query) {
     if (!query)
-      return;
+      return html.replace(/<\/?mark>/g, '');
 
     // extremely dirty way to highlight search terms in html
     // all terms that should be highlighted are between > and <
