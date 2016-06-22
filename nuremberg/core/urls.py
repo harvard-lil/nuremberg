@@ -11,11 +11,11 @@ urlpatterns = [
     url(r'^search/', include('nuremberg.search.urls')),
     url(r'^', include('nuremberg.content.urls')),
     url(r'^proxy_image/printing/(?P<url>.*)$',
-        RedirectView.as_view(url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/%(url)s')),
-        # HttpProxy.as_view(base_url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing')),
+        # RedirectView.as_view(url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/%(url)s')),
+        HttpProxy.as_view(base_url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing')),
     url(r'^proxy_image/(?P<url>.*)$',
-        RedirectView.as_view(url='http://s3.amazonaws.com/nuremberg-dev/%(url)s'))
-        # HttpProxy.as_view(base_url='http://s3.amazonaws.com/nuremberg-dev')),
+        # RedirectView.as_view(url='http://s3.amazonaws.com/nuremberg-dev/%(url)s'))
+        HttpProxy.as_view(base_url='http://s3.amazonaws.com/nuremberg-dev')),
 ]
 
 handler400 = 'nuremberg.core.views.handler400'
