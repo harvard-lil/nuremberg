@@ -75,14 +75,10 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
 
           // don't move to the current page if we already scrolled to it
           if (image !== view.model.attributes.firstVisible) {
-            if (Modernizr.touchevents) {
-              $(window).scrollTop(image.attributes.el.offsetTop);
-            } else {
-              if (view.$el.scrollTop() > image.attributes.el.offsetTop || view.$el.scrollTop() + view.$el.height() < image.attributes.el.offsetTop + image.attributes.el.offsetHeight)
-              view.$el.scrollTop(image.attributes.el.offsetTop);
-              if (view.$el.scrollLeft() > image.attributes.el.offsetLeft || view.$el.scrollLeft() + view.$el.width() < image.attributes.el.offsetLeft + image.attributes.el.offsetWidth)
-              view.$el.scrollLeft(image.attributes.el.offsetLeft);
-            }
+            if (view.$el.scrollTop() > image.attributes.el.offsetTop || view.$el.scrollTop() + view.$el.height() < image.attributes.el.offsetTop + image.attributes.el.offsetHeight)
+            view.$el.scrollTop(image.attributes.el.offsetTop);
+            if (view.$el.scrollLeft() > image.attributes.el.offsetLeft || view.$el.scrollLeft() + view.$el.width() < image.attributes.el.offsetLeft + image.attributes.el.offsetWidth)
+            view.$el.scrollLeft(image.attributes.el.offsetLeft);
           }
 
           // broadcast the update
@@ -121,6 +117,11 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         'change:tool': function () {
           // bind events based on tool selection
 
+          if (Modernizr.touchevents) {
+            // always use native zoom on touch devices
+            return;
+          }
+
           // unbind all
           view.$el.removeClass('tool-magnify tool-scroll');
           view.$el.off('mousewheel', view.wheelZoom);
@@ -140,10 +141,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         }
       });
 
-      if (!Modernizr.touchevents) {
-        this.model.set('tool', 'scroll');
-      }
-
+      this.model.set('tool', 'scroll');
       var stylesheet = document.styleSheets[0];
       var rules = (stylesheet.rules || stylesheet.cssRules);
       if (stylesheet.addRule) {
@@ -590,9 +588,6 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       DownloadQueue.resetPriority();
 
       var $parent = this.$el;
-      if (Modernizr.touchevents) {
-        $parent = $(window);
-      }
 
       // cache viewport bounds
       var bounds = {
@@ -626,12 +621,17 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
           break;
         lastVisible = i;
       }
-
+      // calculate total scale for image loading
+      if (Modernizr.touchevents) {
+        var totalScale = document.body.clientWidth / window.innerWidth;
+      } else {
+        totalScale = model.attributes.scale * model.attributes.viewScale
+      }
       // after finding the visible range, set all models visible in a batch to separate from the
       // DOM reads
       this.model.attributes.images.each(function (image, n) {
         if (n >= firstVisible && n <= lastVisible) {
-          image.set('scale', model.attributes.scale * model.attributes.viewScale);
+          image.set('scale', totalScale);
           image.set('visible', true);
         } else {
           image.set('visible', false);

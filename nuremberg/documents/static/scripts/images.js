@@ -28,7 +28,7 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
         _.defer(function () {
           if (model.get('visible')) {
             var scale = model.attributes.scale;
-            if (model.attributes.$el.width() > model.attributes.size.width) {
+            if (model.attributes.$el.width() > model.attributes.size.width || scale > 2) {
               model.preloadImage('full');
             } else if (model.attributes.$el.width() < 250) {
               model.preloadImage('thumb');
@@ -162,8 +162,10 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
           view.$el.toggleClass('current', view.model.get('current'));
         });
 
-        // queue up all thumbnails, if nothing else is going on
-        this.model.preloadImage('thumb');
+        if (!Modernizr.touchevents) {
+          // queue up all thumbnails, if nothing else is going on
+          this.model.preloadImage('thumb');
+        }
       }
     }),
 
