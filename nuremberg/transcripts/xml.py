@@ -145,7 +145,7 @@ class TranscriptPageJoiner:
     def build_html(self):
         self.html = ''
         self.html += '<div>'
-        if self.debug:
+        if self.debug: # pragma: no cover
             self.html += '<span>[opening]</span>'
         count = len(self.pages)
         self.first_page = not self.include_first
@@ -154,7 +154,7 @@ class TranscriptPageJoiner:
             if not self.include_last:
                 count -= 1
                 self.last_page = count == 0
-            if self.debug:
+            if self.debug: # pragma: no cover
                 self.html += '<span>[seq {}]</span>'.format(self.seq)
                 if self.first_page:
                     self.html += '<span>[first page]</span>'
@@ -181,8 +181,10 @@ class TranscriptPageJoiner:
         if self.joining:
             # oh well, nothing left to do
             self.html += '</p>'
-            if self.debug:
+            if self.debug: # pragma: no cover
                 self.html += '<span>[closed on join]</span>'
+        if self.debug: # pragma: no cover
+            self.html += '<hr />'
         self.html += '</div>'
         return self.html
 
@@ -192,10 +194,10 @@ class TranscriptPageJoiner:
             if len(ends) == 3:
                 if not self.ignore_join:
                     text += ends[0] + ends[1]
-                    if self.debug:
+                    if self.debug: # pragma: no cover
                         text += '[INSERTED END]'
                     text += '</p>\n'
-                    if self.debug:
+                    if self.debug: # pragma: no cover
                         text += 'match: ' + str(ends)
 
                 # we still print carried text after an ignored join (it's the start of a page)
@@ -206,7 +208,7 @@ class TranscriptPageJoiner:
                 self.joining = False
 
                 if self.last_page:
-                    if self.debug:
+                    if self.debug:# pragma: no cover
                         text += '<span>[closing]</span>'
                     return text
 
@@ -296,7 +298,7 @@ class TranscriptPageJoiner:
                         # For the future, use &mdash; to mark words that should be joined?
                         if text[-1] != '—':
                             text += ' '
-                        if self.debug:
+                        if self.debug: # pragma: no cover
                             text += '[IGNORING END]'
                     elif not self.joining:
                         text = self.close_join(text)

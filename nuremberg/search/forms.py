@@ -11,6 +11,10 @@ class EmptyFacetsSearchForm(SearchForm):
         self.facet_to_label = dict(kwargs.pop('facet_to_label'))
         self.selected_facets = kwargs.pop('selected_facets')
         super().__init__(*args, **kwargs)
+        if 'year_min' in self.data and 'year_max' in self.data:
+            self.selected_facets = [f for f in self.selected_facets if not f.startswith('date_year')]
+            self.selected_facets.append('date_year:{}-{}'.format(self.data['year_min'], self.data['year_max']))
+
 
     def search(self):
         sqs = super().search()
@@ -47,10 +51,11 @@ class FieldedSearchForm(SearchForm):
     auto_query = None
     field_queries = []
     sort_fields = {
-        'date-asc': 'date',
-        'date-desc': '-date',
-        'relevance': 'score',
-        'pages': 'total_pages',
+        'date-asc': 'date_sort',
+        'date-desc': '-date_sort',
+        'relevance': '-score',
+        'pages-asc': 'total_pages',
+        'pages-desc': '-total_pages',
         'page': 'seq_number',
     }
     search_fields = {
@@ -60,6 +65,7 @@ class FieldedSearchForm(SearchForm):
         'authors': True,
         'defendant': 'defendants',
         'defendants': True,
+        'hlsl': 'django_id',
         'case': 'case_names',
         'trial': 'case_names',
         'type': 'material_type',
@@ -83,15 +89,26 @@ class FieldedSearchForm(SearchForm):
                 self.data['q'] += ' type:{}'.format(', '.join(included))
 
     def search(self):
-        sqs = self.searchqueryset \
-        .order_by(self.sort_fields.get(self.sort_results, 'score'))
+        sort = self.sort_fields.get(self.sort_results, 'score')
+        sqs = self.searchqueryset
 
         if self.transcript_id:
             sqs = sqs.filter(material_type='Transcript', transcript_id=self.transcript_id) \
+            .order_by(sort)
             # we use snippets to count "occurrences" of a match in transcript search results
             highlight_snippets = 10
         else:
-            sqs = sqs.group_by('grouping_key')
+            # we use grouping by document/transcript id to cluster all transcript page results together
+            # weirdly it uses a separate sort field
+            if sort.startswith('-'):
+                sort = sort[1:] + ' desc'
+            else:
+                sort += ' asc'
+            sqs = sqs.group_by('grouping_key', {
+                'group.sort': 'seq_number asc',
+                'group.limit': 3,
+                'sort': sort,
+            })
             highlight_snippets = 3
 
         if not self.is_valid() or not 'q' in self.cleaned_data:
@@ -99,7 +116,7 @@ class FieldedSearchForm(SearchForm):
 
         (self.auto_query, self.field_queries) = self.parse_query(self.cleaned_data['q'])
 
-        if self.auto_query:
+        if self.auto_query and not re.match(r'^\s*\*\s*$', self.auto_query):
             sqs = sqs.filter(content=AutoQuery(self.auto_query))
 
         highlight_query = self.auto_query
@@ -149,9 +166,6 @@ class FieldedSearchForm(SearchForm):
                 'hl.simple.pre':'<mark>',
                 'hl.simple.post':'</mark>'
             })
-
-        if self.load_all:
-            sqs = sqs.load_all()
 
         return sqs
 

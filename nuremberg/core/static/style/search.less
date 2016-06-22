@@ -95,6 +95,13 @@ section.results {
     p {
       .sans-serif(normal, 14px, 19px);
     }
+    a.exists {
+      color: @dark-gray;
+      border: none;
+      font-size: 20px;
+      line-height: 17px;
+      vertical-align: top;
+    }
     .collapse {
       &:extend(.hide-text);
 
@@ -289,6 +296,9 @@ p.snippets {
     }
     &.type-transcript {
       background-image: url('@{image_url}/documents/icon-type-transcript-small.png');
+    }
+    &.type-photograph {
+      background-image: url('@{image_url}/documents/icon-type-photos-small.png');
     }
   }
   .inline-type {

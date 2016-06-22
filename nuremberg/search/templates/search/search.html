@@ -43,9 +43,10 @@
             Sort by
             <select>
               <option value="{% sort_results 'relevance' %}" {% if form.sort_results == 'relevance' %}selected{% endif %}>Relevance</option>
-              <option value="{% sort_results 'date-asc' %}" {% if form.sort_results == 'date-asc' %}selected{% endif %}>Date (Ascending)</option>
-              <option value="{% sort_results 'date-desc' %}" {% if form.sort_results == 'date-desc' %}selected{% endif %}>Date (Descending)</option>
-              <option value="{% sort_results 'pages' %}" {% if form.sort_results == 'pages' %}selected{% endif %}>Number of Pages</option>
+              <option value="{% sort_results 'date-asc' %}" {% if form.sort_results == 'date-asc' %}selected{% endif %}>Earliest Date</option>
+              <option value="{% sort_results 'date-desc' %}" {% if form.sort_results == 'date-desc' %}selected{% endif %}>Latest Date</option>
+              <option value="{% sort_results 'pages-asc' %}" {% if form.sort_results == 'pages-asc' %}selected{% endif %}>Fewest Pages</option>
+              <option value="{% sort_results 'pages-desc' %}" {% if form.sort_results == 'pages-desc' %}selected{% endif %}>Most Pages</option>
             </select>
           </label>
         </div>

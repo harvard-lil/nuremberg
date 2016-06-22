@@ -21,11 +21,12 @@ class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
 
     date = indexes.CharField(faceted=True, null=True)
     date_year = indexes.CharField(faceted=True, null=True)
+    date_sort = indexes.DateTimeField(model_attr='date', null=True)
 
     authors = indexes.MultiValueField(faceted=True, null=True)
     defendants = indexes.MultiValueField(faceted=True, null=True)
-    case_names = indexes.CharField(model_attr='transcript__case__short_name', faceted=True)
-    case_tags = indexes.CharField(model_attr='transcript__case__tag_name', faceted=True)
+    case_names = indexes.MultiValueField(model_attr='transcript__case__short_name', faceted=True)
+    case_tags = indexes.MultiValueField(model_attr='transcript__case__tag_name', faceted=True)
 
     evidence_codes = indexes.MultiValueField(null=True)
     exhibit_codes = indexes.MultiValueField(null=True)

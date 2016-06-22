@@ -9,28 +9,39 @@
       {% endfor %}
     </p>
     {% if result.material_type == 'Document' %}
-      <a class="unstyled" href="{% url 'documents:show' document_id=result.pk %}-{{result.slug}}{% if query %}?query={% encode_string query %}{% endif %}">
+      <a class="unstyled" href="{% url 'documents:show' document_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
         <h3>{{result.title}}</h3>
         {% if result.literal_title %}
-          <p>{{result.literal_title}}</p>
+          <p>{{result.literal_title|truncatewords:35|truncatechars:300}}</p>
         {% endif %}
+      </a>
+    {% elif result.material_type == 'Photograph' %}
+      <a class="unstyled" href="{% url 'photographs:show' photograph_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
+        <h3>{{result.title}}</h3>
+        {% for snippet in result.highlighted.text|slice:":1" %}
+          <span class="ellipsis">[ ... ]</span>
+          {{ snippet|trim_snippet }}
+          <span class="ellipsis">[ ... ]</span>
+        {% empty %}
+          <p>{{result.literal_title|truncatewords:35|truncatechars:300}}</p>
+        {% endfor %}
       </a>
     {% elif result.material_type == 'Transcript' %}
       <a class="unstyled" href="{% url 'transcripts:search' transcript_id=result.transcript_id slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
         <h3>{{result.title}}</h3>
-        <p>{{group.hits}} results in this transcript</p>
+        <p>{{group.hits}} result{{ group.hits|pluralize }} in this transcript</p>
         <p class="snippets">
           {% if group.hits == 1 %}
-            <span class="ellipsis">[ ... p. {{result.seq_number}} ]</span>
             {% for snippet in result.highlighted.text %}
+              <span class="ellipsis">[ ... p. {{ result.page_label|default:"unlabeled" }} ]</span>
               {{ snippet|trim_snippet }}
-              <span class="ellipsis">[ ... ]</span>
             {% empty %}
+              <span class="ellipsis">[ p. {{ result.page_label|default:"unlabeled" }} ]</span>
               {{ result.text|slice:":150"|trim_snippet }}
             {% endfor %}
           {% else %}
             {% for document in group.documents %}
-              <span class="ellipsis">[ ... p. {{document.seq_number}} ]</span>
+              <span class="ellipsis">[ ... p. {{ document.page_label|default:"unlabeled" }} ]</span>
               {% if document.highlighted %}
                 {{ document.highlighted.text.0|trim_snippet }}
               {% else %}
@@ -43,48 +54,60 @@
       </a>
     {% endif %}
 
-    <p>
-      <strong>Language of Text:</strong>
-      {{result.language}}
-    </p>
-    {% if result.source %}
+    {% if result.material_type == 'Photograph' %}
       <p>
-        <strong>Source of Text:</strong>
+        <strong>Source:</strong>
         {{result.source}}
       </p>
-    {% endif %}
-    {% if result.evidence_codes|length %}
+    {% else %}
       <p>
-        <strong>Evidence Code{{ result.evidence_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
-        {% for code in result.evidence_codes %}
-          {{code}}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
+        <strong>Language of Text:</strong>
+        {{result.language}}
       </p>
-    {% endif %}
-    {% if result.exhibit_codes|length %}
-      <p>
-        <strong>Exhibit Code{{ result.exhibit_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
-        {% for code in result.exhibit_codes %}
-          {{code}}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-      </p>
-    {% endif %}
-
-    {% if result.defendants|length %}
-      <p>
-        <strong>Defendant{{result.defendants|pluralize}}:</strong>
-        {% for defendant in result.defendants %}
-            <a href="{% search_query defendant=defendant %}">{{defendant}}</a>{% if not forloop.last %},{% endif %}
-        {% endfor %}
-      </p>
+      {% if result.source %}
+        <p>
+          <strong>Source of Text:</strong>
+          {{result.source}}
+        </p>
+      {% endif %}
+      {% if result.evidence_codes|length %}
+        <p>
+          <strong>Evidence Code{{ result.evidence_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
+          {% for code in result.evidence_codes %}
+            {{code}}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </p>
+      {% endif %}
+      {% if result.exhibit_codes|length %}
+        <p>
+          <strong>Exhibit Code{{ result.exhibit_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
+          {% for code in result.exhibit_codes %}
+            {{code}}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </p>
+      {% endif %}
+      {% if result.defendants|length %}
+        <p>
+          <strong>Defendant{{result.defendants|pluralize}}:</strong>
+          {% for defendant in result.defendants %}
+              <a href="{% search_query defendant=defendant %}">{{defendant}}</a>{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        </p>
+      {% endif %}
     {% endif %}
   </td>
   <td>
-    {% for author in result.authors %}
-      <p>
-        <a href="{% search_query author=author %}">{{author}}</a>
-      </p>
-    {% endfor %}
+    {% if result.material_type == 'Photograph' %}
+      <a class="unstyled" href="{% url 'photographs:show' photograph_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
+        <img src="{{result.thumb_url}}" />
+      </a>
+    {% else %}
+      {% for author in result.authors %}
+        <p>
+          <a href="{% search_query author=author %}">{{author}}</a>
+        </p>
+      {% endfor %}
+    {% endif %}
   </td>
   <td>
     <h5 class="date">

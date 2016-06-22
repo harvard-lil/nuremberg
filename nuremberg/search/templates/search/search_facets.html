@@ -8,7 +8,12 @@
       {% for value in facet.counts %}
         <p class="{% if forloop.counter > 5 %}hide{% endif %}">
           {{value.0|default:"Unknown"}}
-          <a href="{% add_facet facet.field value.0 %}"> ({{value.1}}) </a>
+          {% facet_exists facet.field value.0 as existing_facet %}
+          {% if existing_facet %}
+            <a  class="exists" href="{% remove_facet existing_facet %}"> &times; </a>
+          {% else %}
+            <a href="{% add_facet facet.field value.0 %}"> ({{value.1}}) </a>
+          {% endif %}
         </p>
       {% empty %}
         <p> No data </p>
@@ -19,7 +24,11 @@
         </p>
       {% endif %}
       <p> Range: </p>
-      <form class="date-filter-form">
+      <form class="date-filter-form" action="">
+        <input type="hidden" name="q" value="{{query}}" />
+        {% for filter in form.applied_filters %}
+          <input type="hidden" name="f" value="{{filter.2}}" />
+        {% endfor %}
         <p class="date-filter">
             <input type="number" name="year_min" value="{{ form.date_range.0|default:"1923" }}"/>
             to
@@ -40,7 +49,12 @@
       {% for value in facet.counts %}
         <p class="{% if forloop.counter > 5 %}hide{% endif %}">
           {{value.0|default:"Unknown"}}
-          <a href="{% add_facet facet.field value.0 %}"> ({{value.1}}) </a>
+          {% facet_exists facet.field value.0 as existing_facet %}
+          {% if existing_facet %}
+            <a class="exists" href="{% remove_facet existing_facet %}"> &times; </a>
+          {% else %}
+            <a href="{% add_facet facet.field value.0 %}"> ({{value.1}}) </a>
+          {% endif %}
         </p>
       {% empty %}
         <p> No data </p>

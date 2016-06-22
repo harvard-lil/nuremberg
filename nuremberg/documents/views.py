@@ -12,9 +12,7 @@ class Show(View):
         .select_related('source') \
         .get(id=document_id)
 
-        query = request.GET.get('query', None)
-
         return render(request, self.template_name,
             {'document': document,
-            'query': query,
+            'query': request.GET.get('q'),
         })

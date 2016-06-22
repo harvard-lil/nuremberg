@@ -23,15 +23,18 @@ class GroupedSearchQuery(SolrSearchQuery):
     def __init__(self, *args, **kwargs):
         super(GroupedSearchQuery, self).__init__(*args, **kwargs)
         self.grouping_field = None
+        self.grouping_params = {}
         self._total_document_count = None
 
     def _clone(self, **kwargs):
         clone = super(GroupedSearchQuery, self)._clone(**kwargs)
         clone.grouping_field = self.grouping_field
+        clone.grouping_params = self.grouping_params
         return clone
 
-    def add_group_by(self, field_name):
+    def add_group_by(self, field_name, params={}):
         self.grouping_field = field_name
+        self.grouping_params = params
 
     def post_process_facets(self, results):
         # FIXME: remove this hack once https://github.com/toastdriven/django-haystack/issues/750 lands
@@ -67,6 +70,7 @@ class GroupedSearchQuery(SolrSearchQuery):
                         'group.sort': 'date desc',
                         'group.facet': 'true',
                         'result_class': GroupedSearchResult})
+            res.update(self.grouping_params)
         return res
 
 
@@ -126,10 +130,10 @@ class GroupedSearchQuerySet(SearchQuerySet):
         if not isinstance(self.query, GroupedSearchQuery):
             raise TypeError("GroupedSearchQuerySet must be used with a GroupedSearchQuery query")
 
-    def group_by(self, field_name):
+    def group_by(self, field_name, params={}):
         """Have Solr group results based on the provided field name"""
         clone = self._clone()
-        clone.query.add_group_by(field_name)
+        clone.query.add_group_by(field_name, params)
         return clone
 
     def post_process_results(self, results):

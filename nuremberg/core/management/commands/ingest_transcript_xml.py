@@ -19,14 +19,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         count = 0
-        print('options', options)
-        if 'd' in options:
+        if options['d']:
             paths = []
             for dirname in options['paths']:
                 paths += [path.join(dirname, name) for name in listdir(dirname)]
         else:
             paths = options['paths']
-        if 's' in options:
+        if options['s']:
             print('Skipping', options['s'], 'files.')
             paths = paths[options['s']:]
         print('Ingesting', len(paths), 'files.')

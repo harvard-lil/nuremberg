@@ -11,9 +11,11 @@ class DocumentIndex(indexes.SearchIndex, indexes.Indexable):
     title = indexes.CharField(model_attr='title')
     literal_title = indexes.CharField(model_attr='literal_title', null=True)
 
-    total_pages = indexes.CharField(model_attr='image_count', null=True)
+    total_pages = indexes.IntegerField(model_attr='image_count', null=True)
     date = indexes.CharField(faceted=True, null=True)
     date_year = indexes.CharField(faceted=True, null=True)
+    date_sort = indexes.DateTimeField(model_attr='date', null=True)
+
     language = indexes.CharField(model_attr='language__name', faceted=True, null=True)
     source = indexes.CharField(model_attr='source__name', faceted=True, null=True)
 
