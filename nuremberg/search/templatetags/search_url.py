@@ -49,8 +49,16 @@ def result_page(context, page):
 def add_facet(context, field, value):
     params = context['request'].GET.copy()
     if 'page' in params: del params['page']
-    params.update({'f': '{}:{}'.format(field, value)})
+    facet = '{}:{}'.format(field, value)
+    if not facet in params.getlist('f'):
+        params.update({'f': '{}:{}'.format(field, value)})
     return '?{}'.format(encode_query(params))
+
+@register.simple_tag(takes_context=True)
+def facet_exists(context, field, value):
+    facet_lookup = context['facet_lookup']
+    facet = '{}:{}'.format(field, value)
+    return facet_lookup.get(facet) and facet
 
 
 @register.simple_tag(takes_context=True)
@@ -64,7 +72,11 @@ def remove_facet(context, facet):
     params = context['request'].GET.copy()
     if 'page' in params: del params['page']
     values = params.getlist('f')
-    values.remove(facet)
+    if facet in values:
+        values.remove(facet)
+    elif facet.startswith('date_year'):
+        if 'year_min' in params: del params['year_min']
+        if 'year_max' in params: del params['year_max']
     params.setlist('f', values)
     return '?{}'.format(encode_query(params))
 
@@ -73,6 +85,8 @@ def clear_facets(context):
     params = context['request'].GET.copy()
     if 'page' in params: del params['page']
     params.setlist('f', [])
+    params.setlist('year_min', [])
+    params.setlist('year_max', [])
     return '?{}'.format(encode_query(params))
 
 @register.filter

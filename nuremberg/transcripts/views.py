@@ -26,7 +26,10 @@ class Search(GenericSearchView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'transcript': self.transcript})
+        context.update({
+            'transcript': self.transcript,
+            'show_search_bar': True
+        })
         return context
 
 class Show(View):

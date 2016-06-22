@@ -25,6 +25,26 @@ def test_document_1():
     info.should.contain('Source of Text: Case Files/English')
     info.should.contain('HLSL Item No.: 1')
 
+
+def test_document_2():
+    page = document(2)
+
+    page('h3').text().should.contain('Argument: prosecution closing argument against all defendants')
+
+    images = page('.document-image')
+    images.length.should.be(78)
+    images.attr['data-screen-url'].should.contain('HLSL_NUR_00002001.jpg')
+
+    page.text().should.contain("Missing Image No. 13")
+
+    info = page('.document-info').text()
+    info.should.contain('NMT 1')
+    info.should.contain('14 July 1947')
+    info.should.contain('Total Pages: 78')
+    info.should.contain('Language of Text: English')
+    info.should.contain('Source of Text: Case Files/English')
+    info.should.contain('HLSL Item No.: 2')
+
 def test_document_400():
     page = document(400)
 
@@ -37,7 +57,7 @@ def test_document_400():
     info = page('.document-info').text()
     info.should.contain('NMT 1')
     info.should.contain('24 October 1939')
-    info.should.contain('Defendants Fritz Fischer')
+    info.should.contain('Defendants Karl Gebhardt')
     info.should.contain('Authors Adolf Hitler')
     info.should.contain('Total Pages: 3')
     info.should.contain('Language of Text: English')

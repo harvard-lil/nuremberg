@@ -1,4 +1,4 @@
-{% extends "documents/base.html" %}
+{% extends "transcripts/base.html" %}
 
 {% block title %} Transcript Viewer - {{transcript.title}} {% endblock %}
 
@@ -8,18 +8,22 @@ t
 
 {% block document_controls %}
   <div class="zoom-buttons pull-left">
-    <select class="select-date">
-      {% for date in dates %}
-        <option value="{{ date|date:'Y-m-d' }}" {% if date == current_page.date %}selected{% endif %}>{{ date|date:'d F Y' }}</option>
-      {% endfor %}
-    </select>
+    <form action="" method="GET">
+      <input type="hidden" name="seq" value="{{ seq }}" />
+      <select name="date" class="select-date">
+        {% for date in dates %}
+          <option value="{{ date|date:'Y-m-d' }}" {% if date == current_page.date %}selected{% endif %}>{{ date|date:'d F Y' }}</option>
+        {% endfor %}
+      </select>
+      <noscript><button class="go-button">Go to date</button></noscript>
+    </form>
   </div>
 {% endblock %}
 {% block tools_overlay %}{% endblock %}
 
 {% block page_selection %}
-  <form class="go-to-page">
-    <input type="hidden" name="seq" value="{{ seq }}"
+  <form class="go-to-page" action="" method="GET">
+    <input type="hidden" name="seq" value="{{ seq }}" />
     <label>
       Go to page:
       <input type="number" name="page" value="{{ current_page.page_number|default:"" }}"/>
@@ -29,19 +33,21 @@ t
 
 {% block viewport %}
   <div class="transcript-controls above">
-    <noscript>
-      <a href="?seq={{ seq|add:"-10" }}">Read more before this</a>
-    </noscript>
-    <div class="end-indicator"> Loading... </div>
+    <div class="end-indicator">
+      <noscript>
+        <a href="?seq={{ seq|add:"-10" }}">Previous Pages</a>
+      </noscript>
+    </div>
   </div>
   <div class="transcript-text" data-total-pages="{{ total_pages }}" data-seq="{{ seq }}" data-from-seq="{{ joiner.from_seq }}" data-to-seq="{{ joiner.to_seq }}">
     {{ joiner.html|safe }}
   </div>
   <div class="transcript-controls below">
-    <noscript>
-      <a href="?seq={{ seq|add:"10" }}">Read more after this</a>
-    </noscript>
-    <div class="end-indicator"> Loading... </div>
+    <div class="end-indicator">
+        <noscript>
+          <a href="?seq={{ seq|add:"10" }}">Next Pages</a>
+        </noscript>
+      </div>
   </div>
 {% endblock %}
 

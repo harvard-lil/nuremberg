@@ -20,6 +20,9 @@ modulejs.define('transcript-viewer', function () {
     currentSeq = Math.min(Math.max(seq, 1), totalPages);
     var $page = $viewport.find('.page[data-seq="'+currentSeq+'"]');
     $viewport.scrollTop($page[0].offsetTop - 10);
+    if (window.history) {
+      history.replaceState(undefined, undefined, location.pathname + location.search.replace(/seq=\d+/, 'seq='+seq))
+    }
   };
   var goToPage = function (page) {
     var $page = $('.page[data-page="'+page+'"]');
@@ -119,13 +122,10 @@ modulejs.define('transcript-viewer', function () {
     query = this.value;
     rehighlight();
   }, 100));
-
-  if (fromSeq <= 1) {
-    $viewport.find('.above .end-indicator').text('Beginning of transcript')
-  }
-  if (toSeq >= totalPages) {
-    $viewport.find('.below .end-indicator').text('End of transcript');
-  }
+  $('.clear-search').on('click', function (e) {
+    e.preventDefault();
+    $(this).closest('form').find('input[type="search"]').val('').trigger('keyup')
+  });
 
   var loading = false;
   var loadBelow = function () {
@@ -203,12 +203,23 @@ modulejs.define('transcript-viewer', function () {
     })
   };
 
+  if (fromSeq <= 1) {
+    loadAbove();
+  }
+  if (toSeq >= totalPages) {
+    loadBelow();
+  }
+
   $viewport.on('click', 'a.view-image', function () {
     var $a = $(this);
     var href = $a.siblings('.download-image').attr('href');
     $a.closest('.page-handle')
     .addClass('show')
     .after('<div><img src="'+ href +'" /></div>');
+  });
+
+  $viewport.on('click', '.page-handle', function () {
+    $(this).addClass('show');
   });
 
   var handleScroll = function () {

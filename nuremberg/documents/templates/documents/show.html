@@ -16,13 +16,8 @@
   {% block document_tools %}
     {% if query %}
       <div class="document-tools">
-        <form class="document-search-inline" method='GET'>
+        <form class="document-search-inline" action="{% url 'search:search' %}" method='GET'>
           {% include 'search/search-bar.html' %}
-          {% if page_obj %}
-            <label><strong>{{ paginator.count }}</strong> pages with results</label>
-            <a href="{% sort_results 'page' %}" {% if form.sort_results == 'page' %}class="active"{% endif %}>Order by Page</a>
-            <a href="{% sort_results 'relevance' %}" {% if form.sort_results == 'relevance' %}class="active"{% endif %}>Order by Relevance</a>
-          {% endif %}
         </form>
         <div class="return-link">
           <a href="{% search_url query %}"> &larr; Back to search results </a>
@@ -168,7 +163,7 @@
         {% block viewport %}
           <div class="document-image-layout">
             {% for image in document.images_screen %}
-              <div data-screen-url="{{image.url}}" data-thumb-url="{{image.thumb_url|default_if_none:""}}"  data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image loaded {% if not image.url %}image-missing{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
+              <div data-screen-url="{{image.url}}" data-thumb-url="{{image.thumb_url|default_if_none:""}}"  data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image {% if not image.url %}image-missing loading{% else %}loaded{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
                 {% if image.url %}
                   <noscript><img src="{{image.url}}" /></noscript>
                   <div class="image-label">

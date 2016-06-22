@@ -69,7 +69,6 @@ class Search(FacetedSearchView):
         context['query'] = context['form'].data.get('q')
         if context['facets']:
             labeled_facets = []
-            print(self.facet_fields)
             for (label, field) in self.facet_labels:
                 counts = context['facets']['fields'].get(field, [])
                 # missing ignores mincount and sorting
@@ -84,6 +83,10 @@ class Search(FacetedSearchView):
                     'counts': counts
                 })
             context.update({'labeled_facets': labeled_facets})
+        if context['form']:
+            context['facet_lookup'] = {}
+            for (field, value, facet) in context['form'].applied_filters:
+                context['facet_lookup'][facet] = True
         return context
 
     def get_paginator(self, *args, **kwargs):

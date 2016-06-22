@@ -9,7 +9,7 @@
       {% endfor %}
     </p>
     {% if result.material_type == 'Document' %}
-      <a class="unstyled" href="{% url 'documents:show' document_id=result.pk %}-{{result.slug}}{% if query %}?query={% encode_string query %}{% endif %}">
+      <a class="unstyled" href="{% url 'documents:show' document_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
         <h3>{{result.title}}</h3>
         {% if result.literal_title %}
           <p>{{result.literal_title}}</p>
@@ -18,19 +18,19 @@
     {% elif result.material_type == 'Transcript' %}
       <a class="unstyled" href="{% url 'transcripts:search' transcript_id=result.transcript_id slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
         <h3>{{result.title}}</h3>
-        <p>{{group.hits}} results in this transcript</p>
+        <p>{{group.hits}} result{{ group.hits|pluralize }} in this transcript</p>
         <p class="snippets">
           {% if group.hits == 1 %}
-            <span class="ellipsis">[ ... p. {{result.seq_number}} ]</span>
             {% for snippet in result.highlighted.text %}
+              <span class="ellipsis">[ ... p. {{ result.page_label|default:"unlabeled" }} ]</span>
               {{ snippet|trim_snippet }}
-              <span class="ellipsis">[ ... ]</span>
             {% empty %}
+              <span class="ellipsis">[ p. {{ result.page_label|default:"unlabeled" }} ]</span>
               {{ result.text|slice:":150"|trim_snippet }}
             {% endfor %}
           {% else %}
             {% for document in group.documents %}
-              <span class="ellipsis">[ ... p. {{document.seq_number}} ]</span>
+              <span class="ellipsis">[ ... p. {{ document.page_label|default:"unlabeled" }} ]</span>
               {% if document.highlighted %}
                 {{ document.highlighted.text.0|trim_snippet }}
               {% else %}

@@ -128,6 +128,8 @@ The browser tests require PhantomJS to be installed (`npm install -g phantomjs`)
 
 Running the test suite will print a code coverage report to the terminal, as well as an interactive HTML report in `coverage/index.html`. Template code is included in the report. Coverage settings are configured in `.coveragerc`.
 
+> NOTE: There is an open issue [#25](https://github.com/nedbat/django_coverage_plugin/issues/25) with django_coverage_plugin which will hide certain warnings related to template coverage settings, thus the requirement of the [emmalemma@e083da1](https://github.com/emmalemma/django_coverage_plugin/commit/e083da1) fork. The plugin works fine, but if you see 0% coverage in templates, double-check your debug settings.
+
 #### Pre-commit hook
 
 To improve test compliance, there is a git pre-commit hook to run the test suite before each commit. It's self-installing, so just run:

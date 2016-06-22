@@ -54,14 +54,14 @@ class TranscriptVolume(models.Model):
     volume_number = models.IntegerField()
     description = models.TextField(blank=True, null=True)
 
-class TranscriptPageQuerySet(models.QuerySet):
-    use_for_related_fields = True
-    def joined_text(self):
-        joiner = TranscriptPageJoiner(self.all())
-        return joiner.html()
+# class TranscriptPageQuerySet(models.QuerySet):
+#     use_for_related_fields = True
+#     def joined_text(self):
+#         joiner = TranscriptPageJoiner(self.all())
+#         return joiner.html()
 
 class TranscriptPage(models.Model):
-    objects = TranscriptPageQuerySet.as_manager()
+    # objects = TranscriptPageQuerySet.as_manager()
 
     transcript = models.ForeignKey(Transcript, related_name='pages', on_delete=models.PROTECT)
     volume = models.ForeignKey(TranscriptVolume, related_name='pages', on_delete=models.PROTECT)
@@ -80,7 +80,6 @@ class TranscriptPage(models.Model):
 
     def xml_tree(self):
         return etree.fromstring(self.xml.encode('utf8'))
-
 
     def populate_from_xml(self):
         for event, element in etree.iterwalk(self.xml_tree()):
@@ -105,7 +104,6 @@ class TranscriptPage(models.Model):
         text = ''
         for event, element in etree.iterwalk(self.xml_tree(), events=('start', 'end')):
             if element.tag == 'p' :
-                # print(element, element.text)
                 if len(element) and element[0].tag == 'runningHead':
                     continue
                 if event == 'start':
@@ -137,7 +135,7 @@ class TranscriptPage(models.Model):
             if element.tag == 'exhibitDocPros':
                 codes.append('Prosecution {}'.format(element.get('n')))
             elif element.tag == 'exhibitDocDef':
-                codes.append('{} {}'.format(element.get('def'), element.get('n')))
+                codes.append('{} {}'.format(element.get('def') or 'Unknown Defendant', element.get('n')))
         return codes
 
     class Meta:

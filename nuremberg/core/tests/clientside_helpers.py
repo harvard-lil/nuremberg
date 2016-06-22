@@ -52,5 +52,4 @@ class global_variable_exists(object):
         self.name = name
 
     def __call__(self, driver):
-        print("return window['"+ self.name +"'];", driver.execute_script("return window['"+ self.name +"'];"))
         return driver.execute_script("return window['"+ self.name +"'];")
