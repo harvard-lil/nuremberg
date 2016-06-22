@@ -141,14 +141,17 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         }
       });
 
-      this.model.set('tool', 'scroll');
+      if (!Modernizr.touchevents) {
+        this.model.set('tool', 'scroll');
+      }
+
       var stylesheet = document.styleSheets[0];
-      var rules = (stylesheet.rules || stylesheet.cssRules);
+      var rules = ('cssRules' in stylesheet) ? stylesheet.cssRules : stylesheet.rules;
       if (stylesheet.addRule) {
         stylesheet.addRule("body.document-viewer #document-viewport .document-image",
           "width: 100% !important; height: auto !important;", 0);
       } else if (stylesheet.insertRule) {
-        stylesheet.insertRule("body.document-viewer #document-viewport .document-image { width: 100% !important; height: auto !important; }", 0);
+        var idx = stylesheet.insertRule("body.document-viewer #document-viewport .document-image { width: 100% !important; height: auto !important; }", 0);
       }
       this.imageCSSRule = rules[0];
 
@@ -297,7 +300,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
 
       if (scaleDelta < 1) {
         // zoom out
-
+        
         // Don't let pages become smaller than necessary to fit all in the viewport
         if (this.model.attributes.scale < 1/this.model.attributes.totalPages || $('.document-image-layout').height() <= this.$viewport[0].clientHeight) {
           this.model.attributes.scale = this.model.previous('scale');
@@ -458,7 +461,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       // apply individual scale as a CSS rule rather than to each page individually
       if (this.imageCSSRule) {
         // TODO: font-size is not animated properly during view scaling...
-        var fn = this.imageCSSRule.style.setAttribute ? 'setAttribute' : 'setProperty';
+        var fn = ('setAttribute' in this.imageCSSRule.style) ? 'setAttribute' : 'setProperty';
         this.imageCSSRule.style[fn]('font-size', 48 * scale + 'px', 'important');
         this.imageCSSRule.style[fn]('line-height', 64 * scale + 'px', 'important');
         this.imageCSSRule.style[fn]('height', 'auto', 'important');
