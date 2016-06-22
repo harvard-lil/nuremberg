@@ -94,7 +94,7 @@ class TranscriptPageJoiner:
     sentence_ending_letters = r'|'.join(( # ends of sentences that exclude "Mr."
         r'[a-z]{2}', # something like "service."
         r'[A-Z]{2}', # something like "OKL."
-        r'[0-9]{2}\w?\.?', # something like "23." or "23.:" or "-28a)."
+        r'[0-9]{2}[\w%]?\.?', # something like "23." or "23.:" or "-28a)."
         r'\s[I]', # something like "as did I."
         r'</a>', #something like "<a>NO-223</a>."
     ))
@@ -204,6 +204,9 @@ class TranscriptPageJoiner:
                     self.log( '[INSERTED END]')
                     self.log('match: ' + str(ends))
 
+                self.ignore_join = False
+                self.joining = False
+
                 if self.join_page:
                     self.close_page()
                     if self.last_page:
@@ -214,8 +217,6 @@ class TranscriptPageJoiner:
                 self.open_p()
                 self.put(ends[2])
 
-                self.ignore_join = False
-                self.joining = False
             elif not self.ignore_join:
                 # we only end ignoring on a successful join
                 self.put(joined_text)
