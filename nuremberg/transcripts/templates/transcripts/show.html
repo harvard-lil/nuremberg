@@ -40,7 +40,9 @@ t
     </div>
   </div>
   <div class="transcript-text" data-total-pages="{{ total_pages }}" data-seq="{{ seq }}" data-from-seq="{{ joiner.from_seq }}" data-to-seq="{{ joiner.to_seq }}">
-    {{ joiner.html|safe }}
+    {% with joiner.html_pages as pages %}
+      {% include 'transcripts/joined_pages.html' %}
+    {% endwith %}
   </div>
   <div class="transcript-controls below">
     <div class="end-indicator">

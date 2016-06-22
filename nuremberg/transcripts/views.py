@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.http.response import JsonResponse
 from django.views.generic import View
 from nuremberg.search.views import Search as GenericSearchView
@@ -59,7 +60,7 @@ class Show(View):
         joiner.build_html()
 
         if request.GET.get('partial'):
-            return JsonResponse({'html': joiner.html, 'from_seq': joiner.from_seq, 'to_seq': joiner.to_seq, 'seq': seq_number})
+            return JsonResponse({'html': render_to_string('transcripts/joined_pages.html', {'pages':joiner.html_pages}), 'from_seq': joiner.from_seq, 'to_seq': joiner.to_seq, 'seq': seq_number})
 
         current_page = next(page for page in pages if page.seq_number == seq_number)
         return render(request, self.template_name, {
