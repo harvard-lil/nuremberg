@@ -4,7 +4,7 @@ from nuremberg.core.tests.clientside_helpers import *
 def document(browser, live_server):
     document_id = 1
     browser.get(live_server.url + url('documents:show', kwargs={'document_id': document_id}))
-    browser.execute_script("$('html').removeClass('touchevents'); Modernizr.touchevents = false;")
+    browser.execute_script("$('html').removeClass('touchevents'); $('html').removeClass('no-xhrresponsetypeblob'); Modernizr.touchevents = false; Modernizr.xhrresponsetypeblob = true;")
     browser.title.should.contain('List of Case 1 documents, prosecution and defense, in English.')
     return browser
 
@@ -12,6 +12,10 @@ def document(browser, live_server):
 def viewport(document):
     document.execute_script("$('.viewport-content').scrollTop(0);")
     return document.find_element_by_css_selector('.viewport-content')
+
+@pytest.fixture
+def log():
+    print('BROWSER LOG:', document.get_log('browser'))
 
 @pytest.fixture(scope='module')
 def preloaded(document):
