@@ -27,7 +27,7 @@ modulejs.define('transcript-viewer', function () {
   var goToPage = function (page) {
     var $page = $('.page[data-page="'+page+'"]');
     if ($page.length) {
-      $viewport.scrollTop($page[0].offsetTop - 10);
+      goToSeq($page.data('seq'));
       return true;
     }
     return false;
@@ -35,7 +35,7 @@ modulejs.define('transcript-viewer', function () {
   var goToDate = function (date) {
     var $page = $('.page[data-date="'+date+'"]');
     if ($page.length) {
-      $viewport.scrollTop($page[0].offsetTop - 10);
+      goToSeq($page.data('seq'));
       return true;
     }
     return false;

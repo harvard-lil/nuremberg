@@ -171,6 +171,13 @@ section.results {
   display: inline-block;
   float: right;
   margin-top: -20px;
+
+  @media (max-width: @screen-md-min) {
+    float: inherit;
+    display: block;
+    margin: 10px 0 0;
+    font-size: 12px;
+  }
 }
 
 .advanced-search-help {
