@@ -149,7 +149,7 @@ Now if any test fails, or test coverage is below 95%, the hook will cancel the c
 
 ### Project Settings
 
-> NOTE: An example configuration used for the demo site on Heroku is in the (heroku)[https://github.com/harvard-lil/nuremberg/tree/heroku] branch as `staging.py`.
+> NOTE: An example configuration used for the demo site on Heroku is in the [heroku](https://github.com/harvard-lil/nuremberg/tree/heroku) branch as `staging.py`.
 
 Environment-specific Django settings live in the `nuremberg/settings` directory, and inherit from `nuremberg.settings.generic`. The settings module is configured by the `DJANGO_SETTINGS_MODULE` environment variable; the default value is `nuremberg.settings.dev`.
 
@@ -166,21 +166,21 @@ The test fixture database dump is, for all intents and purposes, a production-re
 
 #### Solr
 
-Solr indexes are defined in relevant `search_indexes.py` files, and
+Solr indexes are defined in relevant `search_indexes.py` files, and additional indexing configuration is in the `search/templates/search_configuration/solr.xml` file used to generate `schema.xml`.
 
 The Solr schema must be maintained as part of the deploy process. When deploying an updated schema, make sure to generate and upload the `schema.xml` file using `manage.py build_solr_schema`, then run a complete reindexing.
 
-> WARNING: Be cautious when doing this in production-- although in general reindexing will happen transparently, certain schema changes will cause a `SCHEMA-INDEX-MISMATCH` error that will cause search pages to error until reindexing completes.
+> WARNING: Be cautious when doing this in production-- although in general reindexing will happen transparently, certain schema changes will cause a `SCHEMA-INDEX-MISMATCH` error that will cause search pages to crash until reindexing completes.
 
 #### Reindexing
 
-If writes are relatively infrequent, manual reindexing using `manage.py update_index` should work fine. If writes are occurring on a daily or hourly basis, you should set up a `cron` script or similar to automate reindexing on a nightly or hourly basis using `--age 24` or `--age 1`. (Note: This will restrict reindexing only for indexes that have an `updated_at` field defined; currently, `photographs` does not, but completely reindexing that model is fast anyway.)
+If writes are relatively infrequent, manual reindexing using `manage.py update_index` should work fine. If writes happen relatively often, you should set up a `cron` script or similar to automate reindexing on a nightly or hourly basis using `--age 24` or `--age 1`. (Note: This will restrict reindexing only for indexes that have an `updated_at` field defined; currently, `photographs` does not, but completely reindexing that model is fast anyway.)
 
-Reindexing should only take a few minutes to run. For more fine-grained information on indexing progress, use `--batch-size 100 --verbosity 2` or similar.
+Even a full reindex should only take a few minutes to run, and the site can continue to serve requests while it happens. For more fine-grained information on indexing progress, use `--batch-size 100 --verbosity 2` or similar.
 
 #### Transcripts
 
-There is a management command `manage.py ingest_transcript_xml` which reads a file or files like `NRMB-NMT01-23_00512_0.xml` and generates or updates the appropriate transcript, volume, and page models. Since some values read out of the XML are stored in the database, re-ingesting is the preferred way to update transcript data. If database XML is modified directly, remember to call `populate_from_xml` on the appropriate TranscriptPage model to update date, page, and sequence number.
+There is a management command `manage.py ingest_transcript_xml` which reads a file like `NRMB-NMT01-23_00512_0.xml` (or a directory of such files using `-d`) and generates or updates the appropriate transcript, volume, and page models. Since some values read out of the XML are stored in the database, re-ingesting is the preferred way to update transcript data. If database XML is modified directly, call `populate_from_xml` on the appropriate TranscriptPage model to update date, page, and sequence number.
 
 Remember to run `manage.py update_index transcripts` after ingesting XML to enable searching of the new content.
 
