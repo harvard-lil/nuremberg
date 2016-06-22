@@ -39,7 +39,7 @@ class Show(View):
 
     def get(self, request, transcript_id, *args, **kwargs):
         transcript = Transcript.objects.get(id=transcript_id)
-        total_pages = transcript.pages.count()
+        total_pages = transcript.total_pages
 
         seq_number = int(request.GET.get('seq', 1))
         page_number = int(request.GET.get('page', 0))
@@ -71,6 +71,8 @@ class Show(View):
             'dates': transcript.dates(),
             'current_page': current_page,
             'query': request.GET.get('q'),
+            'page_obj': None,
+            'show_search_bar': False
             })
 
     def get_request_seq_range(self, request, seq_number):
