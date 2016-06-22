@@ -154,6 +154,9 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         var idx = stylesheet.insertRule("body.document-viewer #document-viewport .document-image { width: 100% !important; height: auto !important; }", 0);
       }
       this.imageCSSRule = rules[0];
+      if (this.imageCSSRule && this.imageCSSRule.cssRules) {
+        this.imageCSSRule = this.imageCSSRule.cssRules[0];
+      }
 
       this.$el.on('scroll', this.recalculateVisible);
       $(window).on('resize', this.recalculateVisible);
@@ -300,7 +303,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
 
       if (scaleDelta < 1) {
         // zoom out
-        
+
         // Don't let pages become smaller than necessary to fit all in the viewport
         if (this.model.attributes.scale < 1/this.model.attributes.totalPages || $('.document-image-layout').height() <= this.$viewport[0].clientHeight) {
           this.model.attributes.scale = this.model.previous('scale');
@@ -461,7 +464,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       // apply individual scale as a CSS rule rather than to each page individually
       if (this.imageCSSRule) {
         // TODO: font-size is not animated properly during view scaling...
-        var fn = ('setAttribute' in this.imageCSSRule.style) ? 'setAttribute' : 'setProperty';
+        var fn = ('setProperty' in this.imageCSSRule.style) ? 'setProperty' : 'setAttribute';
         this.imageCSSRule.style[fn]('font-size', 48 * scale + 'px', 'important');
         this.imageCSSRule.style[fn]('line-height', 64 * scale + 'px', 'important');
         this.imageCSSRule.style[fn]('height', 'auto', 'important');
