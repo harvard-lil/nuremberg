@@ -1,0 +1,25 @@
+{% load humanize %}
+{% for row in pages %}
+  {% with page=row.page html=row.html %}
+    <div class="page"  data-seq="{{ page.seq_number }}" data-page="{{ page.page_number }}" data-date="{{ page.date|date:'Y-m-d'}}">
+      <div class="page-handle">
+          <span class="page-details">
+              HLSL Seq. No. {{ page.seq_number }}
+              {% if page.date %}
+                  - {{ page.date|date:'d F Y' }}
+              {% endif %}
+              {% if page.image_url %}
+                  <span class="image-options">
+                      - Image
+                      [<a class='view-image'>View</a>]
+                      [<a class='download-image' href="{{page.image_url}}" download="Transcript Seq {{ page.seq_number }}.jpg">Download</a>]
+                  </span>
+              {% endif %}
+          </span>
+          <span class="page-number">Page {{ page.page_label|default:"Unlabeled"|intcomma }}</span>
+      </div>
+
+      {{ html|safe }}
+    </div>
+  {% endwith %}
+{% endfor %}

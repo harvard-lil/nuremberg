@@ -8,7 +8,7 @@ from nuremberg.documents.models import DocumentCase
 from nuremberg.transcripts.models import Transcript, TranscriptPage
 
 class Command(BaseCommand):
-    help = 'Parses a transcript page XML file and creates the appropriate models'
+    help = 'Parses a transcript page XML file or files and creates the appropriate models'
 
     filename_re = re.compile(r'^NRMB-(?P<case_label>[A-Z]+)(?P<case_number>\d{2})?-(?P<volume>\d{2})_(?P<vol_seq>\d{5})_[01]\.xml$')
 

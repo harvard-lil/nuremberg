@@ -4,6 +4,12 @@ import re
 from collections import deque
 
 class EmptyFacetsSearchForm(SearchForm):
+    """
+    This reimplementation of FacetedSearchForm enables two additional features:
+
+    - filtering by missing facet values (like Date: Unknown)
+    - date_year range filtering like 1940-1945, as a search filter
+    """
     applied_filters = []
     date_range = [None, None]
 
@@ -47,7 +53,26 @@ class FieldedSearchForm(SearchForm):
     """
     This form enables natural fielded search with the format:
     general search terms field:field search terms -field:excluded field search terms
+
+    The relevant logic is in `parse_query` and `apply_field_query`.
+
+    The query is parsed into one `auto_query` and many `field_queries`. Each field_query
+    is tagged to render whether it is included, excluded, or ignored.
+
+    You can add an additional search field by adding its name to `search_fields`,
+    along with the Solr index key if different.
+
+
+    To enable grouping of TranscriptPage index objects under a single transcript,
+    we use an experiment modification to the Haystack Solr Backend. Many search parameters
+    are replaced with their group-query equivalents. Be cautious when modifying grouping
+    parameters, as the results can be counter-intuitive.
+
+
+    Highlighting is used in transcript search results, and as a way to count "occurrences"
+    within transcript search.
     """
+
     auto_query = None
     field_queries = []
     sort_fields = {
@@ -58,6 +83,7 @@ class FieldedSearchForm(SearchForm):
         'pages-desc': '-total_pages',
         'page': 'seq_number',
     }
+
     search_fields = {
         'all': 'text',
         'title': 'title',
@@ -119,48 +145,16 @@ class FieldedSearchForm(SearchForm):
         if self.auto_query and not re.match(r'^\s*\*\s*$', self.auto_query):
             sqs = sqs.filter(content=AutoQuery(self.auto_query))
 
-        highlight_query = self.auto_query
+        self.highlight_query = self.auto_query
+
         for field_query in self.field_queries:
-            (field, value) = field_query
+            sqs = self.apply_field_query(sqs, field_query)
 
-            if field[0] == '-':
-                exclude = True
-                field = field[1:]
-            else:
-                exclude = False
-
-            field_key = self.search_fields.get(field)
-            if field_key == True:
-                field_key = field
-
-            if field_key:
-                # the solr backend aggressively quotes OR queries, so we must build it manually to keep our loose keyword search
-                values = re.split(r'[|,]| OR ', value)
-                query_list = []
-                for value in values:
-                    if re.match(r'^\s*(none|unknown)\s*$', value, re.IGNORECASE):
-                        query_list.append('(-{}: [* TO *] AND *:*)'.format(field_key))
-                    else:
-                        # to enable snippets for exhibit codes we must add them to the highlight query
-                        if field_key in ('exhibit_codes', 'evidence_codes', 'text'):
-                            highlight_query += ' ' + value
-                        # NOTE: field_key is whitelisted above
-                        query_list.append('{}:({})'.format(field_key, AutoQuery(value).prepare(sqs.query)))
-                raw_query = '({})'.format(' OR '.join(query_list))
-                if exclude:
-                    field_query.append('excluded')
-                    raw_query = 'NOT {}'.format(raw_query)
-                else:
-                    field_query.append('included')
-                sqs = sqs.raw_search(raw_query)
-            else:
-                field_query.append('ignored')
-
-        if highlight_query:
+        if self.highlight_query:
             sqs = sqs.highlight(**{
                 'hl.snippets': highlight_snippets,
                 'hl.fragsize':150,
-                'hl.q': 'material_type:transcripts AND text:({})'.format(AutoQuery(highlight_query).prepare(sqs.query)),
+                'hl.q': 'material_type:transcripts AND text:({})'.format(AutoQuery(self.highlight_query).prepare(sqs.query)),
                 'hl.fl':'text',
                 'hl.requireFieldMatch':'true',
                 'hl.simple.pre':'<mark>',
@@ -176,6 +170,45 @@ class FieldedSearchForm(SearchForm):
         while len(sections) >= 2:
             field_queries.append([sections.popleft(), sections.popleft()])
         return (auto_query, field_queries)
+
+    def apply_field_query(self, sqs, field_query):
+        (field, value) = field_query
+
+        if field[0] == '-':
+            exclude = True
+            field = field[1:]
+        else:
+            exclude = False
+
+        field_key = self.search_fields.get(field)
+        if field_key == True:
+            field_key = field
+
+        # the solr backend aggressively quotes OR queries,
+        # so we must build an OR query manually to keep our loose keyword search
+        if field_key:
+            values = re.split(r'[|,]| OR ', value)
+            query_list = []
+            for value in values:
+                if re.match(r'^\s*(none|unknown)\s*$', value, re.IGNORECASE):
+                    query_list.append('(-{}: [* TO *] AND *:*)'.format(field_key))
+                else:
+                    # to enable snippets for exhibit codes we must add them to the highlight query
+                    if field_key in ('exhibit_codes', 'evidence_codes', 'text'):
+                        self.highlight_query += ' ' + value
+                    # NOTE: field_key is whitelisted above
+                    query_list.append('{}:({})'.format(field_key, AutoQuery(value).prepare(sqs.query)))
+            raw_query = '({})'.format(' OR '.join(query_list))
+            if exclude:
+                field_query.append('excluded')
+                raw_query = 'NOT {}'.format(raw_query)
+            else:
+                field_query.append('included')
+            sqs = sqs.raw_search(raw_query)
+        else:
+            field_query.append('ignored')
+
+        return sqs
 
 class DocumentSearchForm(EmptyFacetsSearchForm, FieldedSearchForm):
     pass

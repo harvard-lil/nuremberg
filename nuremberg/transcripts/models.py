@@ -101,6 +101,8 @@ class TranscriptPage(models.Model):
                     self.page_number = None
 
     def text(self):
+        # TODO: this blob won't allow exact phrase matches across transcript pages.
+        # It might be extended a few words into either adjacent page to allow that.
         text = ''
         for event, element in etree.iterwalk(self.xml_tree(), events=('start', 'end')):
             if element.tag == 'p' :

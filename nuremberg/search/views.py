@@ -6,13 +6,23 @@ from .forms import DocumentSearchForm
 from .lib.solr_grouping_backend import GroupedSearchQuerySet
 
 class Search(FacetedSearchView):
+    """
+    This is a subclass of the default Haystack faceted search view to implement
+    our modifications, including pagination, shorter query parameters, custom
+    sorting, and labeled facets.
+
+    You can add a search facet to the list simply by placing it in `facet_labels`.
+
+    See `forms.py` for the faceting and fielded search logic itself.
+    """
     load_all = False
     queryset = GroupedSearchQuerySet()
 
+    # page numbers like [1, 2 ... 6, 7, 8, 9, 10, ... 19, 20]
+    paginator_class = DiggPaginator
     paginate_by = 15
     context_pages = 4
     edge_pages = 2
-    paginator_class = DiggPaginator
 
     form_class = DocumentSearchForm
     search_field = 'q'
@@ -34,7 +44,8 @@ class Search(FacetedSearchView):
     facet_fields = [label[1] for label in facet_labels]
 
     def form_invalid(self, form):
-        # override SearchView
+        # override SearchView to give a blank search by default
+        # TODO: this seems unnecessary
         self.queryset = form.search()
         context = self.get_context_data(**{
             self.form_name: form,
@@ -56,16 +67,13 @@ class Search(FacetedSearchView):
         qs = super(FacetedSearchMixin, self).get_queryset()
         for field in self.facet_fields:
             sort = 'count'
-            # if field == 'date_year':
-            #     sort = 'index'
-            # else:
-            #     sort = 'count'
             qs = qs.facet(field, missing=True, sort=sort, mincount=1)
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # allow form to pre-process the query for display
+
+        # pull the query out of form so it is pre-processed
         context['query'] = context['form'].data.get('q')
         if context['facets']:
             labeled_facets = []
@@ -76,6 +84,7 @@ class Search(FacetedSearchView):
                     counts.remove((None, 0))
                 else:
                     pass
+                    # sort missing into the other facet values
                     # counts.sort(key=lambda field: field[1], reverse=True)
                 labeled_facets.append({
                     'field': field,
