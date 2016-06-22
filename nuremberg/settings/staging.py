@@ -1,3 +1,4 @@
+import sys
 from .generic import *
 import dj_database_url
 
@@ -17,6 +18,24 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'nuremberg.search.lib.solr_grouping_backend.GroupedSolrEngine',
         'URL': os.environ.get('OPENSOLR_URL', ''),
+    },
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console':{
+            'level':'INFO',
+            'class':'logging.StreamHandler',
+            'stream': sys.stdout
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
     },
 }
 
