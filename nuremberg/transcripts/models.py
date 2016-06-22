@@ -3,6 +3,7 @@ from io import BytesIO
 from lxml import etree
 from datetime import datetime
 from django.utils.text import slugify
+from django.utils.functional import cached_property
 
 from django.db import models
 from nuremberg.documents.models import DocumentCase
@@ -18,12 +19,14 @@ class Transcript(models.Model):
         return slugify(self.title)
 
     def clamp_seq(self, seq):
-        return min(max(seq, 1), self.pages.count())
+        return min(max(seq, 1), self.total_pages)
+
+    @cached_property
+    def total_pages(self):
+        return self.pages.count()
 
     def dates(self):
         return self.pages.order_by().values_list('date', flat=True).distinct()
-
-
 
     def get_seq_from_page_date(self, page_date, seq_number):
         # find the seq number for provided date

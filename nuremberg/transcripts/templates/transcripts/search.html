@@ -1,7 +1,7 @@
 {% extends "transcripts/show.html" %}
 {% load search_url %}
 
-{% block title %} Search in Transcript - {{document.title}} {% endblock %}
+{% block title %} Search in Transcript - {{transcript.title}} {% endblock %}
 
 {% block javascript_module %}{% endblock %}
 {% block body_class %}transcript-search{% endblock %}
@@ -12,19 +12,23 @@
     {% for result in page_obj.object_list %}
       <div class="result-row">
         <a class="teaser" href="{% url 'transcripts:show' transcript_id=result.transcript_id slug=result.slug %}?seq={{ result.seq_number }}&amp;q={% encode_string query|default:'' %}">Page {{result.page_label|default:"Unlabeled"}} </a>
-        <div class="occurrence-count">{{ result.highlighted.text|length }} occurrences</div>
+        {% if result.highlighted %}<div class="occurrence-count">{{ result.highlighted.text|length }} occurrences</div>{% endif %}
           <p>
-            {% for snippet in result.highlighted.text|slice:":2" %}
-            <span class="ellipsis">[ ... ]</span>
-              {{ snippet|trim_snippet }}
-            {% empty %}
+            {% if result.highlighted %}
+              {% for snippet in result.highlighted.text|slice:":2" %}
+              <span class="ellipsis">[ ... ]</span>
+                {{ snippet|trim_snippet }}
+              {% endfor %}
+            {% else %}
               {{ result.text|slice:":150"|trim_snippet }}
-            {% endfor %}
+            {% endif %}
             <span class="ellipsis">[ ... ]</span>
           </p>
       </div>
     {% empty %}
-      No results found.
+      <p>
+        No results found.
+      </p>
     {% endfor %}
   </div>
   {% include 'search/pagination.html' %}
