@@ -83,21 +83,29 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
         model.set('preloaded', null);
 
 
-        this.set('loader', DownloadQueue.download(url));
+        this.set('loader', DownloadQueue.download(url, this.attributes.img));
 
 
         this.attributes.loader.size = size;
         this.attributes.loader
         .progress(this.downloadProgress)
         .then(function (response) {
-          var reader = new FileReader;
-          reader.readAsDataURL(response)
-          reader.onload = function () {
-            model.get('cache')[size] = reader.result;
-            model.set('url', reader.result);
+          if (response === 'fallback') {
+            // the img tag is already loaded
+            model.get('cache')[size] = model.attributes.img.src;
+            model.set('url', model.attributes.img.src);
             model.set('preloaded', size);
             model.set('loader', null);
-          };
+          } else {
+            var reader = new FileReader;
+            reader.readAsDataURL(response)
+            reader.onload = function () {
+              model.get('cache')[size] = reader.result;
+              model.set('url', reader.result);
+              model.set('preloaded', size);
+              model.set('loader', null);
+            };
+          }
         })
         .fail(function (error) {
           model.set('loader', null);
@@ -109,6 +117,7 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
       initialize: function () {
         var view = this;
         var $img = $('<img></img>').appendTo(this.$el);
+        this.model.attributes.img = $img[0];
 
         var aspectRatio = this.model.attributes.size.height / this.model.attributes.size.width;
         var spacer = $('<div class="aspect-ratio-spacer"></div>').css({

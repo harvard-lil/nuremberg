@@ -65,6 +65,10 @@ body.mockups {
   }
 }
 
+// unfortunately pdfjs requires data urls so this is necessary
+html.no-xhrresponsetypeblob .download-pdf {
+  display: none;
+}
 
 body {
   .center-block();

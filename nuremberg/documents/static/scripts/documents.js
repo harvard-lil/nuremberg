@@ -16,7 +16,7 @@ modulejs.define('documents', ['DocumentViewport', 'DocumentTools', 'DownloadPDF'
     } else {
       pageHash = '#p.' + page;
     }
-    if (history) {
+    if (history && history.replaceState) {
       history.replaceState(undefined, undefined, pageHash);
     } else {
       location.hash = pageHash;

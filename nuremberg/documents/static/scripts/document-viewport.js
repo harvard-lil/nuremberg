@@ -144,9 +144,15 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
         this.model.set('tool', 'scroll');
       }
 
-      this.imageCSSRule = document.styleSheets[0].cssRules[
-        document.styleSheets[0].insertRule("body.document-viewer #document-viewport .document-image { width: 100% !important; height: auto !important; }", 0)
-      ];
+      var stylesheet = document.styleSheets[0];
+      var rules = (stylesheet.rules || stylesheet.cssRules);
+      if (stylesheet.addRule) {
+        stylesheet.addRule("body.document-viewer #document-viewport .document-image",
+          "width: 100% !important; height: auto !important;", 0);
+      } else if (stylesheet.insertRule) {
+        stylesheet.insertRule("body.document-viewer #document-viewport .document-image { width: 100% !important; height: auto !important; }", 0);
+      }
+      this.imageCSSRule = rules[0];
 
       this.$el.on('scroll', this.recalculateVisible);
       $(window).on('resize', this.recalculateVisible);
@@ -183,6 +189,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       // Event handler for the default scroll-to-scroll page-zoom tool.
       e.preventDefault();
 
+
+
       var scaleOrigin = {
         x: e.pageX - this.$viewport.offset().left,
         y: e.pageY - this.$viewport.offset().top
@@ -208,7 +216,8 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
           this.viewScale(1/this.model.attributes.scale, true, {x: page.$el.position().left, y: page.$el.position().top});
         }
       } else {
-        if (e.which === 1 && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+        if (!e.which) e.which = e.keyCode;
+        if (e.type === 'click' && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
           // on left-click, view scale for 100% and page zoom under 100%
           if (this.model.attributes.scale == 1) {
             scale = 1.5 * this.model.attributes.viewScale;
@@ -217,7 +226,7 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
             scale = 1;
             this.zoomToPage(page, scale);
           }
-        } else if (e.which === 3 || e.ctrlKey || e.metaKey || e.shiftKey) {
+        } else if (e.type === 'contextmenu' || e.ctrlKey || e.metaKey || e.shiftKey) {
           // on right-click, reset zoom if zoomed in on multiple columns,
           // zoom out if zoomed in on one column, add more columns otherwise
           if (this.model.attributes.viewScale > 1) {
@@ -451,10 +460,11 @@ modulejs.define('DocumentViewport', ['Images', 'DraggingMixin', 'DownloadQueue']
       // apply individual scale as a CSS rule rather than to each page individually
       if (this.imageCSSRule) {
         // TODO: font-size is not animated properly during view scaling...
-        this.imageCSSRule.style.setProperty('font-size', 48 * scale + 'px', 'important');
-        this.imageCSSRule.style.setProperty('line-height', 64 * scale + 'px', 'important');
-        this.imageCSSRule.style.setProperty('height', 'auto', 'important');
-        this.imageCSSRule.style.setProperty('width', 100 * scale + '%', 'important');
+        var fn = this.imageCSSRule.style.setAttribute ? 'setAttribute' : 'setProperty';
+        this.imageCSSRule.style[fn]('font-size', 48 * scale + 'px', 'important');
+        this.imageCSSRule.style[fn]('line-height', 64 * scale + 'px', 'important');
+        this.imageCSSRule.style[fn]('height', 'auto', 'important');
+        this.imageCSSRule.style[fn]('width', 100 * scale + '%', 'important');
       }
     },
 
