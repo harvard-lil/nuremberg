@@ -67,7 +67,11 @@ def test_transcript_joins(seq):
     text.should.contain('have to look through each individual document') # This page break moves to:
     text.should.contain('carry this out in practice. HLSL Seq. No. 9')
 
-    text.should.contain(' probably very relevant and important ones. HLSL Seq. No. 10') # This page break moves to:
+    text.should.contain(' probably very relevant and important ones. HLSL Seq. No. 10')
+
+    # test not repeating page numbers after
+    page = seq(330)
+    page('.page-handle').with_text('HLSL SEQ. NO. 340').length.should.equal(1)
 
 def test_seq_alignment(seq):
     # the first seq load for 40 and 49 should be the same
