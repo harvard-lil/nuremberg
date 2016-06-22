@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'nuremberg.content',
     'nuremberg.documents',
     'nuremberg.transcripts',
+    'nuremberg.photographs',
     'nuremberg.search',
     'compressor',
 

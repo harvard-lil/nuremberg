@@ -14,7 +14,7 @@ def test_search_page(query):
     search_bar.should.not_be.empty
     search_bar.val().should.be.none
 
-    page('p').text().should.contain('Results 1-15 of 5843 for *')
+    page('p').text().should.contain('Results 1-15 of 6059 for *')
     page('.facet').text().should.contain('Document (5842)')
 
     page = follow_link(page('.facet p').with_text('Transcript').find('a'))
@@ -30,7 +30,7 @@ def test_facets(query):
     page = query('polish workers in germany')
 
     # baseline
-    page.text().should.contain('Results 1-15 of 19 for polish workers in germany')
+    page.text().should.contain('Results 1-15 of 20 for polish workers in germany')
 
     # test adding facet
     page = follow_link(page('.facet p').with_text('NMT 2').find('a'))
@@ -39,11 +39,11 @@ def test_facets(query):
 
     # test removing facet
     page = follow_link(page('.applied-filters').with_text('Trial NMT 2').find('a'))
-    page.text().should.contain('Results 1-15 of 19 for polish workers in germany')
+    page.text().should.contain('Results 1-15 of 20 for polish workers in germany')
 
     # test unknown facet
     page = follow_link(page('.facet').with_text('Trial').find('p').with_text('Unknown').find('a'))
-    page.text().should.contain('Results 1-11 of 11 for polish workers in germany')
+    page.text().should.contain('Results 1-12 of 12 for polish workers in germany')
     page('.applied-filters').with_text('Trial').text().should.contain('None')
 
     # test multiple facets
@@ -73,7 +73,7 @@ def test_facets(query):
 
     # test removing all filters
     page = follow_link(page('a').with_text('Clear all filters'))
-    page.text().should.contain('Results 1-15 of 19 for polish workers in germany')
+    page.text().should.contain('Results 1-15 of 20 for polish workers in germany')
 
 def test_keyword_search(query):
     page = query('')
@@ -101,18 +101,19 @@ def test_field_search(query):
         if first_count == None: first_count = 1
         page.text().should.contain('Results {}-{} of {} for {}'.format(first_count, page_count, count, q.replace(':', ': ')))
 
-    count_results('workers', 549)
+    # TODO: these tests are pretty brittle to indexing changes, consider beefing them up
+    count_results('workers', 551)
     count_results('workers author:fritz', 73)
     count_results('workers date:january', 28)
-    count_results('workers -trial:nmt 4', 433)
+    count_results('workers -trial:nmt 4', 435)
     count_results('workers evidence:NO-190', 5, 5)
     count_results('workers source:typescript language:german', 37)
     count_results('workers source:typescript language:german -author:Milch', 28)
     count_results('workers trial:nmt 2 | nmt 4', 212)
     count_results('workers date:unknown', 25)
     count_results('workers date:none', 25)
-    count_results('workers -date:none', 524)
-    count_results('workers -date:none notafield:no matches', 524)
+    count_results('workers -date:none', 526)
+    count_results('workers -date:none notafield:no matches', 526)
     count_results('workers trial:nmt 2 | nmt 4 author:speer, fritz', 29)
     count_results('workers author:"hitler adolf"', 0, 0, 0)
     count_results('workers author:"adolf hitler"', 7, 7)
@@ -122,7 +123,7 @@ def test_field_search(query):
 
 def test_document_search(query):
     page = query('workers')
-    page.text().should.contain('Results 1-15 of 549 for workers')
+    page.text().should.contain('Results 1-15 of 551 for workers')
     page = follow_link(page('.document-row a'))
 
     search_bar = page('input[type=search]')
@@ -147,7 +148,7 @@ def test_landing_search(query):
     search_bar.should.not_be.empty
 
     page = go_to(search_bar.submit_value('workers'))
-    page.text().should.contain('Results 1-15 of 549 for workers')
+    page.text().should.contain('Results 1-15 of 551 for workers')
 
     page = go_to(url('content:landing'))
 
@@ -202,11 +203,11 @@ def test_transcript_snippets(query):
 def test_pagination(query):
     page = query('')
 
-    page.text().should.contain('Results 1-15 of 5843 for *')
+    page.text().should.contain('Results 1-15 of 6059 for *')
 
-    page = follow_link(page('a').with_text('390'))
+    page = follow_link(page('a').with_text('404'))
 
-    page.text().should.contain('Results 5836-5843 of 5843 for *')
+    page.text().should.contain('Results 6046-6059 of 6059 for *')
 
 
 def test_sort(query):
@@ -220,24 +221,24 @@ def test_sort(query):
     page = query('-date:none')
     page = go_to(page.absolute_url(page('select option').with_text('Earliest Date').val()))
     page.text().should.contain('18 August 1896')
-    page = follow_link(page('a.page-number').with_text('340'))
+    page = follow_link(page('a.page-number').with_text('355'))
     page.text().should.contain('03 September 1948')
 
     page = query('-date:none')
     page = go_to(page.absolute_url(page('select option').with_text('Latest Date').val()))
     page.text().should.contain('03 September 1948')
-    page = follow_link(page('a.page-number').with_text('340'))
+    page = follow_link(page('a.page-number').with_text('355'))
     page.text().should.contain('18 August 1896')
 
     # test page sorts
     page = query('')
     page = go_to(page.absolute_url(page('select option').with_text('Most Pages').val()))
     page.text().should.contain('Journal and office records of Hans Frank, Governor General of Poland, 1939-1944 [27 selections]')
-    page = follow_link(page('a.page-number').with_text('390'))
-    page.text().should.contain('Instructions to concentration camp commandants concerning the brothels provided for guards')
+    page = follow_link(page('a.page-number').with_text('404'))
+    page.text().should.contain('OMGUS MILITARY TRIBUNAL - CASE THREE')
 
     page = query('')
     page = go_to(page.absolute_url(page('select option').with_text('Fewest Pages').val()))
     page.text().should.contain('Letter to K. Gerland concerning the sterilization experiments, replying')
-    page = follow_link(page('a.page-number').with_text('390'))
+    page = follow_link(page('a.page-number').with_text('404'))
     page.text().should.contain('Journal and office records of Hans Frank, Governor General of Poland, 1939-1944 [27 selections]')
