@@ -10,8 +10,9 @@ modulejs.define('DownloadQueue', function () {
 
   var concurrency = 5;
 
-  var DownloadRequest = function (url) {
+  var DownloadRequest = function (url, element) {
     var request = this;
+    this.element = element;
 
     _.bindAll(this, 'xhrProgress');
     this.state = 'queued';
@@ -20,41 +21,69 @@ modulejs.define('DownloadQueue', function () {
     this.promise.request = this;
     this.promise.cancel = function () {
       if (request.state === 'active') {
-        request.xhr.abort();
+        if (request.xhr) {
+          request.xhr.abort();
+        }
       } else {
         request.state = 'cancelled';
       }
     };
   };
+  DownloadRequest.enableXHR = true;
+  DownloadRequest.failures = 0;
 
   DownloadRequest.prototype = {
-    doDownload: function () {
+    doDownload: function (fallback) {
       var request = this;
       this.state = 'active';
 
-      this.xhr = $.ajax({
-        dataType: 'native',
-        url: this.url,
-        xhrFields: {
-          responseType: 'blob',
-          onprogress: this.xhrProgress,
-        }
-      });
-      this.startTime = Date.now();
-      this.promise.notify({loaded: 0, total: 1});
-      this.xhr.then( function (result) {
-        request.state = 'complete';
-        request.promise.resolve(result);
-      });
-      this.xhr.fail( function (err) {
-        request.state = 'failed';
-        request.error = err;
-        request.promise.reject(err);
-      });
+      if (Modernizr.xhrresponsetypeblob && DownloadRequest.enableXHR && !fallback) {
+        // we can download images over ajax
+        this.xhr = $.ajax({
+          dataType: 'native',
+          url: this.url,
+          xhrFields: {
+            responseType: 'blob',
+            onprogress: this.xhrProgress,
+          }
+        });
+        this.startTime = Date.now();
+        this.promise.notify({loaded: 0, total: 1});
+        this.xhr.then( function (result) {
+          request.state = 'complete';
+          request.promise.resolve(result);
+        });
+        this.xhr.fail( function (err, status) {
+          if (status !== 'abort' && !fallback) {
+            DownloadRequest.failures += 1;
+            if (DownloadRequest.failures >= 5) {
+              // Something's wrong, use fallback from now on
+              DownloadRequest.enableXHR = false;
+            }
+            // this is probably because of cors, so use the fallback
+            return request.doDownload(true);
+          }
+
+          request.state = 'failed';
+          request.error = err;
+          request.promise.reject(err);
+        });
+      } else {
+        // fallback to using normal img loading
+        this.element.src = this.url;
+        var imgLoad = imagesLoaded(this.element, function () {
+          if (imgLoad.images[0].isLoaded) {
+            request.state = 'complete';
+            request.promise.resolve('fallback');
+          } else {
+            request.state = 'failed';
+            request.promise.reject({fallbackError: 'failed'});
+          }
+        })
+      }
     },
 
     xhrProgress: function (event) {
-      this.progress =
       this.promise.notify(event);
     },
   };
@@ -67,7 +96,7 @@ modulejs.define('DownloadQueue', function () {
     requests: {},
     complete: {},
 
-    download: function (url) {
+    download: function (url, element) {
       var request;
       request = this.requests[url];
       if (request) {
@@ -79,7 +108,7 @@ modulejs.define('DownloadQueue', function () {
         }
       }
 
-      request = new DownloadRequest(url);
+      request = new DownloadRequest(url, element);
       this.requests[url] = request;
       this.addToFront(request);
       this.testInterrupt();

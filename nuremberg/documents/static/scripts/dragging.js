@@ -7,13 +7,13 @@ modulejs.define('DraggingMixin', function () {
       if (e.which !== 1 || (e.which !== 3 && this.model.attributes.tool !== 'magnify'))
         return;
       this.model.set('dragPosition', {x: e.clientX, y: e.clientY});
-      $(window).on('mousemove', this.doDrag);
-      $(window).one('mouseup', this.endDrag);
+      $(document).on('mousemove', this.doDrag);
+      $(document).one('mouseup', this.endDrag);
       e.preventDefault();
     },
     endDrag: function (e) {
       this.model.set('dragPosition', null);
-      $(window).off('mousemove', this.doDrag);
+      $(document).off('mousemove', this.doDrag);
     },
     doDrag: function (e) {
       var oldPosition = this.model.get('dragPosition');

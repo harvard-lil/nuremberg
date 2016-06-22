@@ -20,7 +20,7 @@ modulejs.define('transcript-viewer', function () {
     currentSeq = Math.min(Math.max(seq, 1), totalPages);
     var $page = $viewport.find('.page[data-seq="'+currentSeq+'"]');
     $viewport.scrollTop($page[0].offsetTop - 10);
-    if (window.history) {
+    if (history && history.replaceState) {
       history.replaceState(undefined, undefined, location.pathname + location.search.replace(/seq=\d+/, 'seq='+seq))
     }
   };
