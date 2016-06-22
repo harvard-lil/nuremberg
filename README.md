@@ -13,6 +13,7 @@ The project is organized into several feature-oriented modules ("apps" in Django
   - `.content`: Files for static pages with project information, etc.
   - `.documents`: Files for displaying digitized document images.
   - `.transcripts`: Files for full-text transcripts and OCR documents.
+  - `.photographs`: Files for displaying images from the photographic archive.
   - `.search`: Files for the search interface and API.
 
 This document covers the following topics:
@@ -20,6 +21,7 @@ This document covers the following topics:
 - [Setting up a development environment](#setup)
 - [Running the test suite](#testing)
 - [Configuring project settings](#project-settings)
+- [Data](#data)
 - [Packaging static assets](#static-assets)
 
 ### Setup
@@ -79,17 +81,22 @@ mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
 
 Solr is needed for the Haystack search engine to run. The app is developed against Solr 4.10.4 -- Solr 5, the latest version, is incompatible with Haystack. Make sure it's installed and configured in the appropriate `settings/` file.
 
-If you make changes to `search_indexes.py`, you will need to update the Solr schema by running:
+You will need to install the Solr schema by running:
 
 ```bash
 manage.py build_solr_schema --filename=/location/of/solr/schema.xml
+curl 'http://localhost:8983/solr/admin/cores?action=RELOAD&core=$SOLR_CORE'
 ```
 
-You will then need to update the `schema.xml` file in the production Solr instance. Then update the index itself:
+Then update the index itself:
 
 ```bash
 manage.py rebuild_search_index
 ```
+
+(It will take a couple of minutes to reindex fully.)
+
+Do this any time you make changes to `search_indexes.py` or `solr.xml`.
 
 #### Run the server
 
@@ -142,11 +149,40 @@ Now if any test fails, or test coverage is below 95%, the hook will cancel the c
 
 ### Project Settings
 
+> NOTE: An example configuration used for the demo site on Heroku is in the (heroku)[https://github.com/harvard-lil/nuremberg/tree/heroku] branch as `staging.py`.
+
 Environment-specific Django settings live in the `nuremberg/settings` directory, and inherit from `nuremberg.settings.generic`. The settings module is configured by the `DJANGO_SETTINGS_MODULE` environment variable; the default value is `nuremberg.settings.dev`.
 
 Secrets (usernames, passwords, security tokens, nonces, etc.) should not be placed in a settings file or committed into git. The proper place for these is an environment variable configured on the host, and read via `os.environ`. If they must live in a `.py` file, they should be included in the environment settings file via an `import` statement and uploaded separately as part of the deployment process.
 
 (The only exception to this is the defaults used in the dev environment.)
+
+
+### Data
+
+Since it is expected that this app will host a largely static dataset, there isn't an admin interface to speak of. Updates can go straight into MySQL. Just ensure that any changes are reindexed by Solr.
+
+The test fixture database dump is, for all intents and purposes, a production-ready database at the time of this writing. However, that file should only be updated when necessary to support testing new features.
+
+#### Solr
+
+Solr indexes are defined in relevant `search_indexes.py` files, and
+
+The Solr schema must be maintained as part of the deploy process. When deploying an updated schema, make sure to generate and upload the `schema.xml` file using `manage.py build_solr_schema`, then run a complete reindexing.
+
+> WARNING: Be cautious when doing this in production-- although in general reindexing will happen transparently, certain schema changes will cause a `SCHEMA-INDEX-MISMATCH` error that will cause search pages to error until reindexing completes.
+
+#### Reindexing
+
+If writes are relatively infrequent, manual reindexing using `manage.py update_index` should work fine. If writes are occurring on a daily or hourly basis, you should set up a `cron` script or similar to automate reindexing on a nightly or hourly basis using `--age 24` or `--age 1`. (Note: This will restrict reindexing only for indexes that have an `updated_at` field defined; currently, `photographs` does not, but completely reindexing that model is fast anyway.)
+
+Reindexing should only take a few minutes to run. For more fine-grained information on indexing progress, use `--batch-size 100 --verbosity 2` or similar.
+
+#### Transcripts
+
+There is a management command `manage.py ingest_transcript_xml` which reads a file or files like `NRMB-NMT01-23_00512_0.xml` and generates or updates the appropriate transcript, volume, and page models. Since some values read out of the XML are stored in the database, re-ingesting is the preferred way to update transcript data. If database XML is modified directly, remember to call `populate_from_xml` on the appropriate TranscriptPage model to update date, page, and sequence number.
+
+Remember to run `manage.py update_index transcripts` after ingesting XML to enable searching of the new content.
 
 ### Static Assets
 
@@ -155,6 +191,14 @@ Secrets (usernames, passwords, security tokens, nonces, etc.) should not be plac
 CSS code is generated from `.less` files that live in `nuremberg/core/static/styles`. The styles are built based on Bootstrap 3 mixins, but don't bundle any Bootstrap code directly to ensure a clean semantic design.
 
 Compilation is handled automatically by the `django-static-precompiler` module while the development server is running.
+
+#### JavaScript
+
+JavaScript code is organized simply. JS dependencies are in `core/static/scripts`, and are simply included in `base.html`. App code is modularized using `modulejs`, to ensure that only code in the module defined in the relevant template is run.
+
+The only significant JavaScript app is the document image loading, panning, and zooming functionality implemented in `documents/scripts`. That functionality is organized as a set of Backbone.js views and viewmodels. There is a smaller amount of code in `transcripts` to handle infinite scrolling and page navigation, which is implemented in pure jQuery. There are also a handful of minor cosmetic features implemented in `search`.
+
+In production, all site javascript is compacted into a single minified blob by `compressor`. (The exception is the rarely-needed dependency `jsPDF`.)
 
 #### In Production
 

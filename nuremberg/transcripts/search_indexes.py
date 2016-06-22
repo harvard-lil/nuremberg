@@ -52,11 +52,12 @@ class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
             return page.date.year
 
     def prepare_defendants(self, page):
+        # TODO
         return []
 
     def prepare_authors(self, page):
+        # TODO
         return []
-
 
     def prepare_evidence_codes(self, page):
         return page.extract_evidence_codes()
