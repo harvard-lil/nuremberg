@@ -39,6 +39,7 @@ class Search(FacetedSearchView):
         ('Author', 'authors'),
         ('Language', 'language'),
         ('Source', 'source'),
+        ('Trial Issues', 'trial_activities'),
     )
     facet_to_label = {field: label for (label, field) in facet_labels}
     facet_fields = [label[1] for label in facet_labels]

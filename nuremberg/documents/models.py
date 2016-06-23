@@ -11,13 +11,13 @@ class Document(models.Model):
     literal_title = models.TextField(db_column='Title')
     updated_at = models.DateTimeField(auto_now=True, db_column='Updated')
 
-    image_count = models.IntegerField(db_column='NoOfImages')
+    image_count = models.IntegerField(db_column='NoOfImages', default=0)
 
     language = models.ForeignKey('DocumentLanguage', db_column='DocLanguageID')
     source = models.ForeignKey('DocumentSource', db_column='DocVersionID')
 
     def page_range(self):
-        return range(1, self.image_count + 1)
+        return range(1, (self.image_count or 0) + 1)
 
     def images_screen(self):
         return (image for image in self.images.all() if image.scale == DocumentImage.SCREEN)
@@ -271,14 +271,25 @@ class DocumentsToCases(models.Model):
         managed = False
         db_table = 'tblCasesList'
 
+class DocumentActivityManager(models.Manager):
+    """
+    Filters out first activity (No activity specified)
+    """
+    use_for_related_fields = True
+    def get_queryset(self):
+        return super().get_queryset().exclude(id=1)
+
 class DocumentActivity(models.Model):
+    objects = DocumentActivityManager()
+
     id = models.AutoField(primary_key=True, db_column='ActivityID')
     name = models.CharField(max_length=100, db_column='Activity')
+    case = models.ForeignKey(DocumentCase, related_name='activities', db_column='CaseID')
 
     @property
     def short_name(self):
         # cheating for now
-        return self.name.split(' (')[0]
+        return self.name.split(' (c')[0]
 
     documents = models.ManyToManyField(Document, related_name='activities', through='DocumentsToActivities', through_fields=('activity', 'document'))
 
@@ -312,6 +323,9 @@ class DocumentEvidenceCode(models.Model):
     number = models.IntegerField(db_column='NMTNo', blank=True, null=True)  # Field name made lowercase.
     suffix = models.CharField(db_column='NMTNoText', max_length=25, blank=True, null=True)  # Field name made lowercase.
 
+    def __str__(self):
+        return '{}-{}{}'.format(self.prefix.code, self.number, self.suffix or '')
+
     class Meta:
         managed = False
         db_table = 'tblNMTList'
@@ -340,6 +354,13 @@ class DocumentExhibitCode(models.Model):
     defense_doc_book_name = models.CharField(db_column='DefDocBkName', max_length=50, blank=True, null=True)  # Field name made lowercase.
     defense_doc_book_number = models.IntegerField(db_column='DefDocBkNo', blank=True, null=True)  # Field name made lowercase.
     defense_doc_book_suffix = models.CharField(db_column='DefDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    def __str__(self):
+        if self.prosecution_number:
+            return 'Prosecution {}{}'.format(self.prosecution_number, self.prosecution_suffix or '')
+        if self.defense_number:
+            return '{} {}{}'.format(self.defense_name, self.defense_number, self.defense_suffix or '')
+        return ''
 
     class Meta:
         managed = False

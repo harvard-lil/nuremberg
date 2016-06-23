@@ -91,9 +91,9 @@
         <p class="date">
           {% with document.date as date %}
           {% if date %}
-            <a>{{date|date:'d F Y'}}</a>
+            <a href="{% search_query date=date|date:'d F Y' %}">{{date|date:'d F Y'}}</a>
           {% else %}
-            <a>Date Unknown</a>
+            <a href="{% search_query date='unknown' %}">Date Unknown</a>
           {% endif %}
           {% endwith %}
         </p>
@@ -101,7 +101,7 @@
         <h6>Author{{personal_authors|length|pluralize}}</h6>
         {% for author in personal_authors %}
           <p>
-            <a href="{% search_url author.full_name %}">{{author.first_name}} {{author.last_name}}</a>
+            <a href="{% search_query author=author.full_name %}">{{author.first_name}} {{author.last_name}}</a>
             ({{author.title}})
           </p>
         {% empty %}
@@ -113,7 +113,7 @@
           <h6>Institutional Author{{group_authors|length|pluralize}}</h6>
           {% for author in group_authors %}
             <p>
-              <a href="{% search_url author.short_name %}">{{author.name}}</a>
+              <a href="{% search_query author=author.short_name %}">{{author.name}}</a>
             </p>
           {% endfor %}
         {% endif %}
@@ -124,7 +124,7 @@
           <h6>Defendant{{defendants|length|pluralize}}</h6>
           {% for defendant in defendants %}
             <p>
-              <a href="{% search_url defendant.full_name %}">{{defendant.first_name}} {{defendant.last_name}}</a>
+              <a href="{% search_query defendant=defendant.full_name %}">{{defendant.first_name}} {{defendant.last_name}}</a>
             </p>
           {% endfor %}
         {% endif %}
@@ -142,6 +142,28 @@
           <strong>Source of Text:</strong>
           {{document.source.name}}
         </p>
+        {% with document.evidence_codes.all as evidence_codes %}
+        {% if evidence_codes %}
+          <p>
+            <strong>Evidence Code{{ evidence_codes|length|pluralize }}:</strong>
+            {% for code in evidence_codes %}
+              <a href="{% search_query evidence=code %}">{{code}}</a> {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </p>
+        {% endif %}
+        {% endwith %}
+        {% with document.exhibit_codes.all as exhibit_codes %}
+        {% if exhibit_codes %}
+          <p>
+            <strong>Exhibit Code{{ exhibit_codes|length|pluralize }}:</strong>
+            {% for code in exhibit_codes %}
+              {% if code.prosecution_number or code.defense_number %}
+                <a href="{% search_query exhibit=code %}">{{code}}</a>{% if not forloop.last %}, {% endif %}
+              {% endif %}
+            {% endfor %}
+          </p>
+        {% endif %}
+        {% endwith %}
         <p>
           <strong>HLSL Item No.:</strong>
           {{document.id}}
@@ -149,10 +171,10 @@
       {% endblock %}
       {% with document.activities.all as activities %}
       {% if activities %}
-        <h6>Trial Activities</h6>
+        <h6>Trial Issues</h6>
         <p>
           {% for activity in activities %}
-              <a class="tag-button" href="{% search_url activity.short_name %}">{{activity.short_name}}</a>
+              <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
           {% endfor %}
         </p>
       {% endif %}

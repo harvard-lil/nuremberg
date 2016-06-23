@@ -63,7 +63,7 @@ def test_document_400():
     info.should.contain('Language of Text: English')
     info.should.contain('Source of Text: Case Files/English')
     info.should.contain('HLSL Item No.: 400')
-    info.should.contain('Trial Activities Sulfanilamide experiments')
+    info.should.contain('Trial Issues Sulfanilamide experiments')
 
 
 def test_document_3799():

@@ -1,5 +1,5 @@
 {% extends "transcripts/base.html" %}
-
+{% load search_url %}
 {% block title %} Transcript Viewer - {{transcript.title}} {% endblock %}
 
 {% block body_class %}transcript-viewer{% endblock %}
@@ -64,4 +64,14 @@ t
 </div>
 <h3>{{transcript.title}}</h3>
 <h5>{{transcript.description}}</h5>
+{% with transcript.case.activities.all as activities %}
+{% if activities %}
+  <h6>Trial Issues</h6>
+  <p>
+    {% for activity in activities %}
+        <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
+    {% endfor %}
+  </p>
+{% endif %}
+{% endwith %}
 {% endblock %}

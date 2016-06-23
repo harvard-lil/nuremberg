@@ -51,7 +51,7 @@
           </label>
         </div>
       </div>
-      {% if form.applied_filters|length %}
+      {% if form.applied_filters %}
         <div class="applied-filters">
           {% for filter in form.applied_filters %}
             <a href="{% remove_facet filter.2 %}" class="applied-filter">

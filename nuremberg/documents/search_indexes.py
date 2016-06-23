@@ -11,7 +11,7 @@ class DocumentIndex(indexes.SearchIndex, indexes.Indexable):
     title = indexes.CharField(model_attr='title')
     literal_title = indexes.CharField(model_attr='literal_title', null=True)
 
-    total_pages = indexes.IntegerField(model_attr='image_count', null=True)
+    total_pages = indexes.IntegerField(model_attr='image_count', default=0, null=True)
     date = indexes.CharField(faceted=True, null=True)
     date_year = indexes.CharField(faceted=True, null=True)
     date_sort = indexes.DateTimeField(model_attr='date', null=True)
@@ -26,6 +26,8 @@ class DocumentIndex(indexes.SearchIndex, indexes.Indexable):
 
     evidence_codes = indexes.MultiValueField(null=True)
     exhibit_codes = indexes.MultiValueField(null=True)
+
+    trial_activities = indexes.MultiValueField(faceted=True, null=True)
 
     def get_model(self):
         return Document
@@ -53,6 +55,10 @@ class DocumentIndex(indexes.SearchIndex, indexes.Indexable):
         return [author.short_name() for author in document.group_authors.all()] + \
             [author.full_name() for author in document.personal_authors.all()]
 
+
+    def prepare_trial_activities(self, document):
+        return [activity.short_name for activity in document.activities.all()]
+
     def prepare_date(self, document):
         date = document.date()
         if date:
@@ -73,13 +79,10 @@ class DocumentIndex(indexes.SearchIndex, indexes.Indexable):
         return [case.tag_name for case in document.cases.all()]
 
     def prepare_evidence_codes(self, document):
-        return ['{}-{}{}'.format(code.prefix.code, code.number, code.suffix or '') for code in document.evidence_codes.all()]
+        return [str(code) for code in document.evidence_codes.all()]
 
     def prepare_exhibit_codes(self, document):
         codes = []
         for code in document.exhibit_codes.all():
-            if code.prosecution_number:
-                codes.append('Prosecution {}{}'.format(code.prosecution_number, code.prosecution_suffix or ''))
-            if code.defense_number:
-                codes.append('{} {}{}'.format(code.defense_name, code.defense_number, code.defense_suffix or ''))
+            if str(code): codes.append(str(code))
         return codes

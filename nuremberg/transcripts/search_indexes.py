@@ -31,6 +31,8 @@ class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
     evidence_codes = indexes.MultiValueField(null=True)
     exhibit_codes = indexes.MultiValueField(null=True)
 
+    trial_activities = indexes.MultiValueField(faceted=True, null=True)
+
     def get_model(self):
         return TranscriptPage
 
@@ -64,3 +66,6 @@ class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_exhibit_codes(self, page):
         return page.extract_exhibit_codes()
+
+    def prepare_trial_activities(self, page):
+        return [activity.short_name for activity in page.transcript.case.activities.all()]

@@ -62,15 +62,15 @@
     <a href="{% search_url 'instructions trial:none' %}">Search</a>
   </p>
   <p>
-    You can also use the OR operator <strong>|</strong> or <strong>,</strong> within a field to make more complex queries:
+    You can also use the OR operator <strong>|</strong> within a field to make more complex queries:
   </p>
   <p>
     <span class="example-search">author:himmler author:speer | fritz</span>
     <a href="{% search_url 'author:himmler author:speer | fritz' %}">Search</a>
   </p>
   <p>
-    <span class="example-search">experiments date:1944, unknown</span>
-    <a href="{% search_url 'experiments date:January 14 1944, none' %}">Search</a>
+    <span class="example-search">experiments date:1944 | unknown</span>
+    <a href="{% search_url 'experiments date:January 14 1944 | none' %}">Search</a>
   </p>
   <p>
     You can search within any field listed in the filters to the left. Valid field names are:
@@ -85,6 +85,7 @@
     <strong>source</strong>,
     <strong>evidence</strong>,
     <strong>exhibit</strong>,
+    <strong>issue</strong>,
     <strong>hlsl</strong>,
     and <strong>all</strong>
   </p>

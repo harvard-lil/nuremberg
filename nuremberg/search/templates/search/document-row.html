@@ -70,7 +70,18 @@
           {{result.source}}
         </p>
       {% endif %}
-      {% if result.evidence_codes|length %}
+      {% if result.trial_activities %}
+        <p>
+          <strong>Trial Issues:</strong>
+          {% for activity in result.trial_activities|slice:":5" %}
+              <a href="{% search_query issue=activity %}">{{activity}}</a>{% if not forloop.last %},{% endif %}
+          {% endfor %}
+          {% if result.trial_activities|length > 5 %}
+            ...
+          {% endif %}
+        </p>
+      {% endif %}
+      {% if result.evidence_codes %}
         <p>
           <strong>Evidence Code{{ result.evidence_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
           {% for code in result.evidence_codes %}
@@ -78,7 +89,7 @@
           {% endfor %}
         </p>
       {% endif %}
-      {% if result.exhibit_codes|length %}
+      {% if result.exhibit_codes %}
         <p>
           <strong>Exhibit Code{{ result.exhibit_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
           {% for code in result.exhibit_codes %}
@@ -86,7 +97,7 @@
           {% endfor %}
         </p>
       {% endif %}
-      {% if result.defendants|length %}
+      {% if result.defendants %}
         <p>
           <strong>Defendant{{result.defendants|pluralize}}:</strong>
           {% for defendant in result.defendants %}
@@ -121,5 +132,8 @@
   <td class="type-col">
     <div class="document-type-icon type-{{result.material_type|slugify}}">
     {{result.material_type}}</div>
+    {% if result.material_type == 'Document' %}
+      <p class="total-pages">{{result.total_pages}} page{{result.total_pages|pluralize}}</p>
+    {% endif %}
   </td>
 </tr>
