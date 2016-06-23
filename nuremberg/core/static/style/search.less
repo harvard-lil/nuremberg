@@ -17,13 +17,20 @@ section.results {
 
   margin-bottom: 18px;
 
-  .results-count {
+  .results-count, .loading-indicator {
     .make-md-column(9);
     .pull-left();
 
     padding-left: 30px;
     margin-top: 2px;
 
+    &.loading-indicator {
+      .sans-serif(normal, 20px, 40px);
+      padding-left: 75px;
+      a.force-load {
+        .sans-serif(light, 12px, 16px);
+      }
+    }
     .hint {
       font-size: 14px;
       .field-query {
@@ -152,7 +159,7 @@ section.results {
   }
 
   .date-slider {
-    width: 90%:
+    width: 90%;
     margin: 25px 0 25px;
   }
   .start-year, .end-year {

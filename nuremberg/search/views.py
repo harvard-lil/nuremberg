@@ -93,10 +93,17 @@ class Search(FacetedSearchView):
                     'counts': counts
                 })
             context.update({'labeled_facets': labeled_facets})
+
         if context['form']:
             context['facet_lookup'] = {}
             for (field, value, facet) in context['form'].applied_filters:
                 context['facet_lookup'][facet] = True
+
+        if self.request.GET.get('partial'):
+            context['base_template'] = 'search/partial.html'
+        else:
+            context['base_template'] = None
+
         return context
 
     def get_paginator(self, *args, **kwargs):
