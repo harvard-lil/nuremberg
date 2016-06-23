@@ -21,8 +21,18 @@ modulejs.define('search', function () {
     }
   });
 
+  if (location.hash === '#advanced') {
+    $('.advanced-search-help').removeClass('hide');
+  }
+
   $('.show-advanced-search, .hide-advanced-search').on('click', function () {
     $('.advanced-search-help').toggleClass('hide');
+    var hash = '#' + ($('.advanced-search-help').hasClass('hide') ? '': 'advanced');
+    if (history && history.replaceState) {
+      history.replaceState(undefined, undefined, hash);
+    } else {
+      location.hash = hash;
+    }
   });
 
   $('.facet .collapse').on('click', function () {
