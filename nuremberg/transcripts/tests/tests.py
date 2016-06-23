@@ -69,9 +69,29 @@ def test_transcript_joins(seq):
 
     text.should.contain(' probably very relevant and important ones. HLSL Seq. No. 10')
 
+    # it should contain each page number once
+    handles = page('.page-handle')
+    handles.length.should.equal(10)
+    print(handles.outerHtml())
+    print([handles.text()])
+    handles.with_text('HLSL SEQ. NO. 1 ').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 2\n').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 3\n').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 4\n').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 5\n').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 6\n').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 7\n').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 8\n').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 9\n').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 10\n').length.should.equal(1)
+
     # test not repeating page numbers after
     page = seq(330)
+    page('.page-handle').length.should.equal(20)
     page('.page-handle').with_text('HLSL SEQ. NO. 340').length.should.equal(1)
+    text = page('.page-handle').text()
+    for i in range(321,341):
+        text.should.contain('HLSL Seq. No. {}\n'.format(i))
     page = seq(150)
     page('.page-handle').with_text('HLSL SEQ. NO. 160').length.should.equal(1)
 
