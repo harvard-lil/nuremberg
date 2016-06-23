@@ -252,6 +252,10 @@ modulejs.define('transcript-viewer', function () {
     currentPage = $page.data('page');
     currentDate = $page.data('date');
 
+    if (currentSeq && history && history.replaceState) {
+      history.replaceState(undefined, undefined, location.pathname + location.search.replace(/seq=\d+/, 'seq='+currentSeq))
+    }
+
     if (currentDate)
       $('select.select-date').val(currentDate);
 

@@ -99,7 +99,7 @@ class TranscriptPageJoiner:
         r'</a>', #something like "<a>NO-223</a>."
     ))
     # BUG: OCR sometimes reads '.' as ',' . Nothing to do about it
-    sentence_ending_punctuation = r'([\.\?\:]|\.{3,5})' # mandatory punctuation to end a sentence
+    sentence_ending_punctuation = r'([\.\?\!\:\;\-]|\.{3,5})' # mandatory punctuation to end a sentence
     sentence_wrapping = r'[\)\"]' # optional wrapping outside a sentence
     sentence_inner_wrapping = r'[\)\"]' # optional wrapping inside a sentence
 
@@ -127,6 +127,9 @@ class TranscriptPageJoiner:
 
     # match for long page numbers with suffix
     page_number = re.compile(r'^(?P<digits>\d+)(?P<suffix>[^\d]+)?$')
+
+    # matches tags that should always begin a paragraph
+    sentence_beginning = re.compile(r'[\da-zA-Z][ \.]?\)')
 
     # enables hinting to figure out why joining isn't working
     debug = False
@@ -233,6 +236,7 @@ class TranscriptPageJoiner:
                 return
             self.open_page()
             self.join_page = False
+        self.open_p()
 
     def put_page(self, page):
         ignore_p = False
@@ -258,8 +262,12 @@ class TranscriptPageJoiner:
                                 self.put('<span class="subheading">{}</span>'.format(element.text))
                             else:
                                 self.put(element.text)
-                    else:
-                        self.join_text(element.text)
+                    elif element.text:
+                        if self.sentence_beginning.match(element.text):
+                            self.close_join()
+                            self.put(element.text)
+                        else:
+                            self.join_text(element.text)
 
                 elif event == 'end':
                     if ignore_p:
@@ -285,7 +293,6 @@ class TranscriptPageJoiner:
                     if self.joining:
                         # a <spkr> tag should always close a paragraph, even if it seems incomplete
                         self.close_join()
-                        self.open_p()
                     if element.text and (len(element.text) <= 2 or (element.tail and not element.tail.isspace())):
                         if self.speech_heading.match(element.tail):
                             # a <spkr> with an all-caps tail is probably a mis-identified header
