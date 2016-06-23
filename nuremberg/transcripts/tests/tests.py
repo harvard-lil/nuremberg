@@ -72,6 +72,8 @@ def test_transcript_joins(seq):
     # test not repeating page numbers after
     page = seq(330)
     page('.page-handle').with_text('HLSL SEQ. NO. 340').length.should.equal(1)
+    page = seq(150)
+    page('.page-handle').with_text('HLSL SEQ. NO. 160').length.should.equal(1)
 
 def test_seq_alignment(seq):
     # the first seq load for 40 and 49 should be the same

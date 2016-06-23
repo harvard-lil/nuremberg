@@ -93,8 +93,8 @@ class TranscriptPageJoiner:
     # Match for places it makes sense to end a paragraph
     sentence_ending_letters = r'|'.join(( # ends of sentences that exclude "Mr."
         r'[a-z]{2}', # something like "service."
-        r'[A-Z]{2}', # something like "OKL."
-        r'[0-9]{2}[\w%]?\.?', # something like "23." or "23.:" or "-28a)."
+        r'[A-Z]{2}', # something like "OKL." or "SS."
+        r'[0-9]+[\w%]?\.?', # something like "23." or "23.:" or "-28a)."
         r'\s[I]', # something like "as did I."
         r'</a>', #something like "<a>NO-223</a>."
     ))
@@ -104,7 +104,7 @@ class TranscriptPageJoiner:
     sentence_inner_wrapping = r'[\)\"]' # optional wrapping inside a sentence
 
     # a conservative regex used to break up paragraphs (we don't want to do this too randomly)
-    sentence_break = re.compile(r'([a-z0-9]{2}[\.\?\:][\)\"]?)')
+    sentence_break = re.compile(r'((?:[a-z]{2}|[0-9]{2}|[A-Z]{2})[\.\?\:][\)\"]?)')
 
     # a liberal regex used to identify paragraph breaks to ignore
     sentence_ends = (
@@ -208,6 +208,7 @@ class TranscriptPageJoiner:
                 self.joining = False
 
                 if self.join_page:
+                    self.log('<span>[closing on join]</span>')
                     self.close_page()
                     if self.last_page:
                         return
@@ -223,14 +224,15 @@ class TranscriptPageJoiner:
 
     def close_join(self):
         self.close_p()
+        self.joining = False
+        self.ignore_join = False
         if self.join_page:
+            self.log('<span>[closing on close]</span>')
             self.close_page()
             if self.last_page:
                 return
             self.open_page()
             self.join_page = False
-        self.joining = False
-        self.ignore_join = False
 
     def put_page(self, page):
         ignore_p = False
@@ -309,4 +311,5 @@ class TranscriptPageJoiner:
                             self.join_text(element.tail)
 
         if not (self.joining or self.last_page):
+            self.log('<span>[closing on put]</span>')
             self.close_page()
