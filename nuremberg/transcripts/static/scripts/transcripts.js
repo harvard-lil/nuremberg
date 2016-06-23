@@ -210,12 +210,24 @@ modulejs.define('transcript-viewer', function () {
     loadBelow();
   }
 
-  $viewport.on('click', 'a.view-image', function () {
-    var $a = $(this);
-    var href = $a.siblings('.download-image').attr('href');
-    $a.closest('.page-handle')
-    .addClass('show')
-    .after('<div><img src="'+ href +'" /></div>');
+  $viewport.on('click', 'a.view-image', function (e) {
+    var $handle = $(this).closest('.page-handle')
+    var href = $handle.find('.download-image').attr('href');
+    if (!$handle.hasClass('has-image')) {
+      $handle
+      .addClass('has-image')
+      .after('<div class="page-image hide"><img src="'+ href +'" /></div>');
+    }
+    $img = $handle.next('.page-image');
+    $img.toggleClass('hide');
+    if ($img.hasClass('hide')) {
+      $handle.removeClass('show');
+      $handle.find('a.view-image').text('VIEW');
+    } else {
+      $handle.addClass('show');
+      $handle.find('a.view-image').text('HIDE');
+    }
+    e.stopPropagation();
   });
 
   $viewport.on('click', '.page-handle', function () {
