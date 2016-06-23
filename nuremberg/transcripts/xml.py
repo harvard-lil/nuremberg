@@ -93,18 +93,18 @@ class TranscriptPageJoiner:
     # Match for places it makes sense to end a paragraph
     sentence_ending_letters = r'|'.join(( # ends of sentences that exclude "Mr."
         r'[a-z]{2}', # something like "service."
-        r'[A-Z]{2}', # something like "OKL."
-        r'[0-9]{2}[\w%]?\.?', # something like "23." or "23.:" or "-28a)."
+        r'[A-Z]{2}', # something like "OKL." or "SS."
+        r'[0-9]+[\w%]?\.?', # something like "23." or "23.:" or "-28a)."
         r'\s[I]', # something like "as did I."
         r'</a>', #something like "<a>NO-223</a>."
     ))
     # BUG: OCR sometimes reads '.' as ',' . Nothing to do about it
-    sentence_ending_punctuation = r'([\.\?\:]|\.{3,5})' # mandatory punctuation to end a sentence
+    sentence_ending_punctuation = r'([\.\?\!\:\;\-]|\.{3,5})' # mandatory punctuation to end a sentence
     sentence_wrapping = r'[\)\"]' # optional wrapping outside a sentence
     sentence_inner_wrapping = r'[\)\"]' # optional wrapping inside a sentence
 
     # a conservative regex used to break up paragraphs (we don't want to do this too randomly)
-    sentence_break = re.compile(r'([a-z0-9]{2}[\.\?\:][\)\"]?)')
+    sentence_break = re.compile(r'((?:[a-z]{2}|[0-9]{2}|[A-Z]{2})[\.\?\:][\)\"]?)')
 
     # a liberal regex used to identify paragraph breaks to ignore
     sentence_ends = (
@@ -127,6 +127,9 @@ class TranscriptPageJoiner:
 
     # match for long page numbers with suffix
     page_number = re.compile(r'^(?P<digits>\d+)(?P<suffix>[^\d]+)?$')
+
+    # matches tags that should always begin a paragraph
+    sentence_beginning = re.compile(r'[\da-zA-Z][ \.]?\)')
 
     # enables hinting to figure out why joining isn't working
     debug = False
@@ -208,6 +211,7 @@ class TranscriptPageJoiner:
                 self.joining = False
 
                 if self.join_page:
+                    self.log('<span>[closing on join]</span>')
                     self.close_page()
                     if self.last_page:
                         return
@@ -223,14 +227,16 @@ class TranscriptPageJoiner:
 
     def close_join(self):
         self.close_p()
+        self.joining = False
+        self.ignore_join = False
         if self.join_page:
+            self.log('<span>[closing on close]</span>')
             self.close_page()
             if self.last_page:
                 return
             self.open_page()
             self.join_page = False
-        self.joining = False
-        self.ignore_join = False
+        self.open_p()
 
     def put_page(self, page):
         ignore_p = False
@@ -256,8 +262,12 @@ class TranscriptPageJoiner:
                                 self.put('<span class="subheading">{}</span>'.format(element.text))
                             else:
                                 self.put(element.text)
-                    else:
-                        self.join_text(element.text)
+                    elif element.text:
+                        if self.sentence_beginning.match(element.text):
+                            self.close_join()
+                            self.put(element.text)
+                        else:
+                            self.join_text(element.text)
 
                 elif event == 'end':
                     if ignore_p:
@@ -283,7 +293,6 @@ class TranscriptPageJoiner:
                     if self.joining:
                         # a <spkr> tag should always close a paragraph, even if it seems incomplete
                         self.close_join()
-                        self.open_p()
                     if element.text and (len(element.text) <= 2 or (element.tail and not element.tail.isspace())):
                         if self.speech_heading.match(element.tail):
                             # a <spkr> with an all-caps tail is probably a mis-identified header
@@ -309,4 +318,5 @@ class TranscriptPageJoiner:
                             self.join_text(element.tail)
 
         if not (self.joining or self.last_page):
+            self.log('<span>[closing on put]</span>')
             self.close_page()
