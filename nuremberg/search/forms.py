@@ -68,6 +68,8 @@ class FieldedSearchForm(SearchForm):
     are replaced with their group-query equivalents. Be cautious when modifying grouping
     parameters, as the results can be counter-intuitive.
 
+    NOTE: Transcript search results require all keywords to match on a single page.
+
 
     Highlighting is used in transcript search results, and as a way to count "occurrences"
     within transcript search.
@@ -146,10 +148,11 @@ class FieldedSearchForm(SearchForm):
 
         (self.auto_query, self.field_queries) = self.parse_query(self.cleaned_data['q'])
 
-        if self.auto_query and not re.match(r'^\s*\*\s*$', self.auto_query):
-            sqs = sqs.filter(content=AutoQuery(self.auto_query))
 
-        self.highlight_query = self.auto_query
+        self.highlight_query = ''
+
+        if self.auto_query and not re.match(r'^\s*\*\s*$', self.auto_query):
+            sqs = self.apply_field_query(sqs, ['all', self.auto_query])
 
         for field_query in self.field_queries:
             sqs = self.apply_field_query(sqs, field_query)

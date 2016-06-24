@@ -120,6 +120,10 @@ def test_field_search(query):
     count_results('workers exhibit:prosecution', 125)
     count_results('* author:hitler -author:adolf', 0, 0, 0)
     count_results('* exhibit:handloser', 49)
+    count_results('malaria', 42)
+    count_results('freezing', 201)
+    count_results('malaria freezing', 1, 1)
+    count_results('malaria | freezing', 242)
 
 def test_document_search(query):
     page = query('workers')

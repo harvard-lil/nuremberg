@@ -33,7 +33,7 @@ def search_url(query):
 @register.simple_tag
 def search_query(*args, **kwargs):
     query = ' '.join(args)
-    query += ' '.join(['{}:{}'.format(field, value) for field, value in kwargs.items()])
+    query += ' '.join(['{}:({})'.format(field, value) for field, value in kwargs.items()])
     return search_url(query)
 
 @register.simple_tag
