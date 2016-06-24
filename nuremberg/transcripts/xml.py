@@ -88,20 +88,24 @@ class TranscriptPageJoiner:
         self.pages = pages
 
     # Matches paragraphs that look like 'Court No. 1', mod OCR errors
-    ignore_p = re.compile(r'^Cou[rn]t (N[o0][\.\:]? ?)?[\dILO]', re.IGNORECASE)
+    ignore_p = re.compile(r'^Cou[rn]t (N[o0][\.\:]? ?)?[\dILO]?', re.IGNORECASE)
 
     # Match for places it makes sense to end a paragraph
-    sentence_ending_letters = r'|'.join(( # ends of sentences that exclude "Mr."
-        r'[a-z]{2}', # something like "service."
-        r'[A-Z]{2}', # something like "OKL." or "SS."
-        r'[0-9]+[\w%]?\.?', # something like "23." or "23.:" or "-28a)."
-        r'\s[I]', # something like "as did I."
-        r'</a>', #something like "<a>NO-223</a>."
-    ))
+    # sentence_ending_letters = r'|'.join(( # ends of sentences that exclude "Mr."
+    #     r'[a-z]{2} ?', # something like "service."
+    #     r'[A-Z]{2}', # something like "OKL." or "SS."
+    #     r'[0-9]+[\w%]?\.?', # something like "23." or "23.:" or "-28a)."
+    #     r'\s[I]', # something like "as did I."
+    #     r'</a>', #something like "<a>NO-223</a>."
+    # ))
+
+    # specific letter matches miss a lot of valid sentences.
+    sentence_ending_letters = r'.{0,4}?'
+
     # BUG: OCR sometimes reads '.' as ',' . Nothing to do about it
-    sentence_ending_punctuation = r'([\.\?\!\:\;\-]|\.{3,5})' # mandatory punctuation to end a sentence
-    sentence_wrapping = r'[\)\"]' # optional wrapping outside a sentence
-    sentence_inner_wrapping = r'[\)\"]' # optional wrapping inside a sentence
+    sentence_ending_punctuation = r'([.?!:;/\-]|\.{3,5})' # mandatory punctuation to end a sentence
+    sentence_wrapping = r'[)"\']' # optional wrapping outside a sentence
+    sentence_inner_wrapping = r'[)"\']' # optional wrapping inside a sentence
 
     # a conservative regex used to break up paragraphs (we don't want to do this too randomly)
     sentence_break = re.compile(r'((?:[a-z]{2}|[0-9]{2}|[A-Z]{2})[\.\?\:][\)\"]?)')
@@ -114,10 +118,13 @@ class TranscriptPageJoiner:
         r'({}){}?{}{}?\s*$'.format(sentence_ending_letters, \
             sentence_inner_wrapping, \
             sentence_ending_punctuation, \
-            sentence_wrapping, \
+            sentence_wrapping,
             ),
     )
     sentence_end = re.compile(r'|'.join(sentence_ends))
+
+    # blacklist for sentence ends
+    reject_sentence_end = re.compile(r'(M\.D\.|D[Rr]\.|M[Rr]\.|\/\.+)$')
 
     # a fully parenthesized non-sentence paragraph is almost always a subheading
     subheading = re.compile(r'^\([^\.]+[^\!\?\:\"]\)$')
@@ -133,6 +140,7 @@ class TranscriptPageJoiner:
 
     # enables hinting to figure out why joining isn't working
     debug = False
+    audit = False
 
     # state variables
     input_page = None # the current page being parsed
@@ -149,6 +157,7 @@ class TranscriptPageJoiner:
 
     def build_html(self):
         self.html_pages = []
+        self.joins = []
         count = len(self.pages)
         for index, page in enumerate(self.pages, start=1):
             self.first_page = index == 1 and not self.include_first
@@ -200,12 +209,14 @@ class TranscriptPageJoiner:
     def join_text(self, joined_text):
         if joined_text:
             ends = self.sentence_break.split(joined_text, 1)
-            if len(ends) == 3:
+            if len(ends) == 3 and not self.reject_sentence_end.match(ends[1]):
                 if not self.ignore_join:
                     self.put(ends[0] + ends[1])
                     self.close_p()
                     self.log( '[INSERTED END]')
                     self.log('match: ' + str(ends))
+                    if self.audit:
+                        self.joins.append('INSERTED: ...{: >26}{} [.] {}... (seq {})'.format(ends[0][-25:].replace('\n', '\\n'), ends[1], ends[2][:25].replace('\n', '\\n'), self.seq))
 
                 self.ignore_join = False
                 self.joining = False
@@ -251,7 +262,7 @@ class TranscriptPageJoiner:
                 if event == 'start':
                     # skip paragraphs that aren't real transcript text
                     if (len(element) and element[0].tag == 'runningHead') \
-                        or (element.text and len(element.text) < 20 and self.ignore_p.match(element.text)):
+                        or (element.text and len(element.text) < 25 and self.ignore_p.match(element.text)):
                         ignore_p = True
                         continue
                     # decide whether to output a <p> tag
@@ -275,15 +286,24 @@ class TranscriptPageJoiner:
                         continue
 
                     # decide whether to output a </p> tag
-                    if not self.sentence_end.search(self.page_html):
+                    end = self.sentence_end.search(self.page_html)
+                    if not end or self.reject_sentence_end.search(end.group(0)):
                         self.joining = True
                         # BUG: No good way to tell if this is the middle of a word.
                         # It's usually not...
                         # For the future, use &mdash; to mark words that should be joined?
                         if self.page_html[-1] != '—':
                             self.put(' ')
+
                         self.log('[IGNORING END]')
+                        if self.audit:
+                            self.joins.append('IGNORED: ...{: >30} [x] ({})'.format(self.page_html[-25:].replace('\n', '\\n'), self.seq))
+                            if end:
+                                self.joins.append('REJECTED: ...{: >30} [x] ({})'.format(self.page_html[-25:].replace('\n', '\\n'), self.seq))
                     elif not self.joining:
+                        if self.audit:
+                            self.joins.append('ALLOWED: ...{: >30} [x] ({})'.format(self.page_html[-25:].replace('\n', '\\n'), self.seq))
+
                         self.close_p()
 
             elif event == 'end':
@@ -293,7 +313,7 @@ class TranscriptPageJoiner:
                     if self.joining:
                         # a <spkr> tag should always close a paragraph, even if it seems incomplete
                         self.close_join()
-                    if element.text and (len(element.text) <= 2 or (element.tail and not element.tail.isspace())):
+                    if element.text and element.tail and not element.tail.isspace():
                         if self.speech_heading.match(element.tail):
                             # a <spkr> with an all-caps tail is probably a mis-identified header
                             self.put('<span class="heading">{} {}</span>'.format(element.text, element.tail))

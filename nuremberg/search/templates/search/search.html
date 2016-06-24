@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends base_template|default:"base.html" %}
 {% load search_url %}
 
 {% block title %} Document Search Results {% endblock %}
@@ -24,6 +24,9 @@
     </div>
     <div class="main-column search-results">
       <div class="results-summary">
+        <div class="loading-indicator hide">
+          Loading results...
+        </div>
         <div class="results-count">
           <p class="hint">
             Results {{page_obj.start_index}}-{{page_obj.end_index}} of {{paginator.count}} for
@@ -51,7 +54,7 @@
           </label>
         </div>
       </div>
-      {% if form.applied_filters|length %}
+      {% if form.applied_filters %}
         <div class="applied-filters">
           {% for filter in form.applied_filters %}
             <a href="{% remove_facet filter.2 %}" class="applied-filter">

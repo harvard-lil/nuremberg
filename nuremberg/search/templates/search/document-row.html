@@ -18,13 +18,17 @@
     {% elif result.material_type == 'Photograph' %}
       <a class="unstyled" href="{% url 'photographs:show' photograph_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
         <h3>{{result.title}}</h3>
-        {% for snippet in result.highlighted.text|slice:":1" %}
-          <span class="ellipsis">[ ... ]</span>
-          {{ snippet|trim_snippet }}
-          <span class="ellipsis">[ ... ]</span>
-        {% empty %}
+        {% if result.highlighted %}
+          {% for snippet in result.highlighted.text|slice:":1" %}
+            <span class="ellipsis">[ ... ]</span>
+            {{ snippet|trim_snippet }}
+            <span class="ellipsis">[ ... ]</span>
+          {% empty %}
+            <p>{{result.literal_title|truncatewords:35|truncatechars:300}}</p>
+          {% endfor %}
+        {% else %}
           <p>{{result.literal_title|truncatewords:35|truncatechars:300}}</p>
-        {% endfor %}
+        {% endif %}
       </a>
     {% elif result.material_type == 'Transcript' %}
       <a class="unstyled" href="{% url 'transcripts:search' transcript_id=result.transcript_id slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
@@ -70,7 +74,18 @@
           {{result.source}}
         </p>
       {% endif %}
-      {% if result.evidence_codes|length %}
+      {% if result.trial_activities %}
+        <p>
+          <strong>Trial Issues:</strong>
+          {% for activity in result.trial_activities|slice:":5" %}
+              <a href="{% search_query issue=activity %}">{{activity}}</a>{% if not forloop.last %},{% endif %}
+          {% endfor %}
+          {% if result.trial_activities|length > 5 %}
+            ...
+          {% endif %}
+        </p>
+      {% endif %}
+      {% if result.evidence_codes %}
         <p>
           <strong>Evidence Code{{ result.evidence_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
           {% for code in result.evidence_codes %}
@@ -78,7 +93,7 @@
           {% endfor %}
         </p>
       {% endif %}
-      {% if result.exhibit_codes|length %}
+      {% if result.exhibit_codes %}
         <p>
           <strong>Exhibit Code{{ result.exhibit_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
           {% for code in result.exhibit_codes %}
@@ -86,7 +101,7 @@
           {% endfor %}
         </p>
       {% endif %}
-      {% if result.defendants|length %}
+      {% if result.defendants %}
         <p>
           <strong>Defendant{{result.defendants|pluralize}}:</strong>
           {% for defendant in result.defendants %}
@@ -121,5 +136,8 @@
   <td class="type-col">
     <div class="document-type-icon type-{{result.material_type|slugify}}">
     {{result.material_type}}</div>
+    {% if result.material_type == 'Document' %}
+      <p class="total-pages">{{result.total_pages}} page{{result.total_pages|pluralize}}</p>
+    {% endif %}
   </td>
 </tr>

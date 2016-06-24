@@ -7,6 +7,11 @@ from urllib.parse import quote_plus
 
 register = template.Library()
 
+def cleaned_params(context):
+    params = context['request'].GET.copy()
+    if 'partial' in params: del params['partial']
+    return params
+
 @register.simple_tag
 def encode_string(string):
     return quote_plus(string, ':')
@@ -39,17 +44,19 @@ def url_with_query(url, *args, **kwargs):
 
 @register.simple_tag(takes_context=True)
 def result_page(context, page):
-    params = context['request'].GET.copy()
+    params = cleaned_params(context)
     params['page'] = page
-    if not page:
-        del params['page']
+    if not page: del params['page']
     return '?{}'.format(encode_query(params))
 
 @register.simple_tag(takes_context=True)
 def add_facet(context, field, value):
-    params = context['request'].GET.copy()
+    params = cleaned_params(context)
     if 'page' in params: del params['page']
     facet = '{}:{}'.format(field, value)
+    if field.startswith('date_year'):
+        if 'year_min' in params: del params['year_min']
+        if 'year_max' in params: del params['year_max']
     if not facet in params.getlist('f'):
         params.update({'f': '{}:{}'.format(field, value)})
     return '?{}'.format(encode_query(params))
@@ -63,18 +70,18 @@ def facet_exists(context, field, value):
 
 @register.simple_tag(takes_context=True)
 def sort_results(context, sort):
-    params = context['request'].GET.copy()
+    params = cleaned_params(context)
     params['sort'] = sort
     return '?{}'.format(encode_query(params))
 
 @register.simple_tag(takes_context=True)
 def remove_facet(context, facet):
-    params = context['request'].GET.copy()
+    params = cleaned_params(context)
     if 'page' in params: del params['page']
     values = params.getlist('f')
     if facet in values:
         values.remove(facet)
-    elif facet.startswith('date_year'):
+    if facet.startswith('date_year'):
         if 'year_min' in params: del params['year_min']
         if 'year_max' in params: del params['year_max']
     params.setlist('f', values)
@@ -82,7 +89,7 @@ def remove_facet(context, facet):
 
 @register.simple_tag(takes_context=True)
 def clear_facets(context):
-    params = context['request'].GET.copy()
+    params = cleaned_params(context)
     if 'page' in params: del params['page']
     params.setlist('f', [])
     params.setlist('year_min', [])

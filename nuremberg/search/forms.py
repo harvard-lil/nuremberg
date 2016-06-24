@@ -100,6 +100,10 @@ class FieldedSearchForm(SearchForm):
         'source': True,
         'evidence': 'evidence_codes',
         'exhibit': 'exhibit_codes',
+        'activity': 'trial_activities',
+        'activities': 'trial_activities',
+        'issue': 'trial_activities',
+        'issues': 'trial_activities',
     }
     material_types = ('documents', 'transcripts', 'photographs')
 
@@ -187,7 +191,7 @@ class FieldedSearchForm(SearchForm):
         # the solr backend aggressively quotes OR queries,
         # so we must build an OR query manually to keep our loose keyword search
         if field_key:
-            values = re.split(r'[|,]| OR ', value)
+            values = re.split(r'[|]| OR ', value)
             query_list = []
             for value in values:
                 if re.match(r'^\s*(none|unknown)\s*$', value, re.IGNORECASE):

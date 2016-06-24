@@ -1,5 +1,5 @@
 {% extends "transcripts/base.html" %}
-
+{% load search_url %}
 {% block title %} Transcript Viewer - {{transcript.title}} {% endblock %}
 
 {% block body_class %}transcript-viewer{% endblock %}
@@ -61,7 +61,27 @@ t
 </p>
 <div class="print-controls">
   <button class="print-document">Print</button>
+  <form class="print-options hide">
+    Next
+    <input type="number" class="page-range" name="pages" value="20" min="1" max="20"/>
+    pages
+    <a class="do-print">Print</a>
+  </form>
+  <div class="print-loading hide">Downloading pages to print... <span class="progress"></span></div>
 </div>
 <h3>{{transcript.title}}</h3>
 <h5>{{transcript.description}}</h5>
+<div class="print-show"></div>
+{% comment %}
+{% with transcript.case.activities.all as activities %}
+{% if activities %}
+  <h6>Trial Issues</h6>
+  <p>
+    {% for activity in activities %}
+        <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
+    {% endfor %}
+  </p>
+{% endif %}
+{% endwith %}
+{% endcomment %}
 {% endblock %}
