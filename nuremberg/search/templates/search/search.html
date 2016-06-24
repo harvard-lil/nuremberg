@@ -35,9 +35,15 @@
             </strong>
 
             {% for field_query in form.field_queries %}
-              <span class="field-query {{field_query.2}}">
-                {% if field_query.0 %}{{field_query.0}}:{% endif %}<strong>{{field_query.1}}</strong>
-              </span>
+              {% if field_query.0 %}
+                <span class="field-query {{field_query.2}}">
+                  {{field_query.0}}:<strong>{{field_query.1}}</strong>
+                </span>
+              {% else %}
+                <strong>
+                  {{field_query.1|default:""}}
+                </strong>
+              {% endif %}
             {% endfor %}
           </p>
         </div>
