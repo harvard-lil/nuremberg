@@ -26,8 +26,26 @@ modulejs.define('search', function () {
     initialize: function () {
       var $dateForm = $('.date-filter-form').on('submit', function (e) {
         e.preventDefault();
+        e.stopPropagation();
         var fromYear = $dateForm.find('input[name=year_min]').val();
         var toYear = $dateForm.find('input[name=year_max]').val();
+
+        if (fromYear < 1895 || fromYear > 1950 || toYear < 1895 || toYear > 1950) {
+          fromYear = Math.min(Math.max(fromYear, 1895), 1950);
+          toYear = Math.min(Math.max(toYear, 1895), 1950);
+          $dateForm.find('input[name=year_min]').val(fromYear);
+          $dateForm.find('input[name=year_max]').val(toYear);
+          return;
+        }
+
+        if (fromYear > toYear) {
+          var t = fromYear;
+          fromYear = toYear;
+          toYear = t;
+          $dateForm.find('input[name=year_min]').val(fromYear);
+          $dateForm.find('input[name=year_max]').val(toYear);
+        }
+
         var range = 'f=date_year:'+fromYear+'-'+toYear;
         if (location.search && location.search.indexOf('date_year') > -1)
           href = location.search.replace(/f=date_year:\d+-?\d+/, range)
@@ -38,6 +56,18 @@ modulejs.define('search', function () {
         href = href.replace(/([\?&])page=\d+&?/, function (m, c) {return c});
         gotoResults(href);
       });
+
+      // set date range to extent of date facets
+      if (!$dateForm.find('input[name=year_min]').val()) {
+        var min = _.min($dateForm.closest('.facet').find('p[data-year]'), function (p) { return $(p).data('year') || Infinity });
+        min = min && $(min).data('year') ? $(min).data('year') : 1900;
+        $dateForm.find('input[name=year_min]').val(min);
+      }
+      if (!$dateForm.find('input[name=year_max]').val()) {
+        var max = _.max($dateForm.closest('.facet').find('p[data-year]'), function (p) { return $(p).data('year') || 0 });
+        max = max && $(max).data('year') ? $(max).data('year') : 1945;
+        $dateForm.find('input[name=year_max]').val(max);
+      }
 
       var setRange = _.debounce(function () {
           $dateForm.triggerHandler('submit');

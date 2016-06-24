@@ -325,11 +325,11 @@ class TranscriptPageJoiner:
 
                 elif element.tag in ('evidenceFileDoc', 'exhibitDocPros', 'exhibitDocDef'):
                     if element.tag == 'evidenceFileDoc':
-                        self.put('<a href="/search?q=evidence:{}">{}</a>'.format(element.get('n'), element.text))
+                        self.put('<a href="/search?q=evidence:({})">{}</a>'.format(element.get('n'), element.text))
                     elif element.tag == 'exhibitDocPros':
-                        self.put('<a href="/search?q=exhibit:Prosecution+{}">{}</a>'.format(element.get('n'), element.text))
+                        self.put('<a href="/search?q=exhibit:(Prosecution+{})">{}</a>'.format(element.get('n'), element.text))
                     elif element.tag == 'exhibitDocDef':
-                        self.put('<a href="/search?q=exhibit:{}+{}">{}</a>'.format(element.get('def'), element.get('n'), element.text))
+                        self.put('<a href="/search?q=exhibit:({}+{})">{}</a>'.format(element.get('def'), element.get('n'), element.text))
 
                     if element.tail:
                         if not self.joining:

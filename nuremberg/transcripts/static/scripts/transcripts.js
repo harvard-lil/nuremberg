@@ -1,3 +1,9 @@
+modulejs.define('transcript-search', function () {
+  $('.clear-search').on('click', function (e) {
+    e.preventDefault();
+    $(this).closest('form').find('input[type="search"]').val('');
+  });
+});
 modulejs.define('transcript-viewer', function () {
   var $viewport = $('.viewport-content');
 
@@ -126,42 +132,43 @@ modulejs.define('transcript-viewer', function () {
       loadFromScratch({date: date});
   });
 
-  var highlightHtml = function (html, query) {
+  var highlightEl = function (el, query) {
+    el.find('mark').contents().unwrap();
     if (!query)
-      return html.replace(/<\/?mark>/g, '');
+      return;
 
-    // extremely dirty way to highlight search terms in html
-    // all terms that should be highlighted are between > and <
-    // This will only highlight the first match in each paragraph.
-    // This will not be perfect because our stems don't match solr's.
+    // rough highlighting of terms in javascript
 
     var terms = query
+    .replace(/evidence:|exhibit:/, '')
     .replace(/\w+:.*/, '')
-    .replace(/[^\w]+/g, ' ')
+    .replace(/[^\w\-]+/g, ' ')
     .replace(/^\s+|\s+$/g, '')
-    .replace(/\b[a-zA-Z]{1,2}\b/g, '')
     .replace(/(s|ing|ed|ment)\b/g, '')
     .split(/\ +/g);
 
-    if (terms.length == 1 && terms[0] == '')
-      return html.replace(/<\/?mark>/g, '');
+    terms = _.reject(terms, function (term) {return !term || (term.length < 3 && !term.match(/[A-Z]{2,3}|\d+/));});
 
-    var rx = new RegExp( '>([^<>]*?)\\b('+terms.join('|')+')(s|ing|ed|ment)?\\b', 'ig');
-    return html.replace(/<\/?mark>/g, '')
-      .replace(rx, function (m, pre, term, post) {
-        return '>' + pre + '<mark>' + term + (post || '') + '</mark>';
-      });
+    if (!terms.length)
+      return;
+
+    var rx = new RegExp( '\\b('+terms.join('|')+')(s|ing|ed|ment)?\\b', 'ig');
+    el.find('p, span, a').contents().filter(function(){ return this.nodeType == 3; }).replaceWith(function (n, text) {
+        return this.textContent.replace(rx, function (m, term, stem) {
+            return '<mark>' + term + (stem || '') + '</mark>';
+        });
+    });
   };
 
   var rehighlight = function () {
-    $text.html(highlightHtml($text.html(), query));
+    $text.html(highlightEl($text, query));
   };
 
   rehighlight();
   $('input[name=q]').on('keyup', _.debounce(function () {
     query = this.value;
     rehighlight();
-  }, 100));
+  }, 500));
   $('.clear-search').on('click', function (e) {
     e.preventDefault();
     $(this).closest('form').find('input[type="search"]').val('').trigger('keyup')
@@ -189,7 +196,10 @@ modulejs.define('transcript-viewer', function () {
     })
     .then(function (data) {
       toSeq = data.to_seq;
-      $text.append($(highlightHtml(data.html, query)));
+      var container = $('<div></div>');
+      container.append($(data.html));
+      highlightEl(container, query);
+      $text.append(container);
       loading = false;
     });
   };
@@ -215,7 +225,8 @@ modulejs.define('transcript-viewer', function () {
     .then(function (data) {
       fromSeq = data.from_seq;
       var container = $('<div></div>');
-      container.append($(highlightHtml(data.html, query)));
+      container.append($(data.html));
+      highlightEl(container, query);
       $text.prepend(container);
       $viewport.scrollTop($viewport.scrollTop() + container.height() + 29);
       loading = false;
@@ -237,7 +248,8 @@ modulejs.define('transcript-viewer', function () {
     .then(function (data) {
       fromSeq = data.from_seq;
       toSeq = data.to_seq;
-      $text.append($(highlightHtml(data.html, query)));
+      $text.append(data.html);
+      rehighlight();
       if (data.seq)
         goToSeq(data.seq)
       loading = false;

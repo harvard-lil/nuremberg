@@ -33,7 +33,7 @@ def search_url(query):
 @register.simple_tag
 def search_query(*args, **kwargs):
     query = ' '.join(args)
-    query += ' '.join(['{}:{}'.format(field, value) for field, value in kwargs.items()])
+    query += ' '.join(['{}:({})'.format(field, value) for field, value in kwargs.items()])
     return search_url(query)
 
 @register.simple_tag
@@ -95,6 +95,12 @@ def clear_facets(context):
     params.setlist('year_min', [])
     params.setlist('year_max', [])
     return '?{}'.format(encode_query(params))
+
+@register.simple_tag
+def group_merge(results, key):
+    values = set()
+    for result in results: values.update(getattr(result, key, None) or [])
+    return list(values)
 
 @register.filter
 def trim_snippet(snippet):

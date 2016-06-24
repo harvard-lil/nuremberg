@@ -68,6 +68,8 @@ class FieldedSearchForm(SearchForm):
     are replaced with their group-query equivalents. Be cautious when modifying grouping
     parameters, as the results can be counter-intuitive.
 
+    NOTE: Transcript search results require all keywords to match on a single page.
+
 
     Highlighting is used in transcript search results, and as a way to count "occurrences"
     within transcript search.
@@ -146,10 +148,11 @@ class FieldedSearchForm(SearchForm):
 
         (self.auto_query, self.field_queries) = self.parse_query(self.cleaned_data['q'])
 
-        if self.auto_query and not re.match(r'^\s*\*\s*$', self.auto_query):
-            sqs = sqs.filter(content=AutoQuery(self.auto_query))
 
-        self.highlight_query = self.auto_query
+        self.highlight_query = ''
+
+        if self.auto_query and not re.match(r'^\s*\*\s*$', self.auto_query):
+            sqs = self.apply_field_query(sqs, ['all', self.auto_query])
 
         for field_query in self.field_queries:
             sqs = self.apply_field_query(sqs, field_query)
@@ -172,17 +175,37 @@ class FieldedSearchForm(SearchForm):
         auto_query = sections.popleft()
         field_queries = []
         while len(sections) >= 2:
-            field_queries.append([sections.popleft(), sections.popleft()])
+            field = sections.popleft()
+            term = sections.popleft()
+            m = re.match(r'\s*(".+"|\(.+\))(.*)', term)
+            if m:
+
+                field_queries.append([field, m.group(1)])
+                if m.group(2):
+                    field_queries.append([None, m.group(2)])
+            else:
+                terms = re.split(r'\s', term)
+                field_queries.append([field, terms[0]])
+                if len(terms) > 1:
+                    field_queries.append([None, ' '.join(terms[1:])])
+        print('got field queries', field_queries)
         return (auto_query, field_queries)
 
     def apply_field_query(self, sqs, field_query):
         (field, value) = field_query
+
+        if not value or value.isspace():
+            return sqs
+
+        if not field:
+            field = 'all'
 
         if field[0] == '-':
             exclude = True
             field = field[1:]
         else:
             exclude = False
+
 
         field_key = self.search_fields.get(field)
         if field_key == True:
