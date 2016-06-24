@@ -28,26 +28,26 @@ def test_transcript_search(seq):
     page('mark').text().should.be.empty
     page('a').with_text('Page 26').should.not_be.empty
 
-    page = go_to(search_bar.submit_value('transcript'))
+    page = go_to(search_bar.submit_value('exhibit'))
 
     search_bar = page('input[type="search"]')
     search_bar.should.not_be.empty
-    search_bar.val().should.equal('transcript')
+    search_bar.val().should.equal('exhibit')
 
-    page.text().should.contain('369 pages with results')
+    page.text().should.contain('2333 pages with results')
 
-    page('mark').text().should.contain('transcript')
+    page('mark').text().should.contain('exhibit')
 
-    page_link = page('a').with_text('Page 167')
+    page_link = page('a').with_text('Page 88')
     page_link.should.not_be.empty
 
     page = follow_link(page_link)
 
     search_bar = page('input[type="search"]')
     search_bar.should.not_be.empty
-    search_bar.val().should.equal('transcript')
+    search_bar.val().should.equal('exhibit')
 
-    page.text().should.contain('(The Tribunal adjourned until 11 December 1946 at 0930 hours)')
+    page.text().should.contain('Page 88')
 
 
 def test_transcript_joins(seq):

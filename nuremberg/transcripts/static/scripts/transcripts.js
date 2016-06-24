@@ -1,3 +1,9 @@
+modulejs.define('transcript-search', function () {
+  $('.clear-search').on('click', function (e) {
+    e.preventDefault();
+    $(this).closest('form').find('input[type="search"]').val('');
+  });
+});
 modulejs.define('transcript-viewer', function () {
   var $viewport = $('.viewport-content');
 
