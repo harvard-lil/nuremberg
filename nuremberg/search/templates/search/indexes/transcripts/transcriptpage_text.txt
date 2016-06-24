@@ -3,10 +3,26 @@
 {# this is a sentinel value used to hide these terms from highlighting snippets #}
 <end of text>
 
+{{ object.material_type }}
+
 {{ object.transcript.case.short_name }}
+
 Page {{ object.page_label }}
+
 {% if object.date %}
   {{object.date|date:'d F Y'}}
 {% else %}
   Date Unknown
 {% endif %}
+
+English
+
+Trial Transcripts
+
+{% for code in object.extract_evidence_codes %}
+  {{code}}
+{% endfor %}
+
+{% for code in object.extract_exhibit_codes %}
+  {{code}}
+{% endfor %}

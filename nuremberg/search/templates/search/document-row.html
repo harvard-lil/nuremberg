@@ -85,18 +85,20 @@
           {% endif %}
         </p>
       {% endif %}
-      {% if result.evidence_codes %}
+      {% group_merge group.documents 'evidence_codes' as evidence_codes %}
+      {% if evidence_codes %}
         <p>
-          <strong>Evidence Code{{ result.evidence_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
-          {% for code in result.evidence_codes %}
+          <strong>Evidence Code{{ evidence_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
+          {% for code in evidence_codes %}
             {{code}}{% if not forloop.last %}, {% endif %}
           {% endfor %}
         </p>
       {% endif %}
-      {% if result.exhibit_codes %}
+      {% group_merge group.documents 'exhibit_codes' as exhibit_codes %}
+      {% if exhibit_codes %}
         <p>
-          <strong>Exhibit Code{{ result.exhibit_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
-          {% for code in result.exhibit_codes %}
+          <strong>Exhibit Code{{ exhibit_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
+          {% for code in exhibit_codes %}
             {{code}}{% if not forloop.last %}, {% endif %}
           {% endfor %}
         </p>

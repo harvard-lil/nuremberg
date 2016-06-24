@@ -1,6 +1,6 @@
 {{ object.title }}
 
-{{ object.literal_title }}
+{{ object.literal_title|default:"" }}
 
 {{ object.material_type }}
 
@@ -28,4 +28,16 @@
 
 {% for author in object.personal_authors.all %}
   {{ author.full_name }}
+{% endfor %}
+
+{% for activity in object.activities.all %}
+  {{ activity.short_name }}
+{% endfor %}
+
+{% for code in object.evidence_codes.all %}
+  {{code}}
+{% endfor %}
+
+{% for code in object.exhibit_codes.all %}
+  {{code}}
 {% endfor %}

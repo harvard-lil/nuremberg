@@ -80,8 +80,10 @@ def test_keyword_search(query):
     search_bar = page('input[type="search"]')
     page = go_to(search_bar.submit_value('experiments'))
 
-    page('p').text().should.contain('Results 1-15 of 1110 for experiments')
+    page('p').text().should.contain('Results 1-15 of 1492 for experiments')
     page('.document-row').length.should.equal(15)
+
+    page = follow_link(page('.facet').with_text('Material Type').find('p').with_text('Transcript').find('a'))
     transcript_row = page('.document-row').with_text('Case transcript for NMT 1: Medical Case')
     transcript_row.should.not_be.empty
     transcript_row.text().should.contain('Language of Text: English')
@@ -102,32 +104,34 @@ def test_field_search(query):
         page.text().should.contain('Results {}-{} of {} for {}'.format(first_count, page_count, count, q.replace(':', ': ')))
 
     # TODO: these tests are pretty brittle to indexing changes, consider beefing them up
-    count_results('workers', 551)
-    count_results('workers author:fritz', 73)
-    count_results('workers date:january', 28)
-    count_results('workers -trial:(nmt 4)', 435)
+    count_results('workers', 600)
+    count_results('workers author:fritz', 78)
+    count_results('workers date:january', 30)
+    count_results('workers -trial:(nmt 4)', 484)
     count_results('workers evidence:NO-190', 5, 5)
     count_results('workers source:typescript language:german', 37)
     count_results('workers source:typescript language:german -author:Milch', 28)
-    count_results('workers trial:(nmt 2 | nmt 4)', 212)
-    count_results('workers date:unknown', 25)
-    count_results('workers date:none', 25)
-    count_results('workers -date:none', 526)
-    count_results('workers -date:none notafield:(no matches)', 526)
-    count_results('workers trial:(nmt 2 | nmt 4) author:speer|fritz', 29)
+    count_results('workers trial:(nmt 2 | nmt 4)', 261)
+    count_results('workers date:unknown', 34)
+    count_results('workers date:none', 34)
+    count_results('workers -date:none', 566)
+    count_results('workers -date:none notafield:(no matches)', 566)
+    count_results('workers trial:(nmt 2 | nmt 4) author:speer|fritz', 37)
     count_results('workers author:"hitler adolf"', 0, 0, 0)
-    count_results('workers author:"adolf hitler"', 7, 7)
-    count_results('workers exhibit:prosecution', 125)
+    count_results('workers author:"adolf hitler"', 11, 11)
+    count_results('workers exhibit:prosecution', 158)
     count_results('* author:hitler -author:adolf', 0, 0, 0)
     count_results('* exhibit:handloser', 49)
-    count_results('malaria', 42)
-    count_results('freezing', 201)
-    count_results('malaria freezing', 1, 1)
-    count_results('malaria | freezing', 242)
+    count_results('malaria', 95)
+    count_results('freezing', 278)
+    count_results('malaria freezing', 32)
+    count_results('-malaria freezing', 247)
+    count_results('malaria -freezing', 64)
+    count_results('malaria | freezing', 341)
 
 def test_document_search(query):
     page = query('workers')
-    page.text().should.contain('Results 1-15 of 551 for workers')
+    page.text().should.contain('Results 1-15 of 600 for workers')
     page = follow_link(page('.document-row a'))
 
     search_bar = page('input[type=search]')
@@ -152,7 +156,7 @@ def test_landing_search(query):
     search_bar.should.not_be.empty
 
     page = go_to(search_bar.submit_value('workers'))
-    page.text().should.contain('Results 1-15 of 551 for workers')
+    page.text().should.contain('Results 1-15 of 600 for workers')
 
     page = go_to(url('content:landing'))
 
@@ -217,9 +221,9 @@ def test_pagination(query):
 def test_sort(query):
     # testing "relevance" might be too brittle for now
     page = query('experiments')
-    page.text().should.contain('Letter to Ernst Grawitz concerning the seawater experiments')
-    page = follow_link(page('a.page-number').with_text('74'))
-    page.text().should.contain('Extract from orders by the labor office of Amtsgruppe D (WVHA) to concentration camp administrators concerning records of prisoners used in experiments')
+    page.text().should.contain('Argument: Final plea for Karl Gebhardt')
+    page = follow_link(page('a.page-number').with_text('100'))
+    page.text().should.contain('Brief: Prosecution closing brief against Georg Loerner')
 
     # test date sorts
     page = query('-date:none')
