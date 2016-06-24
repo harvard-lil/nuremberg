@@ -172,17 +172,37 @@ class FieldedSearchForm(SearchForm):
         auto_query = sections.popleft()
         field_queries = []
         while len(sections) >= 2:
-            field_queries.append([sections.popleft(), sections.popleft()])
+            field = sections.popleft()
+            term = sections.popleft()
+            m = re.match(r'\s*(".+"|\(.+\))(.*)', term)
+            if m:
+
+                field_queries.append([field, m.group(1)])
+                if m.group(2):
+                    field_queries.append([None, m.group(2)])
+            else:
+                terms = re.split(r'\s', term)
+                field_queries.append([field, terms[0]])
+                if len(terms) > 1:
+                    field_queries.append([None, ' '.join(terms[1:])])
+        print('got field queries', field_queries)
         return (auto_query, field_queries)
 
     def apply_field_query(self, sqs, field_query):
         (field, value) = field_query
+
+        if not value or value.isspace():
+            return sqs
+
+        if not field:
+            field = 'all'
 
         if field[0] == '-':
             exclude = True
             field = field[1:]
         else:
             exclude = False
+
 
         field_key = self.search_fields.get(field)
         if field_key == True:

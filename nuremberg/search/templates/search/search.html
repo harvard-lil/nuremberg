@@ -36,7 +36,7 @@
 
             {% for field_query in form.field_queries %}
               <span class="field-query {{field_query.2}}">
-                {{field_query.0}}:<strong>{{field_query.1}}</strong>
+                {% if field_query.0 %}{{field_query.0}}:{% endif %}<strong>{{field_query.1}}</strong>
               </span>
             {% endfor %}
           </p>

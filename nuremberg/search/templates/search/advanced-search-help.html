@@ -22,7 +22,7 @@
     For example, to restrict your search to documents written by Milch, search for:
   </p>
   <p>
-    <span class="example-search">workers english 1944 author:Erhard Milch</span>
+    <span class="example-search">workers english 1944 author:Milch</span>
     <a href="{% search_url 'workers english 1944 author:Milch' %}">Search</a>
   </p>
   <p>
@@ -39,15 +39,22 @@
     <span class="example-search">"international law"</span>
     <a href="{% search_url '"international law"' %}">Search</a>
   <p>
-    Field search can include several keywords. If you want to search across all fields after adding a fielded search, you can use the special "all" field, so these are equivalent:
+    The same field can be searched multiple times in a query, and you can use parentheses to search for multiple keywords in a field. These are equivalent:
   </p>
   <p>
-    <span class="example-search">"international law" trial:NMT 4</span>
-    <a href="{% search_url '"international law" trial:NMT 4' %}">Search</a>
+    <span class="example-search">date:january date:1937</span>
+    <a href="{% search_url 'date:january date:1937' %}">Search</a>
   </p>
   <p>
-    <span class="example-search">trial:NMT 4 all:"international law"</span>
-    <a href="{% search_url 'trial:NMT 4 all:"international law"' %}">Search</a>
+    <span class="example-search">date:(january 1937)</span>
+    <a href="{% search_url 'date:(january 1937)' %}">Search</a>
+  </p>
+  <p>
+    By default, all field queries must match. You can use the OR operator <strong>|</strong> within a field to search for documents that contain either keyword:
+  </p>
+  <p>
+    <span class="example-search">author:himmler author:speer|buch</span>
+    <a href="{% search_url 'author:himmler author:speer|buch' %}">Search</a>
   </p>
   <p>
     For many fields, we have incomplete data, and you can specify only documents without a field
@@ -62,15 +69,8 @@
     <a href="{% search_url 'instructions trial:none' %}">Search</a>
   </p>
   <p>
-    You can also use the OR operator <strong>|</strong> within a field to make more complex queries:
-  </p>
-  <p>
-    <span class="example-search">author:himmler author:speer | fritz</span>
-    <a href="{% search_url 'author:himmler author:speer | fritz' %}">Search</a>
-  </p>
-  <p>
-    <span class="example-search">experiments date:1944 | unknown</span>
-    <a href="{% search_url 'experiments date:January 14 1944 | none' %}">Search</a>
+    <span class="example-search">experiments date:1944|unknown</span>
+    <a href="{% search_url 'experiments date:1944|unknown' %}">Search</a>
   </p>
   <p>
     You can search within any field listed in the filters to the left. Valid field names are:
