@@ -10,11 +10,51 @@ modulejs.define('transcript-viewer', function () {
   var fromSeq = $text.data('from-seq');
   var toSeq = $text.data('to-seq');
   var query = $('input[name=q]').val();
-  var batchSize = 11;
+  var batchSize = 10;
 
   $('.print-document').on('click', function () {
-    window.print();
+    $('.print-options, .print-document').toggleClass('hide');
   });
+  $('.do-print').on('click', function () {
+    var pages = parseInt($('.print-options input[name=pages]').val());
+    if (pages > 20 || pages < 1) {
+      pages = Math.min(Math.max(pages, 1), 20);
+      return $('.print-options input[name=pages]').val(pages);
+    }
+    var missing = currentSeq + pages - toSeq;
+    if (missing > 1)
+      var promise = loadBelow(Math.ceil(missing/10));
+    if (promise) {
+      promise.then(function () {doPrint(pages)});
+    } else {
+      doPrint(pages);
+    }
+  })
+  var intcomma = function (x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  var doPrint = function (pages) {
+    var $hidden = $('.page').addClass('print-hide');
+    var nums = [0,0];
+    var seqs = [0,0];
+    var printed = 0;
+    for (var i = currentSeq; i <= currentSeq + pages - 1; i++) {
+      var shown = $hidden.filter('[data-seq="'+i+'"]');
+      shown.removeClass('print-hide');
+      if (shown.length) {
+        nums[0] = nums[0] || shown.data('page') || '?';
+        nums[1] = shown.data('page') || '?';
+        seqs[0] = seqs[0] || shown.data('seq');
+        seqs[1] = shown.data('seq');
+        printed += 1;
+      }
+    }
+    $('.document-info .print-show').text('Printed '+printed+' transcript pages labeled '+_.map(nums, intcomma).join(' through ')+' (seq. nos. '+seqs.join('-')+')' )
+
+    $('.print-options, .print-document').toggleClass('hide');
+    window.print();
+    $hidden.removeClass('print-hide');
+  }
 
   var goToSeq = function (seq) {
     currentSeq = Math.min(Math.max(seq, 1), totalPages);
@@ -128,7 +168,8 @@ modulejs.define('transcript-viewer', function () {
   });
 
   var loading = false;
-  var loadBelow = function () {
+  var loadBelow = function (batches) {
+    batches = batches || 1;
     if (toSeq >= totalPages) {
       $viewport.find('.below .end-indicator').text('End of transcript');
       return;
@@ -138,11 +179,11 @@ modulejs.define('transcript-viewer', function () {
     if (loading)
       return;
     loading = true;
-    $.get({
+    return $.get({
       url: location.pathname,
       data: {
         from_seq: toSeq,
-        to_seq: Math.min(totalPages, toSeq + batchSize),
+        to_seq: Math.min(totalPages, toSeq + batches * (batchSize) + 1),
         partial: true,
       }
     })
@@ -150,7 +191,7 @@ modulejs.define('transcript-viewer', function () {
       toSeq = data.to_seq;
       $text.append($(highlightHtml(data.html, query)));
       loading = false;
-    })
+    });
   };
 
   var loadAbove = function () {
@@ -166,7 +207,7 @@ modulejs.define('transcript-viewer', function () {
     $.get({
       url: location.pathname,
       data: {
-        from_seq: Math.max(1, fromSeq - batchSize),
+        from_seq: Math.max(1, fromSeq - (batchSize + 1)),
         to_seq: fromSeq,
         partial: true,
       }
