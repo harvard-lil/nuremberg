@@ -1,8 +1,9 @@
-from nuremberg.documents.models import Document
-from .lib.digg_paginator import DiggPaginator
-from django.shortcuts import render
+from django.http import Http404
+from django.shortcuts import render, redirect
 from haystack.generic_views import SearchView, FacetedSearchView, FacetedSearchMixin
+from nuremberg.documents.models import Document
 from .forms import DocumentSearchForm
+from .lib.digg_paginator import DiggPaginator
 from .lib.solr_grouping_backend import GroupedSearchQuerySet
 
 class Search(FacetedSearchView):
@@ -43,6 +44,16 @@ class Search(FacetedSearchView):
     )
     facet_to_label = {field: label for (label, field) in facet_labels}
     facet_fields = [label[1] for label in facet_labels]
+
+    def get(self, *args, **kwargs):
+        try:
+            return super().get(*args, **kwargs)
+        except Http404:
+            if self.request.GET.get('page', 1) == 1:
+                raise
+        params = self.request.GET.copy()
+        del params['page']
+        return redirect('%s?%s' % (self.request.path, params.urlencode()))
 
     def form_invalid(self, form):
         # override SearchView to give a blank search by default
