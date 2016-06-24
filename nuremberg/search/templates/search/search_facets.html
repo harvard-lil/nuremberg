@@ -6,7 +6,7 @@
       <h5>Date</h5>
       <div class="collapse">Hide</div>
       {% for value in facet.counts %}
-        <p class="{% if forloop.counter > 5 %}hide{% endif %}">
+        <p class="{% if forloop.counter > 5 %}hide{% endif %}" data-year="{{value.0|default:""}}">
           {{value.0|default:"Unknown"}}
           {% facet_exists facet.field value.0 as existing_facet %}
           {% if existing_facet %}
@@ -30,9 +30,9 @@
           <input type="hidden" name="f" value="{{filter.2}}" />
         {% endfor %}
         <p class="date-filter">
-            <input type="number" name="year_min" value="{{ form.date_range.0|default:"1923" }}"/>
+            <input type="number" name="year_min" value="{{ form.date_range.0|default:"" }}"/>
             to
-            <input type="number" name="year_max" value="{{ form.date_range.1|default:"1940" }}" />
+            <input type="number" name="year_max" value="{{ form.date_range.1|default:"" }}" />
             <button class="go-button">Filter</button>
         </p>
     </form>
