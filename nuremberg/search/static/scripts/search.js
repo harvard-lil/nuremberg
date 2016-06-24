@@ -35,6 +35,7 @@ modulejs.define('search', function () {
           href = location.search + '&' + range;
         else
           href = '?' + range;
+        href = href.replace(/([\?&])page=\d+&?/, function (m, c) {return c});
         gotoResults(href);
       });
 
