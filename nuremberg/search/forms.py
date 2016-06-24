@@ -146,7 +146,7 @@ class FieldedSearchForm(SearchForm):
         if not self.is_valid() or not 'q' in self.cleaned_data:
             return sqs
 
-        (self.auto_query, self.field_queries) = self.parse_query(self.cleaned_data['q'])
+        (self.auto_query, self.field_queries) = self.parse_query_keywords(self.cleaned_data['q'])
 
 
         self.highlight_query = ''
@@ -170,25 +170,30 @@ class FieldedSearchForm(SearchForm):
 
         return sqs
 
-    def parse_query(self, full_query):
-        sections = deque(re.split('(\-?\w+)\:', full_query))
+    def parse_query_phrases(self, full_query):
+        """
+        Parser that extracts unmarked phrase queries for fields, eg: date:January 2
+        """
+        sections = deque(re.split(r'(\-?\w+)\:', full_query))
         auto_query = sections.popleft()
         field_queries = []
         while len(sections) >= 2:
-            field = sections.popleft()
-            term = sections.popleft()
-            m = re.match(r'\s*(".+"|\(.+\))(.*)', term)
-            if m:
+            field_queries.append([sections.popleft(), sections.popleft()])
+        return (auto_query, field_queries)
 
-                field_queries.append([field, m.group(1)])
-                if m.group(2):
-                    field_queries.append([None, m.group(2)])
+    def parse_query_keywords(self, full_query):
+        """
+        Parser that extracts single field keyword queries, () keyword groups or "" exact matches
+        e.g. date:(January 2)
+        """
+        sections = re.split(r'((?:\-?\w+)\s*\:\s*(?:"[^:]+"|\([^:]+\)|[\w\-\+\.\|]+))', full_query)
+        auto_query = sections[0]
+        field_queries = []
+        for query in sections[1:]:
+            if ':' in query:
+                field_queries.append(query.split(':', 1))
             else:
-                terms = re.split(r'\s', term)
-                field_queries.append([field, terms[0]])
-                if len(terms) > 1:
-                    field_queries.append([None, ' '.join(terms[1:])])
-        print('got field queries', field_queries)
+                field_queries.append([None, query])
         return (auto_query, field_queries)
 
     def apply_field_query(self, sqs, field_query):
