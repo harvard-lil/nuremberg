@@ -11,26 +11,20 @@
 </div>
 <ul class="footer-nav-col offset">
   <li>
+    <a href="{% url 'content:about' %}"> About the Project </a>
+  </li>
+  <li>
     <a href="{% url 'content:trials' %}"> Trials </a>
   </li>
   <li>
     <a href="{% url 'content:approaches' %}"> Approaches </a>
   </li>
-  <li>
-    <a href="{% url 'content:history' %}"> History </a>
-  </li>
-  <li>
-    <a href="/search#advanced"> Advanced Search </a>
-  </li>
 </ul>
 <ul class="footer-nav-col">
   <li>
-    <a href="{% url 'content:about' %}"> About the Project </a>
+    <a href="/search#advanced"> Advanced Search </a>
   </li>
   <li>
-    <a href="/donate"> Donate </a>
-  </li>
-  <li>
-    <a href="/api"> API </a>
+    <a href="{% url 'content:history' %}"> History </a>
   </li>
 </ul>
