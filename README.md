@@ -117,6 +117,7 @@ Tests in the project are generally high-level integration acceptance tests that 
 Make sure you have installed test dependencies and initialized the test database in [Setup](#setup) above. Then simply:
 
 ```bash
+mkdir coverage
 py.test
 ```
 
