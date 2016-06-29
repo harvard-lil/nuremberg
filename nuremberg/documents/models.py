@@ -350,6 +350,8 @@ class DocumentExhibitCode(models.Model):
     prosecution_doc_book_suffix = models.CharField(db_column='ProsDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
 
     defense_name = models.ForeignKey(DocumentExhibitCodeName, db_column='DefExhNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_suffix = models.CharField(db_column='DefExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    defense_name_denormalized = models.CharField(db_column='DefExhName', max_length=50, blank=True, null=True)
     defense_number = models.IntegerField(db_column='DefExhNo', blank=True, null=True)  # Field name made lowercase.
     defense_suffix = models.CharField(db_column='DefExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
 
@@ -367,7 +369,11 @@ class DocumentExhibitCode(models.Model):
         if self.prosecution_number:
             return 'Prosecution {}{}'.format(self.prosecution_number, self.prosecution_suffix or '')
         if self.defense_number:
-            return '{} {}{}'.format(self.defense_name.name, self.defense_number, self.defense_suffix or '')
+            if self.defense_name:
+                name = self.defense_name.name
+            else:
+                name = self.defense_name_denormalized or 'Defendant'
+            return '{} {}{}'.format(name, self.defense_number, self.defense_suffix or '')
         return ''
 
     class Meta:
