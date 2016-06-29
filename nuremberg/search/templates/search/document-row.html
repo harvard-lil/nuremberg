@@ -64,16 +64,25 @@
         {{result.source}}
       </p>
     {% else %}
+      {% comment %}
       <p>
         <strong>Language of Text:</strong>
         {{result.language}}
       </p>
+      {% endcomment %}
+      {% if result.material_type == 'Document' %}
+        <p>
+          <strong>HLSL Item No.:</strong>
+          {{result.pk}}
+        </p>
+      {% endif %}
       {% if result.source %}
         <p>
           <strong>Source of Text:</strong>
           {{result.source}}
         </p>
       {% endif %}
+      {% comment %}
       {% if result.trial_activities %}
         <p>
           <strong>Trial Issues:</strong>
@@ -85,6 +94,7 @@
           {% endif %}
         </p>
       {% endif %}
+      {% endcomment %}
       {% group_merge group.documents 'evidence_codes' as evidence_codes %}
       {% if evidence_codes %}
         <p>
@@ -103,6 +113,7 @@
           {% endfor %}
         </p>
       {% endif %}
+      {% comment %}
       {% if result.defendants %}
         <p>
           <strong>Defendant{{result.defendants|pluralize}}:</strong>
@@ -111,6 +122,7 @@
           {% endfor %}
         </p>
       {% endif %}
+      {% endcomment %}
     {% endif %}
   </td>
   <td>
