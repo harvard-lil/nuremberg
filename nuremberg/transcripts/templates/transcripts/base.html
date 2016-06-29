@@ -17,7 +17,7 @@
           {% endif %}
         </form>
         <div class="return-link">
-          <a href="{% search_url query %}"> &larr; Back to search results </a>
+          <a href="{% search_url query %}"> &larr; Back to all results </a>
         </div>
       </div>
       <hr />
@@ -43,9 +43,9 @@
           </button>
         </div>
       </div>
+      <hr />
     {% endblock %}
   {% endblock %}
-  <hr />
   <div class="sidebar-layout">
     <div class="sidebar-column document-info">
       {% block document_info %}

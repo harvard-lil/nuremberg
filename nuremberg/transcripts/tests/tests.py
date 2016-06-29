@@ -23,7 +23,7 @@ def test_transcript_search(seq):
 
     search_bar = page('input[type="search"]')
     search_bar.should.not_be.empty
-    search_bar.val().should.be.none
+    search_bar.val().should.equal('*')
 
     page('mark').text().should.be.empty
     page('a').with_text('Page 26').should.not_be.empty
@@ -142,7 +142,7 @@ def test_evidence_links(seq):
     page = seq(136)
     page = follow_link(page('a').with_text('NO-417'))
 
-    page.text().should.contain('Results 1-4 of 4 for * evidence: (NO-417)')
+    page.text().should.contain('Results 1-2 of 2 for * evidence: "NO-417"')
     page.text().should.contain('Organizational chart of the SS Medical Service (from September 1943)')
 
     page = follow_link(page('.document-row').with_text('Case transcript for NMT 1: Medical Case').find('a'))
@@ -153,7 +153,7 @@ def test_exhibit_links(seq):
     page = seq(210)
     page = follow_link(page('a').with_text('61'))
 
-    page.text().should.contain('Results 1-5 of 5 for * exhibit: (Prosecution 61)')
+    page.text().should.contain('Results 1-5 of 5 for * exhibit: "Prosecution 61"')
     page.text().should.contain('Letter to Heinrich Himmler, sending report on high altitude experiments')
 
     page = follow_link(page('.document-row').with_text('Case transcript for NMT 1: Medical Case').find('a'))
@@ -163,7 +163,7 @@ def test_exhibit_links(seq):
     page = seq(6267)
     page = follow_link(page('a').with_text('8'))
 
-    page.text().should.contain('Results 1-2 of 2 for * exhibit: (Rose 8)')
+    page.text().should.contain('Results 1-2 of 2 for * exhibit: "Rose 8"')
     page.text().should.contain('Extract from a report of a conference of consulting specialists, concerning dysentery')
 
     page = follow_link(page('.document-row').with_text('Case transcript for NMT 1: Medical Case').find('a'))

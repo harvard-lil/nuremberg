@@ -161,8 +161,8 @@ class FieldedSearchForm(SearchForm):
             sqs = sqs.highlight(**{
                 'hl.snippets': highlight_snippets,
                 'hl.fragsize':150,
-                'hl.q': 'material_type:transcripts AND text:({})'.format(AutoQuery(self.highlight_query).prepare(sqs.query)),
-                'hl.fl':'text',
+                'hl.q': 'material_type:transcripts AND highlight:({})'.format(AutoQuery(self.highlight_query).prepare(sqs.query)),
+                'hl.fl':'highlight',
                 'hl.requireFieldMatch':'true',
                 'hl.simple.pre':'<mark>',
                 'hl.simple.post':'</mark>'
@@ -170,7 +170,7 @@ class FieldedSearchForm(SearchForm):
 
         return sqs
 
-    def parse_query_phrases(self, full_query):
+    def parse_query_phrases(self, full_query): # pragma: no cover
         """
         Parser that extracts unmarked phrase queries for fields, eg: date:January 2
         """
@@ -186,7 +186,7 @@ class FieldedSearchForm(SearchForm):
         Parser that extracts single field keyword queries, () keyword groups or "" exact matches
         e.g. date:(January 2)
         """
-        sections = re.split(r'((?:\-?\w+)\s*\:\s*(?:"[^:]+"|\([^:]+\)|[\w\-\+\.\|]+))', full_query)
+        sections = re.split(r'((?:\-?\w+)\s*\:\s*(?:"[^"]+"|\([^:]+\)|[\w\-\+\.\|]+))', full_query)
         auto_query = sections[0]
         field_queries = []
         for query in sections[1:]:
@@ -219,10 +219,10 @@ class FieldedSearchForm(SearchForm):
         # the solr backend aggressively quotes OR queries,
         # so we must build an OR query manually to keep our loose keyword search
         if field_key:
-            values = re.split(r'[|]| OR ', value)
+            values = re.split(r'[|]', value)
             query_list = []
             for value in values:
-                if re.match(r'^\s*(none|unknown)\s*$', value, re.IGNORECASE):
+                if re.match(r'^\s*"?(none|unknown)"?\s*$', value, re.IGNORECASE):
                     query_list.append('(-{}: [* TO *] AND *:*)'.format(field_key))
                 else:
                     # to enable snippets for exhibit codes we must add them to the highlight query

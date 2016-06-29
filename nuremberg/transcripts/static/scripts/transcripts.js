@@ -140,15 +140,21 @@ modulejs.define('transcript-viewer', function () {
 
     // rough highlighting of terms in javascript
 
-    var terms = query
+    query = query
     .replace(/evidence:|exhibit:/, '')
-    .replace(/\w+:.*/, '')
+    .replace(/((?:\-?\w+)\s*\:\s*(?:"[^"]+"|\([^:]+\)|[\w\-\+\.\|]+))/, '');
+    var exact_terms = query.match(/"([^"]+)"/g);
+    exact_terms = _.map(exact_terms, function (t) { return t.replace(/^"|"$/g, '').replace(/[^\w]+/g, '[^\\w]+'); })
+    query = query.replace(/"([^"]+)"/g, '');
+
+    var terms = query
     .replace(/[^\w\-]+/g, ' ')
     .replace(/^\s+|\s+$/g, '')
     .replace(/(s|ing|ed|ment)\b/g, '')
     .split(/\ +/g);
 
     terms = _.reject(terms, function (term) {return !term || (term.length < 3 && !term.match(/[A-Z]{2,3}|\d+/));});
+    terms = terms.concat(exact_terms);
 
     if (!terms.length)
       return;

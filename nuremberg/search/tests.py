@@ -12,14 +12,14 @@ def test_search_page(query):
 
     search_bar = page('input[type="search"]')
     search_bar.should.not_be.empty
-    search_bar.val().should.be.none
+    search_bar.val().should.equal('*')
 
-    page('p').text().should.contain('Results 1-15 of 6059 for *')
+    page('p').text().should.contain('Results 1-15 of 6065 for *')
     page('.facet').text().should.contain('Document (5842)')
 
     page = follow_link(page('.facet p').with_text('Transcript').find('a'))
 
-    page('p').text().should.contain('Results 1-1 of 1 for *')
+    page('p').text().should.contain('Results 1-4 of 4 for *')
     page('.facet').text().should_not.contain('Document')
     filter_link = page('.applied-filters').with_text('Material Type Transcript').find('a')
     filter_link.should.not_be.empty
@@ -30,16 +30,16 @@ def test_facets(query):
     page = query('polish workers in germany')
 
     # baseline
-    page.text().should.contain('Results 1-15 of 20 for polish workers in germany')
+    page.text().should.contain('Results 1-15 of 22 for polish workers in germany')
 
     # test adding facet
     page = follow_link(page('.facet p').with_text('NMT 2').find('a'))
-    page.text().should.contain('Results 1-7 of 7 for polish workers in germany')
+    page.text().should.contain('Results 1-8 of 8 for polish workers in germany')
     page('.applied-filters').with_text('Trial').text().should.contain('NMT 2')
 
     # test removing facet
     page = follow_link(page('.applied-filters').with_text('Trial NMT 2').find('a'))
-    page.text().should.contain('Results 1-15 of 20 for polish workers in germany')
+    page.text().should.contain('Results 1-15 of 22 for polish workers in germany')
 
     # test unknown facet
     page = follow_link(page('.facet').with_text('Trial').find('p').with_text('Unknown').find('a'))
@@ -73,20 +73,19 @@ def test_facets(query):
 
     # test removing all filters
     page = follow_link(page('a').with_text('Clear all filters'))
-    page.text().should.contain('Results 1-15 of 20 for polish workers in germany')
+    page.text().should.contain('Results 1-15 of 22 for polish workers in germany')
 
 def test_keyword_search(query):
     page = query('')
     search_bar = page('input[type="search"]')
     page = go_to(search_bar.submit_value('experiments'))
 
-    page('p').text().should.contain('Results 1-15 of 1492 for experiments')
+    page('p').text().should.contain('Results 1-15 of 1495 for experiments')
     page('.document-row').length.should.equal(15)
 
     page = follow_link(page('.facet').with_text('Material Type').find('p').with_text('Transcript').find('a'))
     transcript_row = page('.document-row').with_text('Case transcript for NMT 1: Medical Case')
     transcript_row.should.not_be.empty
-    transcript_row.text().should.contain('Language of Text: English')
     transcript_row.text().should.contain('05 December 1946')
 
     page = follow_link(transcript_row.find('a'))
@@ -96,42 +95,46 @@ def test_keyword_search(query):
     page = follow_link(page('a').with_text('Page 32'))
     page.text().should.contain('HLSL Seq. No. 8')
 
-def test_field_search(query):
-    def count_results(q, count, page_count=None, first_count=None):
+@pytest.fixture
+def count_results(query):
+    def _count(q, count, page_count=None, first_count=None):
         page = query(q)
         if page_count == None: page_count = 15
         if first_count == None: first_count = 1
-        page.text().should.contain('Results {}-{} of {} for {}'.format(first_count, page_count, count, q.replace(':', ': ')))
+        page('.results-count').text().should.contain('Results {}-{} of {} for {}'.format(first_count, page_count, count, q.replace(':', ': ')))
+    return _count
+
+def test_field_search(count_results):
 
     # TODO: these tests are pretty brittle to indexing changes, consider beefing them up
-    count_results('workers', 600)
+    count_results('workers', 603)
     count_results('workers author:fritz', 78)
-    count_results('workers date:january', 30)
-    count_results('workers -trial:(nmt 4)', 484)
+    count_results('workers date:january', 32)
+    count_results('workers -trial:(nmt 4)', 487)
     count_results('workers evidence:NO-190', 5, 5)
     count_results('workers source:typescript language:german', 37)
     count_results('workers source:typescript language:german -author:Milch', 28)
-    count_results('workers trial:(nmt 2 | nmt 4)', 261)
-    count_results('workers date:unknown', 34)
-    count_results('workers date:none', 34)
-    count_results('workers -date:none', 566)
-    count_results('workers -date:none notafield:(no matches)', 566)
+    count_results('workers trial:(nmt 2 | nmt 4)', 262)
+    count_results('workers date:unknown', 37)
+    count_results('workers date:none', 37)
+    count_results('workers -date:none', 569)
+    count_results('workers -date:none notafield:(no matches)', 569)
     count_results('workers trial:(nmt 2 | nmt 4) author:speer|fritz', 37)
     count_results('workers author:"hitler adolf"', 0, 0, 0)
     count_results('workers author:"adolf hitler"', 11, 11)
-    count_results('workers exhibit:prosecution', 158)
+    count_results('workers exhibit:prosecution', 159)
     count_results('* author:hitler -author:adolf', 0, 0, 0)
-    count_results('* exhibit:handloser', 49)
-    count_results('malaria', 95)
-    count_results('freezing', 278)
-    count_results('malaria freezing', 32)
-    count_results('-malaria freezing', 247)
-    count_results('malaria -freezing', 64)
-    count_results('malaria | freezing', 341)
+    count_results('* exhibit:handloser', 81)
+    count_results('malaria', 98)
+    count_results('freezing', 281)
+    count_results('malaria freezing', 33)
+    count_results('-malaria freezing', 250)
+    count_results('malaria -freezing', 67)
+    count_results('malaria | freezing', 344)
 
 def test_document_search(query):
     page = query('workers')
-    page.text().should.contain('Results 1-15 of 600 for workers')
+    page.text().should.contain('Results 1-15 of 603 for workers')
     page = follow_link(page('.document-row a'))
 
     search_bar = page('input[type=search]')
@@ -139,7 +142,7 @@ def test_document_search(query):
     search_bar.val().should.equal('workers')
 
     page = go_to(search_bar.submit_value('instructions'))
-    page.text().should.contain('Results 1-15 of 320 for instructions')
+    page.text().should.contain('Results 1-15 of 323 for instructions')
     page = follow_link(page('.document-row a'))
 
     search_bar = page('input[type=search]')
@@ -147,7 +150,7 @@ def test_document_search(query):
     search_bar.val().should.equal('instructions')
 
     page = follow_link(page('a').with_text('Back to search results'))
-    page.text().should.contain('Results 1-15 of 320 for instructions')
+    page.text().should.contain('Results 1-15 of 323 for instructions')
 
 def test_landing_search(query):
     page = go_to(url('content:landing'))
@@ -156,7 +159,7 @@ def test_landing_search(query):
     search_bar.should.not_be.empty
 
     page = go_to(search_bar.submit_value('workers'))
-    page.text().should.contain('Results 1-15 of 600 for workers')
+    page.text().should.contain('Results 1-15 of 603 for workers')
 
     page = go_to(url('content:landing'))
 
@@ -168,12 +171,12 @@ def test_landing_search(query):
         form.find('label').with_text('Documents').find('input').attr('name'): 'transcripts',
     }))
 
-    page.text().should.contain('Results 1-1 of 1 for workers type: transcripts')
+    page.text().should.contain('Results 1-4 of 4 for workers type: transcripts')
 
 def test_transcript_snippets(query):
     page = query('documents type:transcript')
 
-    page.text().should.contain('Results 1-1 of 1 for documents type: transcript')
+    page.text().should.contain('Results 1-4 of 4 for documents type: transcript')
     page.text().should.contain('4039 results in this transcript')
 
     # snippets on several pages
@@ -189,8 +192,8 @@ def test_transcript_snippets(query):
 
     # all snippets from first page
     page.text().should.contain('[ ... p. 26 ] can work on it')
-    page.text().should.contain('[ ... p. 26 ] it is not possible')
-    page.text().should.contain('[ ... p. 26 ] be able to select')
+    page.text().should.contain('[ ... p. 26 ] possible with these few documents')
+    page.text().should.contain('[ ... p. 26 ] able to select which documents')
 
     # test no snippets
     page = query('type:transcript')
@@ -211,11 +214,11 @@ def test_transcript_snippets(query):
 def test_pagination(query):
     page = query('')
 
-    page.text().should.contain('Results 1-15 of 6059 for *')
+    page.text().should.contain('Results 1-15 of 6065 for *')
 
     page = follow_link(page('a').with_text('404'))
 
-    page.text().should.contain('Results 6046-6059 of 6059 for *')
+    page.text().should.contain('Results 6046-6060 of 6065 for *')
 
 
 def test_sort(query):
@@ -242,11 +245,11 @@ def test_sort(query):
     page = query('')
     page = go_to(page.absolute_url(page('select option').with_text('Most Pages').val()))
     page.text().should.contain('492 pages')
-    page = follow_link(page('a.page-number').with_text('404'))
+    page = follow_link(page('a.page-number').with_text('405'))
     page.text().should.contain('0 pages')
 
     page = query('')
     page = go_to(page.absolute_url(page('select option').with_text('Fewest Pages').val()))
     page.text().should.contain('0 pages')
-    page = follow_link(page('a.page-number').with_text('404'))
+    page = follow_link(page('a.page-number').with_text('405'))
     page.text().should.contain('492 pages')

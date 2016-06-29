@@ -171,7 +171,7 @@
       {% endblock %}
       {% with document.activities.all as activities %}
       {% if activities %}
-        <h6>Trial Issues</h6>
+        <h6>Trial Issue{{activities|length|pluralize}}</h6>
         <p>
           {% for activity in activities %}
               <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>

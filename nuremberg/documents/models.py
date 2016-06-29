@@ -27,7 +27,7 @@ class Document(models.Model):
         if date:
             return date.as_date()
 
-    def slug(self):
+    def slug(self): # pragma: no cover
         # Try to extract the "genre term" from the descriptive title
         words = self.title.split(' ')
         n = 4
@@ -330,6 +330,15 @@ class DocumentEvidenceCode(models.Model):
         managed = False
         db_table = 'tblNMTList'
 
+class DocumentExhibitCodeName(models.Model):
+    id = models.AutoField(db_column='DefenseExhNameID', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='DefenseExhName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    case = models.ForeignKey(DocumentCase, db_column='CaseID')
+
+    class Meta:
+        managed = False
+        db_table = 'tblDefenseExhNames'
+
 class DocumentExhibitCode(models.Model):
     id = models.AutoField(db_column='CasesListID', primary_key=True)  # Field name made lowercase.
     document = models.ForeignKey(Document, related_name='exhibit_codes', db_column='DocID')
@@ -340,8 +349,9 @@ class DocumentExhibitCode(models.Model):
     prosecution_doc_book_number = models.IntegerField(db_column='ProsDocBkNo', blank=True, null=True)  # Field name made lowercase.
     prosecution_doc_book_suffix = models.CharField(db_column='ProsDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
 
-    defense_name_id = models.IntegerField(db_column='DefExhNameID', blank=True, null=True)  # Field name made lowercase.
-    defense_name = models.CharField(db_column='DefExhName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    defense_name = models.ForeignKey(DocumentExhibitCodeName, db_column='DefExhNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_suffix = models.CharField(db_column='DefExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    defense_name_denormalized = models.CharField(db_column='DefExhName', max_length=50, blank=True, null=True)
     defense_number = models.IntegerField(db_column='DefExhNo', blank=True, null=True)  # Field name made lowercase.
     defense_suffix = models.CharField(db_column='DefExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
 
@@ -359,7 +369,11 @@ class DocumentExhibitCode(models.Model):
         if self.prosecution_number:
             return 'Prosecution {}{}'.format(self.prosecution_number, self.prosecution_suffix or '')
         if self.defense_number:
-            return '{} {}{}'.format(self.defense_name, self.defense_number, self.defense_suffix or '')
+            if self.defense_name:
+                name = self.defense_name.name
+            else:
+                name = self.defense_name_denormalized or 'Defendant'
+            return '{} {}{}'.format(name, self.defense_number, self.defense_suffix or '')
         return ''
 
     class Meta:
