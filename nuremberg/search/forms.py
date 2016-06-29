@@ -170,7 +170,7 @@ class FieldedSearchForm(SearchForm):
 
         return sqs
 
-    def parse_query_phrases(self, full_query):
+    def parse_query_phrases(self, full_query): # pragma: no cover
         """
         Parser that extracts unmarked phrase queries for fields, eg: date:January 2
         """
