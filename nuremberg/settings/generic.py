@@ -34,27 +34,35 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'static_precompiler',
-    'compressor',
+    'django.contrib.humanize',
 
     'nuremberg',
     'nuremberg.core',
     'nuremberg.content',
     'nuremberg.documents',
     'nuremberg.transcripts',
+    'nuremberg.photographs',
     'nuremberg.search',
+    'compressor',
+
+    'haystack',
+    'httpproxy',
+    'static_precompiler',
 ]
 
 MIDDLEWARE_CLASSES = [
-    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'nuremberg.core.urls'
@@ -71,6 +79,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'nuremberg.core.middlewares.context_processors.show_mockups',
+                'nuremberg.core.middlewares.context_processors.settings_variables',
             ],
         },
     },
@@ -117,7 +126,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/

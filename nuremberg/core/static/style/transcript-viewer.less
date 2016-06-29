@@ -1,4 +1,6 @@
+
 .transcript-text {
+  padding-right: 10px;
   p {
     .serif-text(normal, 18px, 30px);
     margin: 29px 0;
@@ -12,7 +14,91 @@
     display: block;
     margin: 10px 0 0;
   }
-  strong {
+  .speaker {
     .sans-serif(bold, 18px, 30px);
+  }
+  .heading {
+    .sans-serif(@medium, 20px, 35px);
+  }
+  .subheading {
+    .serif-text(normal, 18px, 35px);
+    font-style: italic;
+  }
+}
+.page-buttons label {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.viewport-content {
+  overflow: auto;
+}
+
+.page-handle {
+  .sans-serif(@light, 11px, 11px);
+
+  // width: 100px;
+  margin-left: 20px;
+  float: right;
+
+  color: @dark-gray;
+  text-transform: uppercase;
+  text-align: right;
+
+  &:hover, &.show {
+    .page-details {
+      display: inline;
+    }
+  }
+}
+.page-number {
+  padding: 7px 7px 6px;
+  border-left: 3px dotted @light-gray;
+}
+.page-details {
+  display: none;
+  padding: 7px 10px 6px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.page-buttons {
+  form {
+    display: inline-block;
+    vertical-align: top;
+  }
+  input {
+    width: 45px;
+    padding: 9px;
+    margin: 0 5px;
+  }
+}
+
+.end-indicator, .loading-indicator {
+  .sans-serif(@medium, 20px, 35px);
+
+  width: 100%;
+  padding: 20px;
+
+  color: @white;
+  background-color: @light-gray;
+
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.below .end-indicator, .below .loading-indicator {
+  margin-top: 20px;
+}
+.above .end-indicator, .above .loading-indicator {
+  margin-bottom: 20px;
+}
+
+html.touchevents & {
+  .viewport-content, #document-viewport{
+    height: 100vh;
+    overflow: auto;
+  };
+  .zoom-buttons {
+    display: block;
   }
 }

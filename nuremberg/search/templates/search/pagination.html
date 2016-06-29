@@ -1,0 +1,21 @@
+{% load search_url %}
+
+{% if paginator.num_pages > 1 %}
+  <div class="pagination-row">
+    <div class="pagination-controls">
+      {% if page_obj.has_previous %}
+        <a href="{% result_page page_obj.previous_page_number %}" class="prev-page">Prev</a>
+      {% endif %}
+      {% for page_number in page_obj.page_range %}
+        {% if page_number %}
+          <a class="page-number {% if page_number == page_obj.number %}current{% endif %}" href="{% result_page page_number%}">{{page_number}}</a>
+        {% else %}
+          ...
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <a href="{% result_page page_obj.next_page_number %}" class="next-page">Next</a>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}

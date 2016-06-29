@@ -1,5 +1,7 @@
+from django.utils.text import slugify
 from django.db import models
 import datetime
+import re
 
 IMAGE_URL_ROOT="http://nuremberg.law.harvard.edu/imagedir/HLSL_NMT01"
 
@@ -9,26 +11,29 @@ class Document(models.Model):
     literal_title = models.TextField(db_column='Title')
     updated_at = models.DateTimeField(auto_now=True, db_column='Updated')
 
-    image_count = models.IntegerField(db_column='NoOfImages')
+    image_count = models.IntegerField(db_column='NoOfImages', default=0)
 
     language = models.ForeignKey('DocumentLanguage', db_column='DocLanguageID')
     source = models.ForeignKey('DocumentSource', db_column='DocVersionID')
 
+    def page_range(self):
+        return range(1, (self.image_count or 0) + 1)
+
+    def images_screen(self):
+        return (image for image in self.images.all() if image.scale == DocumentImage.SCREEN)
+
     def date(self):
         date = self.dates.first()
         if date:
-            return self.dates.first().as_date()
+            return date.as_date()
 
     def slug(self):
         # Try to extract the "genre term" from the descriptive title
-        return self.title.split(' ')[0]
-
-    def image_urls(self):
-        # This is how the existing site generates page URLs, just concats doc ID with presumed page no.
-        image_number = 1
-        while image_number <= self.image_count:
-            yield "{}/{}{:05d}{:03d}.jpg".format(IMAGE_URL_ROOT, "HLSL_NUR_", self.id, image_number)
-            image_number += 1
+        words = self.title.split(' ')
+        n = 4
+        while n < len(words) and words[n-1] in ('a', 'an', 'the', 'in', 'of', 'to', 'at', 'on', 'and', 'for'):
+            n += 1
+        return slugify(' '.join(words[:n]))
 
     class Meta:
         managed = False
@@ -37,29 +42,73 @@ class Document(models.Model):
     def __str__(self):
         return "#{0} - {1}".format(self.id, self.title)
 
-
 class DocumentImage(models.Model):
+    document = models.ForeignKey(Document, related_name='images', on_delete=models.PROTECT)
+
+    page_number = models.IntegerField()
+    physical_page_number = models.IntegerField(blank=True, null=True)
+
+    THUMB = 't'
+    HALF = 'h'
+    SCREEN = 's'
+    DOUBLE = 'd'
+    FULL = 'f'
+    IMAGE_SCALES = (
+        (THUMB, 'thumb'),
+        (HALF, 'half'),
+        (SCREEN, 'screen'),
+        (DOUBLE, 'double'),
+        (FULL, 'full'),
+    )
+
+    url = models.CharField(max_length=255, blank=True, null=True)
+    scale = models.CharField(max_length=1, choices=IMAGE_SCALES)
+    width = models.IntegerField(blank=True, null=True)
+    height = models.IntegerField(blank=True, null=True)
+
+    image_type = models.ForeignKey('DocumentImageType')
+
+    def find_url(self, scale):
+        if self.scale == scale:
+            return url
+        else:
+            images = self.document.images.all()
+            filter = (image for image in images if image.page_number == self.page_number and image.scale == scale)
+            scaled = next(filter, None)
+            if scaled:
+                return scaled.url
+            else:
+                return None
+
+    def thumb_url(self):
+        return self.find_url(self.THUMB)
+    def screen_url(self):
+        return self.find_url(self.SCREEN)
+    def full_url(self):
+        return self.find_url(self.FULL)
+
+    def image_tag(self):
+        return '<a href="{0}"><img src="{0}" width=100 /></a>'.format(self.url)
+    image_tag.allow_tags = True
+
+    def __str__(self):
+        return "#{} Page {} {} {}x{}".format(self.document.id, self.page_number, self.scale, self.width, self.height)
+
+    class Meta:
+        managed = False
+        ordering = ['page_number']
+
+
+class OldDocumentImage(models.Model):
     id = models.AutoField(primary_key=True, db_column='ImagesListID')
-    document = models.ForeignKey(Document, related_name='images', on_delete=models.PROTECT, db_column='DocID')
+    document = models.ForeignKey(Document, related_name='old_images', on_delete=models.PROTECT, db_column='DocID')
 
     page_number = models.IntegerField(db_column='PageSequenceNo')
     physical_page_number = models.CharField(max_length=50, db_column='PhysicalPageNo')
 
-    file_prefix = models.CharField(max_length=8, db_column='CaseFolderName')
-    file_name = models.CharField(max_length=8, db_column='FileName')
-    file_suffix = models.CharField(max_length=5, db_column='FileFormat')
+    filename = models.CharField(db_column='FileName', max_length=8, blank=True, null=True)
 
     image_type = models.ForeignKey('DocumentImageType', db_column='PageTypeID')
-
-    def image_url(self):
-        return "{}/{}{}{}".format(IMAGE_URL_ROOT, self.file_prefix, self.file_name, self.file_suffix)
-
-    def image_tag(self):
-        return '<a href="{0}"><img src="{0}" width=100 /></a>'.format(self.image_url())
-    image_tag.allow_tags = True
-
-    def __str__(self):
-        return "#{} - {} Page {}".format(self.document.id, self.document.title, self.page_number)
 
     class Meta:
         managed = False
@@ -96,6 +145,8 @@ class DocumentDate(models.Model):
     year = models.IntegerField(db_column='DocYear')
 
     def as_date(self):
+        if not (self.year and self.month and self.day):
+            return None
         if self.year == 0 or self.month == 13 or self.day >= 32:
             return None
         if self.month == 2 and self.day == 29 and (self.year % 4) != 0:
@@ -116,7 +167,10 @@ class DocumentPersonalAuthor(models.Model):
     documents = models.ManyToManyField(Document, related_name='personal_authors', through='DocumentsToPersonalAuthors', through_fields=('author', 'document'))
 
     def full_name(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        if self.first_name and self.last_name:
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name or self.last_name or 'Unknown'
 
     class Meta:
         managed = False
@@ -138,8 +192,8 @@ class DocumentGroupAuthor(models.Model):
 
     documents = models.ManyToManyField(Document, related_name='group_authors', through='DocumentsToGroupAuthors', through_fields=('author', 'document'))
 
-    def full_name(self):
-        return name.split(' (')[0]
+    def short_name(self):
+        return self.name.split(' (')[0]
 
     class Meta:
         managed = False
@@ -164,7 +218,10 @@ class DocumentDefendant(models.Model):
     documents = models.ManyToManyField(Document, related_name='defendants', through='DocumentsToDefendants', through_fields=('defendant', 'document'))
 
     def full_name(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        if self.first_name and self.last_name:
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name or self.last_name or 'Unknown'
 
     class Meta:
         managed = False
@@ -186,7 +243,7 @@ class DocumentCase(models.Model):
     name = models.CharField(max_length=100, db_column='Case_temp')
 
     @property
-    def short_name(self):
+    def tag_name(self):
         # cheating for now
         if self.id == 1:
             return 'IMT'
@@ -194,6 +251,9 @@ class DocumentCase(models.Model):
             return 'Other'
         else:
             return 'NMT {}'.format(self.id-1)
+
+    def short_name(self):
+        return self.name.split(' -')[0].replace('.', ':').replace(' 0', ' ')
 
     documents = models.ManyToManyField(Document, related_name='cases', through='DocumentsToCases', through_fields=('case', 'document'))
 
@@ -211,14 +271,25 @@ class DocumentsToCases(models.Model):
         managed = False
         db_table = 'tblCasesList'
 
+class DocumentActivityManager(models.Manager):
+    """
+    Filters out first activity (No activity specified)
+    """
+    use_for_related_fields = True
+    def get_queryset(self):
+        return super().get_queryset().exclude(id=1)
+
 class DocumentActivity(models.Model):
+    objects = DocumentActivityManager()
+
     id = models.AutoField(primary_key=True, db_column='ActivityID')
     name = models.CharField(max_length=100, db_column='Activity')
+    case = models.ForeignKey(DocumentCase, related_name='activities', db_column='CaseID')
 
     @property
     def short_name(self):
         # cheating for now
-        return self.name.split(' (')[0]
+        return self.name.split(' (c')[0]
 
     documents = models.ManyToManyField(Document, related_name='activities', through='DocumentsToActivities', through_fields=('activity', 'document'))
 
@@ -234,3 +305,63 @@ class DocumentsToActivities(models.Model):
     class Meta:
         managed = False
         db_table = 'tblActivitiesList'
+
+
+class DocumentEvidencePrefix(models.Model):
+    id = models.AutoField(db_column='NMTCodeID', primary_key=True)  # Field name made lowercase.
+    code = models.CharField(db_column='NMTCode', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'tblNMTCodes'
+
+
+class DocumentEvidenceCode(models.Model):
+    id = models.AutoField(db_column='NMTListID', primary_key=True)  # Field name made lowercase.
+    prefix = models.ForeignKey(DocumentEvidencePrefix, db_column='NMTListCodeID')  # Field name made lowercase.
+    document = models.ForeignKey(Document, related_name='evidence_codes', db_column='DocID')
+    number = models.IntegerField(db_column='NMTNo', blank=True, null=True)  # Field name made lowercase.
+    suffix = models.CharField(db_column='NMTNoText', max_length=25, blank=True, null=True)  # Field name made lowercase.
+
+    def __str__(self):
+        return '{}-{}{}'.format(self.prefix.code, self.number, self.suffix or '')
+
+    class Meta:
+        managed = False
+        db_table = 'tblNMTList'
+
+class DocumentExhibitCode(models.Model):
+    id = models.AutoField(db_column='CasesListID', primary_key=True)  # Field name made lowercase.
+    document = models.ForeignKey(Document, related_name='exhibit_codes', db_column='DocID')
+
+    case = models.ForeignKey(DocumentCase, db_column='DocCaseID')
+    prosecution_number = models.IntegerField(db_column='ProsExhNo', blank=True, null=True)  # Field name made lowercase.
+    prosecution_suffix = models.CharField(db_column='ProsExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    prosecution_doc_book_number = models.IntegerField(db_column='ProsDocBkNo', blank=True, null=True)  # Field name made lowercase.
+    prosecution_doc_book_suffix = models.CharField(db_column='ProsDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    defense_name_id = models.IntegerField(db_column='DefExhNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_name = models.CharField(db_column='DefExhName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    defense_number = models.IntegerField(db_column='DefExhNo', blank=True, null=True)  # Field name made lowercase.
+    defense_suffix = models.CharField(db_column='DefExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    defense_doc_name_id = models.IntegerField(db_column='DefDocNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_name = models.CharField(db_column='DefDocName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+
+    defense_doc_number = models.IntegerField(db_column='DefDocNo', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_suffix = models.CharField(db_column='DefDocNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_name_id = models.IntegerField(db_column='DefDocBkNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_name = models.CharField(db_column='DefDocBkName', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_number = models.IntegerField(db_column='DefDocBkNo', blank=True, null=True)  # Field name made lowercase.
+    defense_doc_book_suffix = models.CharField(db_column='DefDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
+
+    def __str__(self):
+        if self.prosecution_number:
+            return 'Prosecution {}{}'.format(self.prosecution_number, self.prosecution_suffix or '')
+        if self.defense_number:
+            return '{} {}{}'.format(self.defense_name, self.defense_number, self.defense_suffix or '')
+        return ''
+
+    class Meta:
+        managed = False
+        db_table = 'tblCasesList'

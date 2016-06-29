@@ -22,26 +22,20 @@
       </h2>
     </hgroup>
     <form class="landing-search" action='{% url 'search:search' %}' method='GET'>
-      <div class="search-bar-wrapper">
-        <input type="search" name="query" required />
-        <div class="button-wrapper">
-          <button class="clear-search" type="reset">Clear</button>
-          <button class="button search-button" type="submit">Search</button>
-        </div>
-      </div>
+      {% include 'search/search-bar.html' %}
 
       <div class="include-materials">
         <legend>Include these materials:</legend>
         <label>
-          <input type="checkbox" name="include" value="documents" checked />
+          <input type="checkbox" name="m" value="documents" checked />
           Documents
         </label>
         <label>
-          <input type="checkbox" name="include" value="transcripts" />
+          <input type="checkbox" name="m" value="transcripts" checked />
           Transcripts
         </label>
         <label>
-          <input type="checkbox" name="include" value="photographs" />
+          <input type="checkbox" name="m" value="photographs" checked />
           Photographs
         </label>
       </div>
@@ -125,13 +119,13 @@
       </p>
       <ul class="module">
         <li>
-          <a> Karl Brandt</a>: Reich Commissioner for Health and Sanitation
+          <a>Karl Brandt</a>: Reich Commissioner for Health and Sanitation
         </li>
         <li>
-          <a> Hermann Goering</a>: General of the Air Force, chief of the war economy, Minister for Aviation
+          <a>Hermann Goering</a>: General of the Air Force, chief of the war economy, Minister for Aviation
         </li>
         <li>
-          <a> Heinrich Himmler</a>: Reichsfuehrer-SS and Chief of the Police
+          <a>Heinrich Himmler</a>: Reichsfuehrer-SS and Chief of the Police
         </li>
       </ul>
     </div>
@@ -145,14 +139,14 @@
       </p>
       <ul class="module">
         <li>
-          <strong> C: </strong> <a> Crimes </a> ; IMT
+          <strong> C: </strong> <a>Crimes</a>; IMT
         </li>
         <li>
-          <strong> NO: </strong> <a> Nuremberg Organizations </a> ; concerning Nazi organizations,
+          <strong> NO: </strong> <a>Nuremberg Organizations</a>  concerning Nazi organizations,
           such as the SS; NMT
         </li>
         <li>
-          <strong> NG: </strong> <a> Nuremberg Government </a> ; concerning Nazi government
+          <strong> NG: </strong> <a>Nuremberg Government</a>; concerning Nazi government
           agencies; NMT
         </li>
       </ul>
@@ -230,8 +224,8 @@
         <div class="completion-date end-date">2025</div>
       </div>
       <div class="progress-legend">
-        <div class="legend documents-digitized">Documents Digitized</div>
         <div class="legend transcripts-keyed">Transcripts Keyed</div>
+        <div class="legend documents-digitized">Documents Digitized</div>
       </div>
     </div>
   </div>

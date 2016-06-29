@@ -1,7 +1,10 @@
 .document-tools {
-  .make-row();
+  &:extend(.row);
 
   padding: 15px 0 7px;
+
+  .sans-serif(normal, 14px, 14px);
+  color: @gray;
 
   select {
     .form-control();
@@ -11,38 +14,43 @@
     vertical-align: bottom;
   }
 
-  input[type="search"] {
-    max-width: 310px;
+  .search-bar-wrapper {
+    width: 310px;
+    padding-right: 50px;
+    display: inline-block;
+  }
+  button.search-button {
+    display: none;
   }
   button.clear-search {
     margin-right: 15px;
   }
 
-  .sans-serif(normal, 14px, 14px);
-  color: @gray;
-
   a {
-    margin: 0px 5px;
+    margin: 0 5px;
     font-weight: normal;
+
     &.active {
       font-weight: @medium;
       color: @dark-gray;
-      text-decoration: none;
+      border: none;
     }
   }
 
   .document-search-inline {
+    .make-md-column(9);
+    .pull-left();
+
     label {
       margin-right: 15px;
     }
-    .make-md-column(9);
-    .pull-left();
   }
   .return-link {
     .make-md-column(2);
     .pull-right();
-    text-align: right;
+
     padding-top: 12px;
+    text-align: right;
   }
 }
 .zoom-buttons {
@@ -56,8 +64,9 @@
 .page-buttons {
   .make-md-column(6);
   .pull-right();
-  text-align: right;
+
   height: 30px;
+  text-align: right;
 
   label {
     .sans-serif(normal, 14px, 14px);
@@ -68,18 +77,17 @@
     margin: 0 5px;
   }
 
-  button {
+  button, a.download-page {
+    &:extend(.hide-text);
+
+    display: inline-block;
     height: 35px;
     width: 32px;
 
-    display: inline-block;
-    cursor: pointer;
-    background-repeat: no-repeat;
-    background-position: center;
     background-color: @white;
     border: none;
-    color: transparent !important;
     overflow: hidden;
+    cursor: pointer;
 
     &.first-page {
       background-image: url('@{image_url}/icon-first-page.png');
@@ -93,6 +101,10 @@
     &.last-page {
       background-image: url('@{image_url}/icon-last-page.png');
     }
+    &.download-page {
+      margin-left: 10px;
+      background-image: url('@{image_url}/icon-download-page.png');
+    }
   }
 }
 
@@ -100,22 +112,40 @@ hr {
   margin: 12px 0 0;
 }
 
-.sidebar-layout {
+html.touchevents & {
+  // .viewport-content, #document-viewport{
+  //   height: inherit;
+  //
+  //   background-color: @white;
+  //   overflow: visible;
+  // };
+  .document-tools-overlay, .zoom-buttons {
+    display: none;
+  }
+}
+
+.viewport-content {
+
+  height: 1000px;
+  height: 100vh;
+  overflow: scroll;
+}
+
+.sidebar-layout, .full-width {
   margin-top: 50px;
 
   .main-column {
     .make-md-column(8);
-    height: 100vh;
-    overflow: hidden;
-    &.scrollable {
-      overflow-y: auto;
-    }
+    .make-md-column-pull(4);
+    .make-md-column-offset(0);
+
+    position: relative;
   }
+
   .sidebar-column {
     .make-md-column(4);
-    .make-md-column-offset(0);
+    .make-md-column-push(8);
     padding-top: 25px;
-    padding-left: 30px;
   }
 
   h3 {
@@ -130,15 +160,84 @@ hr {
     }
   }
   h5 {
+    .sans-serif(@light, 16px, 25px);
     margin: 0 0 20px;
-    .sans-serif(300, 16px, 25px);
   }
   h6 {
     .sans-serif(bold, 14px, 14px);
+
+    margin: 37px 0 10px;
+
     letter-spacing: 2px;
     color: @gray;
     text-transform: uppercase;
-
-    margin: 37px 0 10px;
   }
+}
+
+.print-controls {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  background-color: white;
+  > div {
+    height: 24px;
+    margin-bottom: 5px;
+  }
+  .print-document {
+    .sans-serif(@light, 14px, 24px);
+    height: 24px;
+    padding-right: 28px;
+    float: right;
+
+    background-image: url('@{image_url}/icon-print.png');
+    background-position: right;
+
+    opacity: 0.5;
+    &:hover {
+      opacity: 1;
+    }
+  }
+  .download-pdf {
+    .print-document();
+    padding-right: 28px;
+    float: right;
+    clear: both;
+    background-image: url('@{image_url}/icon-download.png');
+  }
+  .download-options {
+    .transition(~"max-width 0.3s");
+    max-width: 250px;
+    float: right;
+    clear: both;
+
+    text-align: right;
+    overflow: hidden;
+    white-space: nowrap;
+
+    &.hide {
+      display:block;
+      max-width: 0px;
+    }
+  }
+  input.page-range {
+    width: 25px;
+    padding: 4px;
+  }
+  .do-download, .do-print {
+    .sans-serif(normal, 14px, 10px);
+    margin-left: 5px;
+  }
+}
+
+.photograph-title, .photograph-date {
+  display: block;
+}
+.photograph-date {
+}
+.photograph-inscription {
+  margin-bottom: 150px;
+}
+
+.printed-document-summary {
+  display: none;
 }

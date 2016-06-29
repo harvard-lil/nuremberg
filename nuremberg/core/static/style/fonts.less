@@ -6,7 +6,7 @@
     font-style: @style;
     font-weight: @weight;
     src: url('@{font_url}/@{path}.eot');
-    src: url('@{font_url}/@{path}.eot') format('embedded-opentype'),
+    src: url('@{font_url}/@{path}.eot?#ie') format('embedded-opentype'),
       url('@{font_url}/@{path}.woff') format('woff');
 }
 
@@ -15,7 +15,7 @@
     font-style: @style;
     font-weight: @weight;
     src: url('@{font_url}/@{path}.eot');
-    src: url('@{font_url}/@{path}.eot') format('embedded-opentype'),
+    src: url('@{font_url}/@{path}.eot?#ie') format('embedded-opentype'),
       url('@{font_url}/@{path}.woff') format('woff'),
       url('@{font_url}/@{path}.woff2') format('woff2');
 }
@@ -61,23 +61,21 @@
   .load-font('Proof', italic, bold, 'Proof-BoldItalic');
 }
 
-.set-font(@weight, @size, @height) {
+.set-font(@family, @weight, @size, @height) {
+  font-family: @family;
   font-weight: @weight;
   font-size: @size;
   line-height: @height;
 }
 
 .sans-serif(@weight, @size, @height) {
-  font-family: 'Proof', sans-serif;
-  .set-font(@weight; @size; @height);
+  .set-font('Proof', sans-serif; @weight; @size; @height);
 }
 
 .serif-headline(@weight, @size, @height) {
-  font-family: 'Tiempos Headline', serif;
-  .set-font(@weight; @size; @height);
+  .set-font('Tiempos Headline', serif; @weight; @size; @height);
 }
 
 .serif-text(@weight, @size, @height) {
-  font-family: 'Tiempos Text', serif;
-  .set-font(@weight; @size; @height);
+  .set-font('Tiempos Text', serif; @weight; @size; @height);
 }

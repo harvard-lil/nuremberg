@@ -1,0 +1,93 @@
+{% load search_url %}
+
+<div class="advanced-search-help hide">
+  <h4>Advanced Search Terms
+  <a class="hide-advanced-search">Hide</a>
+  </h4>
+  <p>
+    Most advanced queries can be made naturally. For example, to find English-language documents about
+    Erhard Milch relating to treatment of workers in 1944, search for:
+  </p>
+  <p>
+    <span class="example-search">workers Erhard Milch english 1944</span>
+    <a href="{% search_url 'workers Milch english 1944' %}">Search</a>
+  </p>
+  <p>
+    By default, documents that contain all keywords in any field are
+    found. Our data can sometimes be incomplete, so you should usually try a more general
+    search first. The filtering options shown on the left will let you narrow down the results.
+  </p>
+  <p>
+    However, you can also define specific fields to use for keyword search.
+    For example, to restrict your search to documents written by Milch, search for:
+  </p>
+  <p>
+    <span class="example-search">workers english 1944 author:Milch</span>
+    <a href="{% search_url 'workers english 1944 author:Milch' %}">Search</a>
+  </p>
+  <p>
+    Or to include documents used in Milch's prosecution, but written by someone else, you can exclude a field using the minus sign:
+  </p>
+  <p>
+    <span class="example-search">workers english 1944 defendant:milch -author:milch</span>
+    <a href="{% search_url 'workers english 1944 defendant:milch -author:milch' %}">Search</a>
+  <p>
+    You can search for any number of exact phrase matches in or out of a field
+    by quoting the phrase to be searched, such as:
+  </p>
+  <p>
+    <span class="example-search">"international law"</span>
+    <a href="{% search_url '"international law"' %}">Search</a>
+  <p>
+    The same field can be searched multiple times in a query, and you can use parentheses to search for multiple keywords in a field. These are equivalent:
+  </p>
+  <p>
+    <span class="example-search">date:january date:1937</span>
+    <a href="{% search_url 'date:january date:1937' %}">Search</a>
+  </p>
+  <p>
+    <span class="example-search">date:(january 1937)</span>
+    <a href="{% search_url 'date:(january 1937)' %}">Search</a>
+  </p>
+  <p>
+    By default, all field queries must match. You can use the OR operator <strong>|</strong> within a field to search for documents that contain either keyword:
+  </p>
+  <p>
+    <span class="example-search">author:himmler author:speer|buch</span>
+    <a href="{% search_url 'author:himmler author:speer|buch' %}">Search</a>
+  </p>
+  <p>
+    For many fields, we have incomplete data, and you can specify only documents without a field
+    using the special keyword "unknown" or "none":
+  </p>
+  <p>
+    <span class="example-search">workers date:unknown</span>
+    <a href="{% search_url 'workers date:unknown' %}">Search</a>
+  </p>
+  <p>
+    <span class="example-search">instructions trial:none</span>
+    <a href="{% search_url 'instructions trial:none' %}">Search</a>
+  </p>
+  <p>
+    <span class="example-search">experiments date:1944|unknown</span>
+    <a href="{% search_url 'experiments date:1944|unknown' %}">Search</a>
+  </p>
+  <p>
+    You can search within any field listed in the filters to the left. Valid field names are:
+  </p>
+  <p>
+    <strong>type</strong>,
+    <strong>trial</strong>,
+    <strong>author</strong>,
+    <strong>defendant</strong>,
+    <strong>date</strong>,
+    <strong>language</strong>,
+    <strong>source</strong>,
+    <strong>evidence</strong>,
+    <strong>exhibit</strong>,
+    <strong>issue</strong>,
+    <strong>hlsl</strong>,
+    and <strong>all</strong>
+  </p>
+</div>
+</div>

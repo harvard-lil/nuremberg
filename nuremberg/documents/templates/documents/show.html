@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load search_url %}
+{% load search_url static cache %}
 
 {% block title %} Document Viewer - {{document.title}} {% endblock %}
 
@@ -7,24 +7,17 @@
 
 {% block javascript_module %}documents{% endblock %}
 
+{% block javascript %}
+{{block.super}}
+{% endblock %}
+
 {% block content %}
 <section class="theme-light flush">
   {% block document_tools %}
     {% if query %}
       <div class="document-tools">
-        <form class="document-search-inline" action='{% url 'transcripts:search' document.id %}' method='GET'>
-          <div class="search-bar-wrapper">
-            <input type="search" name="query" value="{{query}}" required />
-            <div class="button-wrapper">
-              <button class="clear-search" type="reset">Clear</button>
-              {# <button class="button search-button" type="submit">Search</button>#}
-            </div>
-          </div>
-          {% if results %}
-            <label><strong>{{results|length}}</strong> results in this transcript</label>
-            <a>Order by Page</a>
-            <a class="active">Order by Relevance</a>
-          {% endif %}
+        <form class="document-search-inline" action="{% url 'search:search' %}" method='GET'>
+          {% include 'search/search-bar.html' %}
         </form>
         <div class="return-link">
           <a href="{% search_url query %}"> &larr; Back to search results </a>
@@ -35,19 +28,19 @@
     <div class="document-tools">
       {% block document_controls %}
         <div class="zoom-buttons">
-          <button class="zoom-in" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.remove('small-image')});">
+          <button class="zoom-in">
             Zoom In
           </button>
-          <button class="zoom-out" onclick="Array.prototype.slice.call(document.querySelectorAll('.document-image')).forEach(function (img) {img.classList.add('small-image')});">
+          <button class="zoom-out">
             Zoom Out
           </button>
         </div>
       {% endblock %}
       <div class="page-buttons">
         {% block page_selection %}
-          <select onchange="window.location.hash = this.value;console.log(this.value)">
-            {% for image_url in document.image_urls %}
-              <option value="page-{{forloop.counter}}">Page {{forloop.counter}}</option>
+          <select>
+            {% for page in document.page_range %}
+              <option value="{{page}}">Sequence No. {{page}} </option>
             {% endfor %}
           </select>
         {% endblock %}
@@ -63,84 +56,160 @@
         <button class="last-page">
           Last Page
         </button>
+        <a class="download-page">
+          Download Page
+        </a>
       </div>
     </div>
   {% endblock %}
   <hr />
   <div class="sidebar-layout">
-    <div id="document-viewport" class="main-column scrollable">
-      {% block viewport %}
-        {% for image_url in document.image_urls %}
-          <img id="page-{{forloop.counter}}" src="{{image_url}}" class="document-image"/>
-        {% endfor %}
-      {% endblock %}
-    </div>
     <div class="sidebar-column document-info">
-      <div class="material-icon material-documents"></div>
+      <div class="material-icon small material-documents"></div>
       <p class="trial-flags">
         {% for case in document.cases.all %}
-          <span class="trial-flag trial-{{case.short_name|slugify}}">{{case.short_name}}</span>
+          <span class="trial-flag trial-{{case.tag_name|slugify}}">{{case.tag_name}}</span>
         {% endfor %}
+        &nbsp;
       </p>
+      <div class="print-controls">
+        <div>
+          <button class="download-pdf">PDF</button>
+          <div class="download-options hide">
+            Page
+            <input type="number" class="page-range" name="from-page" min="1" max="{{document.image_count}}"/>
+            to
+            <input type="number" class="page-range" name="to-page" min="1" max="{{document.image_count}}"/>
+            <a class="do-download">Save PDF</a>
+          </div>
+          <div class="pdf-loading hide">Downloading images for PDF... <span class="progress"></span></div>
+        </div>
+      </div>
       <h3>{{document.title}}</h3>
       <h5>{{document.literal_title}}</h5>
       {% block document_details %}
         <p class="date">
-          {% if document.date %}
-            <a>{{document.date|date:'d F Y'}}</a>
+          {% with document.date as date %}
+          {% if date %}
+            <a href="{% search_query date=date|date:'d F Y' %}">{{date|date:'d F Y'}}</a>
           {% else %}
-            <a>Date Unknown</a>
+            <a href="{% search_query date='unknown' %}">Date Unknown</a>
           {% endif %}
+          {% endwith %}
         </p>
-        <h6>Author{{document.personal_authors.count|pluralize}}</h6>
-        {% if document.personal_authors.count %}
-          {% for author in document.personal_authors.all %}
-            <p>
-              <a href="{% search_url author.full_name %}">{{author.first_name}} {{author.last_name}}</a>
-              ({{author.title}})
-            </p>
-          {% endfor %}
-        {% else %}
+        {% with document.personal_authors.all as personal_authors %}
+        <h6>Author{{personal_authors|length|pluralize}}</h6>
+        {% for author in personal_authors %}
+          <p>
+            <a href="{% search_query author=author.full_name %}">{{author.first_name}} {{author.last_name}}</a>
+            ({{author.title}})
+          </p>
+        {% empty %}
           <p> Unknown </p>
-        {% endif %}
-        {% if document.group_authors.count %}
-          <h6>Institutional Author{{document.group_authors.count|pluralize}}</h6>
-          {% for author in document.group_authors.all %}
+        {% endfor %}
+        {% endwith %}
+        {% with document.group_authors.all as group_authors %}
+        {% if group_authors %}
+          <h6>Institutional Author{{group_authors|length|pluralize}}</h6>
+          {% for author in group_authors %}
             <p>
-              <a href="{% search_url author.short_name %}">{{author.name}}</a>
+              <a href="{% search_query author=author.short_name %}">{{author.name}}</a>
             </p>
           {% endfor %}
         {% endif %}
-        {% if document.defendants.count %}
-          <h6>Defendant{{document.defendants.count|pluralize}}</h6>
-          {% for defendant in document.defendants.all %}
+        {% endwith %}
+
+        {% with document.defendants.all as defendants %}
+        {% if defendants %}
+          <h6>Defendant{{defendants|length|pluralize}}</h6>
+          {% for defendant in defendants %}
             <p>
-              <a href="{% search_url defendant.full_name %}">{{defendant.first_name}} {{defendant.last_name}}</a>
+              <a href="{% search_query defendant=defendant.full_name %}">{{defendant.first_name}} {{defendant.last_name}}</a>
             </p>
           {% endfor %}
         {% endif %}
+        {% endwith %}
         <br />
         <p>
-          <strong>Language of text:</strong>
+          <strong>Total Pages:</strong>
+          {{document.image_count}}
+        </p>
+        <p>
+          <strong>Language of Text:</strong>
           {{document.language.name}}
         </p>
         <p>
           <strong>Source of Text:</strong>
           {{document.source.name}}
         </p>
+        {% with document.evidence_codes.all as evidence_codes %}
+        {% if evidence_codes %}
+          <p>
+            <strong>Evidence Code{{ evidence_codes|length|pluralize }}:</strong>
+            {% for code in evidence_codes %}
+              <a href="{% search_query evidence=code %}">{{code}}</a> {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </p>
+        {% endif %}
+        {% endwith %}
+        {% with document.exhibit_codes.all as exhibit_codes %}
+        {% if exhibit_codes %}
+          <p>
+            <strong>Exhibit Code{{ exhibit_codes|length|pluralize }}:</strong>
+            {% for code in exhibit_codes %}
+              {% if code.prosecution_number or code.defense_number %}
+                <a href="{% search_query exhibit=code %}">{{code}}</a>{% if not forloop.last %}, {% endif %}
+              {% endif %}
+            {% endfor %}
+          </p>
+        {% endif %}
+        {% endwith %}
         <p>
           <strong>HLSL Item No.:</strong>
           {{document.id}}
         </p>
       {% endblock %}
-      {% if document.activities.count %}
-        <h6>Trial Activites</h6>
+      {% with document.activities.all as activities %}
+      {% if activities %}
+        <h6>Trial Issues</h6>
         <p>
-          {% for activity in document.activities.all %}
-              <a class="tag-button" href="{% search_url activity.short_name %}">{{activity.short_name}}</a>
+          {% for activity in activities %}
+              <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
           {% endfor %}
         </p>
       {% endif %}
+      {% endwith %}
+    </div>
+    <div id="document-viewport" class="main-column">
+      <div class="viewport-content scrollable" data-document-id="{{document.id}}">
+        {% block viewport %}
+          <div class="document-image-layout">
+            {% for image in document.images_screen %}
+              <div data-screen-url="{{image.url}}" data-thumb-url="{{image.thumb_url|default_if_none:""}}"  data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image {% if not image.url %}image-missing loading{% else %}loaded{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
+                {% if image.url %}
+                  <noscript><img src="{{image.url}}" /></noscript>
+                  <div class="image-label">
+                    {{image.page_number}}
+                  </div>
+                {% else %}
+                  <div class="image-label">
+                    Missing Image No. {{image.page_number}}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endblock %}
+      </div>
+      {% block tools_overlay %}
+        <div class="document-tools-overlay">
+          <div class="tool-buttons">
+            <button class="magnify">magnify</button>
+            <button class="scroll">scroll</button>
+            <button class="expand">expand</button>
+          </div>
+        </div>
+      {% endblock %}
     </div>
   </div>
 </section>

@@ -1,32 +1,91 @@
-{% extends "documents/show.html" %}
-
-{% block title %} Transcript Viewer - {{document.title}} {% endblock %}
+{% extends "transcripts/base.html" %}
+{% load search_url %}
+{% block title %} Transcript Viewer - {{transcript.title}} {% endblock %}
 
 {% block body_class %}transcript-viewer{% endblock %}
+t
+{% block javascript_module %}transcript-viewer{% endblock %}
 
 {% block document_controls %}
   <div class="zoom-buttons pull-left">
-    <select class="select-date">
-      <option>21 November 1946</option>
-      <option>5 December 1946</option>
-      <option>9 December 1946</option>
-    </select>
+    <form action="" method="GET">
+      <input type="hidden" name="seq" value="{{ seq }}" />
+      <select name="date" class="select-date">
+        {% for date in dates %}
+          <option value="{{ date|date:'Y-m-d' }}" {% if date == current_page.date %}selected{% endif %}>{{ date|date:'d F Y' }}</option>
+        {% endfor %}
+      </select>
+      <noscript><button class="go-button">Go to date</button></noscript>
+    </form>
   </div>
 {% endblock %}
+{% block tools_overlay %}{% endblock %}
 
 {% block page_selection %}
-  <label>
-    Go to page:
-    <input type="text" />
-  </label>
+  <form class="go-to-page" action="" method="GET">
+    <input type="hidden" name="seq" value="{{ seq }}" />
+    <label>
+      Go to page:
+      <input type="number" name="page" value="{{ current_page.page_number|default:"" }}"/>
+    </label>
+  </form>
 {% endblock %}
 
 {% block viewport %}
-  <div class="transcript-text">
-    {{ document.text|safe }}
+  <div class="transcript-controls above">
+    <div class="end-indicator">
+      <noscript>
+        <a href="?seq={{ seq|add:"-10" }}">Previous Pages</a>
+      </noscript>
+    </div>
+  </div>
+  <div class="transcript-text" data-total-pages="{{ total_pages }}" data-seq="{{ seq }}" data-from-seq="{{ joiner.from_seq }}" data-to-seq="{{ joiner.to_seq }}">
+    {% with joiner.html_pages as pages %}
+      {% include 'transcripts/joined_pages.html' %}
+    {% endwith %}
+  </div>
+  <div class="transcript-controls below">
+    <div class="end-indicator">
+        <noscript>
+          <a href="?seq={{ seq|add:"10" }}">Next Pages</a>
+        </noscript>
+      </div>
   </div>
 {% endblock %}
 
-{% block document_details %}
+{% block document_info %}
+  <div class="material-icon small material-documents"></div>
+  <p class="trial-flags">
+      <span class="trial-flag trial-{{transcript.case.tag_name|slugify}}">{{transcript.case.tag_name}}</span>
+    &nbsp;
+  </p>
 
+  {% block print_controls %}
+    <div class="print-controls">
+      <button class="print-document">Print</button>
+      <form class="print-options hide">
+        Next
+        <input type="number" class="page-range" name="pages" value="20" min="1" max="20"/>
+        pages
+        <a class="do-print">Print</a>
+      </form>
+      <div class="print-loading hide">Downloading pages to print... <span class="progress"></span></div>
+    </div>
+  {% endblock %}
+
+  <h3>{{transcript.title}}</h3>
+  <h5>{{transcript.description}}</h5>
+  <div class="print-show"></div>
+  {% comment %}
+    {% with transcript.case.activities.all as activities %}
+    {% if activities %}
+      <h6>Trial Issues</h6>
+      <p>
+        {% for activity in activities %}
+            <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
+        {% endfor %}
+      </p>
+    {% endif %}
+    {% endwith %}
+  {% endcomment %}
 {% endblock %}

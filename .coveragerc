@@ -3,12 +3,18 @@ data_file=coverage/.coverage
 plugins=
   django_coverage_plugin
 omit=
+  */management/*
+  */lib/*
   */settings/*
+  */migrations/*
   */admin.py
   */test*
+  */browser_test*
   */urls.py
   */wsgi.py
   */__init__.py
+  */search_indexes.py
+
 branch=True
 
 [report]
