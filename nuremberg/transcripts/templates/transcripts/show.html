@@ -54,34 +54,38 @@ t
 {% endblock %}
 
 {% block document_info %}
-<div class="material-icon small material-documents"></div>
-<p class="trial-flags">
-    <span class="trial-flag trial-{{transcript.case.tag_name|slugify}}">{{transcript.case.tag_name}}</span>
-  &nbsp;
-</p>
-<div class="print-controls">
-  <button class="print-document">Print</button>
-  <form class="print-options hide">
-    Next
-    <input type="number" class="page-range" name="pages" value="20" min="1" max="20"/>
-    pages
-    <a class="do-print">Print</a>
-  </form>
-  <div class="print-loading hide">Downloading pages to print... <span class="progress"></span></div>
-</div>
-<h3>{{transcript.title}}</h3>
-<h5>{{transcript.description}}</h5>
-<div class="print-show"></div>
-{% comment %}
-{% with transcript.case.activities.all as activities %}
-{% if activities %}
-  <h6>Trial Issues</h6>
-  <p>
-    {% for activity in activities %}
-        <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
-    {% endfor %}
+  <div class="material-icon small material-documents"></div>
+  <p class="trial-flags">
+      <span class="trial-flag trial-{{transcript.case.tag_name|slugify}}">{{transcript.case.tag_name}}</span>
+    &nbsp;
   </p>
-{% endif %}
-{% endwith %}
-{% endcomment %}
+
+  {% block print_controls %}
+    <div class="print-controls">
+      <button class="print-document">Print</button>
+      <form class="print-options hide">
+        Next
+        <input type="number" class="page-range" name="pages" value="20" min="1" max="20"/>
+        pages
+        <a class="do-print">Print</a>
+      </form>
+      <div class="print-loading hide">Downloading pages to print... <span class="progress"></span></div>
+    </div>
+  {% endblock %}
+
+  <h3>{{transcript.title}}</h3>
+  <h5>{{transcript.description}}</h5>
+  <div class="print-show"></div>
+  {% comment %}
+    {% with transcript.case.activities.all as activities %}
+    {% if activities %}
+      <h6>Trial Issues</h6>
+      <p>
+        {% for activity in activities %}
+            <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
+        {% endfor %}
+      </p>
+    {% endif %}
+    {% endwith %}
+  {% endcomment %}
 {% endblock %}

@@ -91,7 +91,7 @@ curl 'http://localhost:8983/solr/admin/cores?action=RELOAD&core=$SOLR_CORE'
 Then update the index itself:
 
 ```bash
-manage.py rebuild_search_index
+manage.py rebuild_index
 ```
 
 (It will take a couple of minutes to reindex fully.)
