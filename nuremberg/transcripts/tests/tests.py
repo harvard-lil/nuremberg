@@ -23,7 +23,7 @@ def test_transcript_search(seq):
 
     search_bar = page('input[type="search"]')
     search_bar.should.not_be.empty
-    search_bar.val().should.be.none
+    search_bar.val().should.equal('*')
 
     page('mark').text().should.be.empty
     page('a').with_text('Page 26').should.not_be.empty

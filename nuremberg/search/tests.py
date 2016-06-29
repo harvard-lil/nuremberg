@@ -12,7 +12,7 @@ def test_search_page(query):
 
     search_bar = page('input[type="search"]')
     search_bar.should.not_be.empty
-    search_bar.val().should.be.none
+    search_bar.val().should.equal('*')
 
     page('p').text().should.contain('Results 1-15 of 6059 for *')
     page('.facet').text().should.contain('Document (5842)')

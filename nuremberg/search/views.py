@@ -86,7 +86,7 @@ class Search(FacetedSearchView):
         context = super().get_context_data(**kwargs)
 
         # pull the query out of form so it is pre-processed
-        context['query'] = context['form'].data.get('q')
+        context['query'] = context['form'].data.get('q') or '*'
         if context['facets']:
             labeled_facets = []
             for (label, field) in self.facet_labels:
