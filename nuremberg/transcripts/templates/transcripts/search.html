@@ -27,7 +27,10 @@
       </div>
     {% empty %}
       <p>
-        No results found.
+        No results found in this transcript.
+      </p>
+      <p>
+        <a href="{% search_query query %}">Click here to search for "{{query}}" in all documents.</a>
       </p>
     {% endfor %}
   </div>
