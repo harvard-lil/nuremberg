@@ -18,6 +18,6 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': HAYSTACK_URL,
+        'URL': os.environ['HAYSTACK_URL'],
     },
 }
