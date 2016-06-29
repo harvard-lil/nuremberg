@@ -31,9 +31,15 @@ def search_url(query):
     return url_with_query('search:search', q=query)
 
 @register.simple_tag
-def search_query(*args, **kwargs):
+def search_query_keywords(*args, **kwargs):
     query = ' '.join(args)
     query += ' '.join(['{}:({})'.format(field, value) for field, value in kwargs.items()])
+    return search_url(query)
+
+@register.simple_tag
+def search_query(*args, **kwargs):
+    query = ' '.join(args)
+    query += ' '.join(['{}:"{}"'.format(field, value) for field, value in kwargs.items()])
     return search_url(query)
 
 @register.simple_tag

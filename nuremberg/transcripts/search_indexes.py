@@ -4,6 +4,7 @@ from nuremberg.transcripts.models import TranscriptPage
 
 class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
+    highlight = indexes.CharField(model_attr='text')
     material_type = indexes.CharField(default='Transcript', faceted=True)
     grouping_key = indexes.FacetField(facet_for='grouping_key') # not really a facet, just an exact key
 

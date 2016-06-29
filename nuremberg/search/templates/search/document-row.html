@@ -19,7 +19,7 @@
       <a class="unstyled" href="{% url 'photographs:show' photograph_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
         <h3>{{result.title}}</h3>
         {% if result.highlighted %}
-          {% for snippet in result.highlighted.text|slice:":1" %}
+          {% for snippet in result.highlighted.highlight|slice:":1" %}
             <span class="ellipsis">[ ... ]</span>
             {{ snippet|trim_snippet }}
             <span class="ellipsis">[ ... ]</span>
@@ -36,7 +36,7 @@
         <p>{{group.hits}} result{{ group.hits|pluralize }} in this transcript</p>
         <p class="snippets">
           {% if group.hits == 1 %}
-            {% for snippet in result.highlighted.text %}
+            {% for snippet in result.highlighted.highlight %}
               <span class="ellipsis">[ ... p. {{ result.page_label|default:"unlabeled" }} ]</span>
               {{ snippet|trim_snippet }}
             {% empty %}
@@ -47,7 +47,7 @@
             {% for document in group.documents %}
               <span class="ellipsis">[ ... p. {{ document.page_label|default:"unlabeled" }} ]</span>
               {% if document.highlighted %}
-                {{ document.highlighted.text.0|trim_snippet }}
+                {{ document.highlighted.highlight.0|trim_snippet }}
               {% else %}
                 {{ document.text|slice:":150"|trim_snippet }}
               {% endif %}
