@@ -166,12 +166,13 @@ def test_landing_search(query):
     # uncheck Documents
     search_bar = page('input[type=search]')
     form = search_bar.closest('form')
-    page = go_to(form.submit_url({
-        search_bar.attr('name'): 'workers',
-        form.find('label').with_text('Documents').find('input').attr('name'): 'transcripts',
-    }))
+    values = QueryDict('', mutable=True)
+    values[search_bar.attr('name')] = 'workers'
+    values.setlist(form.find('label').with_text('Documents').find('input').attr('name'),
+        ['transcripts', 'photographs'])
+    page = go_to(form.submit_url(values, defaults=False))
 
-    page.text().should.contain('Results 1-4 of 4 for workers type: transcripts')
+    page.text().should.contain('Results 1-6 of 6 for workers type: transcripts|photographs')
 
 def test_transcript_snippets(query):
     page = query('documents type:transcript')
