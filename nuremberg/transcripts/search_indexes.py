@@ -55,8 +55,7 @@ class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
             return page.date.year
 
     def prepare_defendants(self, page):
-        # TODO
-        return []
+        return [defendant.full_name() for defendant in page.transcript.case.defendants.all()]
 
     def prepare_authors(self, page):
         # TODO

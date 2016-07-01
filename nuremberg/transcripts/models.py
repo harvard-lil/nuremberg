@@ -6,7 +6,7 @@ from django.utils.text import slugify
 from django.utils.functional import cached_property
 
 from django.db import models
-from nuremberg.documents.models import DocumentCase
+from nuremberg.documents.models import DocumentCase, DocumentActivity
 from .xml import TranscriptPageJoiner
 
 class Transcript(models.Model):
@@ -14,6 +14,8 @@ class Transcript(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    activities = models.ManyToManyField(DocumentActivity, related_name='transcripts')
 
     def slug(self):
         return slugify(self.title)

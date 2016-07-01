@@ -74,18 +74,26 @@ t
   {% endblock %}
 
   <h3>{{transcript.title}}</h3>
-  <h5>{{transcript.description}}</h5>
+  <p class="module">{{transcript.description}}</p>
   <div class="print-show"></div>
-  {% comment %}
-    {% with transcript.case.activities.all as activities %}
-    {% if activities %}
-      <h6>Trial Issues</h6>
-      <p>
-        {% for activity in activities %}
-            <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
-        {% endfor %}
-      </p>
-    {% endif %}
-    {% endwith %}
-  {% endcomment %}
+  {% with transcript.activities.all as activities %}
+  {% if activities %}
+    <h6>Trial Issue{{activities|length|pluralize}}</h6>
+    <p>
+      {% for activity in activities %}
+          <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
+      {% endfor %}
+    </p>
+  {% endif %}
+  {% endwith %}
+  {% with transcript.case.defendants.all as defendants %}
+  {% if defendants %}
+    <h6>Defendant{{defendants|length|pluralize}}</h6>
+    <p>
+      {% for defendant in defendants %}
+          <a href="{% search_query defendant=defendant.full_name %}">{{defendant.full_name}}</a>{% if not forloop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+  {% endif %}
+  {% endwith %}
 {% endblock %}

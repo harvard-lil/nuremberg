@@ -208,36 +208,6 @@ class DocumentsToGroupAuthors(models.Model):
         managed = False
         db_table = 'tblGroupAuthorsList'
 
-
-class DocumentDefendant(models.Model):
-    id = models.AutoField(primary_key=True, db_column='DefendantID')
-    last_name = models.CharField(max_length=110, db_column='DefLName')
-    first_name = models.CharField(max_length=25, db_column='DefFName')
-    case = models.IntegerField( db_column='CaseID')
-
-    documents = models.ManyToManyField(Document, related_name='defendants', through='DocumentsToDefendants', through_fields=('defendant', 'document'))
-
-    def full_name(self):
-        if self.first_name and self.last_name:
-            return '{} {}'.format(self.first_name, self.last_name)
-        else:
-            return self.first_name or self.last_name or 'Unknown'
-
-    class Meta:
-        managed = False
-        db_table = 'tblDefendants'
-
-
-class DocumentsToDefendants(models.Model):
-    id = models.AutoField(primary_key=True, db_column='DefendantsListID')
-    document = models.ForeignKey(Document, db_column='DocID')
-    defendant = models.ForeignKey(DocumentDefendant, db_column='DefNameID')
-
-    class Meta:
-        managed = False
-        db_table = 'tblDefendantsList'
-
-
 class DocumentCase(models.Model):
     id = models.AutoField(primary_key=True, db_column='CaseID')
     name = models.CharField(max_length=100, db_column='Case_temp')
@@ -270,6 +240,44 @@ class DocumentsToCases(models.Model):
     class Meta:
         managed = False
         db_table = 'tblCasesList'
+
+class DocumentDefendantManager(models.Manager):
+    """
+    Filters out null names
+    """
+    use_for_related_fields = True
+    def get_queryset(self):
+        return super().get_queryset().exclude(first_name__isnull=True)
+
+class DocumentDefendant(models.Model):
+    objects = DocumentDefendantManager()
+
+    id = models.AutoField(primary_key=True, db_column='DefendantID')
+    last_name = models.CharField(max_length=110, db_column='DefLName')
+    first_name = models.CharField(max_length=25, db_column='DefFName')
+    case = models.ForeignKey(DocumentCase, related_name='defendants', db_column='CaseID')
+
+    documents = models.ManyToManyField(Document, related_name='defendants', through='DocumentsToDefendants', through_fields=('defendant', 'document'))
+
+    def full_name(self):
+        if self.first_name and self.last_name:
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name or self.last_name or 'Unknown'
+
+    class Meta:
+        managed = False
+        db_table = 'tblDefendants'
+
+class DocumentsToDefendants(models.Model):
+    id = models.AutoField(primary_key=True, db_column='DefendantsListID')
+    document = models.ForeignKey(Document, db_column='DocID')
+    defendant = models.ForeignKey(DocumentDefendant, db_column='DefNameID')
+
+    class Meta:
+        managed = False
+        db_table = 'tblDefendantsList'
+
 
 class DocumentActivityManager(models.Manager):
     """
