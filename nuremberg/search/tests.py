@@ -84,7 +84,7 @@ def test_keyword_search(query):
     page('.document-row').length.should.equal(15)
 
     page = follow_link(page('.facet').with_text('Material Type').find('p').with_text('Transcript').find('a'))
-    transcript_row = page('.document-row').with_text('Case transcript for NMT 1: Medical Case')
+    transcript_row = page('.document-row').with_text('Transcript for NMT 1: Medical Case')
     transcript_row.should.not_be.empty
     transcript_row.text().should.contain('05 December 1946')
 
