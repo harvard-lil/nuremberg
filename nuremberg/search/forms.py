@@ -137,7 +137,7 @@ class FieldedSearchForm(SearchForm):
             else:
                 sort += ' asc'
             sqs = sqs.group_by('grouping_key', {
-                'group.sort': 'seq_number asc',
+                'group.sort': sort + ', seq_number asc',
                 'group.limit': 3,
                 'sort': sort,
             })
