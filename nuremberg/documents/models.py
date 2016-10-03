@@ -3,6 +3,8 @@ from django.db import models
 import datetime
 import re
 
+global_slug_count = 0
+
 IMAGE_URL_ROOT="http://nuremberg.law.harvard.edu/imagedir/HLSL_NMT01"
 
 class Document(models.Model):
@@ -28,12 +30,21 @@ class Document(models.Model):
             return date.as_date()
 
     def slug(self): # pragma: no cover
+        global global_slug_count
+        global_slug_count += 1
         # Try to extract the "genre term" from the descriptive title
-        words = self.title.split(' ')
-        n = 4
-        while n < len(words) and words[n-1] in ('a', 'an', 'the', 'in', 'of', 'to', 'at', 'on', 'and', 'for'):
-            n += 1
-        return slugify(' '.join(words[:n]))
+        try:
+            words = self.title.split(' ')
+            n = 4
+            while n < len(words) and words[n-1] in ('a', 'an', 'the', 'in', 'of', 'to', 'at', 'on', 'and', 'for'):
+                n += 1
+            testing =  slugify(' '.join(words[:n]))
+            print ("{0}. DocID: {1} TitleDescriptive slug: {2}".format(global_slug_count, self.id, testing))
+            return slugify(' '.join(words[:n]))
+        except:
+            testing = "descriptive-title-missing"
+            print ("{0}. DocID: {1} TitleDescriptive slug: {2}".format(global_slug_count, self.id, testing))
+            return testing
 
     class Meta:
         managed = False

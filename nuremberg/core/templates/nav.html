@@ -16,8 +16,8 @@
         </ul>
     </li>
 
-    <li> <a href="{% url 'content:approaches' %}"
-      {% if request.resolver_match.url_name == 'approaches' %}class="active"{% endif %}
+    <li> <a href="{% url 'content:documents' %}"
+      {% if request.resolver_match.url_name == 'documents' %}class="active"{% endif %}
       >  Documents </a> </li>
 
     <li class="has-menu"> <a href="#" data-toggle="dropdown"
@@ -26,7 +26,6 @@
         <ul class="menu">
           <li><a href="{% url 'content:intro' %}">Intro</a></li>
           <li><a href="{% url 'content:funding' %}">Funding</a></li>
-          <li><a href="{% url 'content:additional' %}">Additional Materials</a></li>
         </ul>
     </li>
   </ul>

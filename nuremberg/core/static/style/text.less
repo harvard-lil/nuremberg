@@ -1,3 +1,54 @@
+.table-narrow {
+  width: 75%;
+  max-width: 75%;
+  margin-bottom: @line-height-computed;
+  // Cells
+  > thead,
+  > tbody,
+  > tfoot {
+    > tr {
+      > th,
+      > td {
+        padding: @table-cell-padding;
+        line-height: @line-height-base;
+        vertical-align: top;
+        border-top: 1px solid @table-border-color;
+      }
+    }
+  }
+  // Bottom align for column headings
+  > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid @table-border-color;
+  }
+  // Remove top border from thead by default
+  > caption + thead,
+  > colgroup + thead,
+  > thead:first-child {
+    > tr:first-child {
+      > th,
+      > td {
+        border-top: 0;
+      }
+    }
+  }
+  // Account for multiple tbody instances
+  > tbody + tbody {
+    border-top: 2px solid @table-border-color;
+  }
+
+  // Nesting
+  .table {
+    background-color: @body-bg;
+  }
+  td:nth-child(3){
+    width: 18%;
+  }
+  td:nth-child(1){
+    width: 15%;
+  }
+}
+
 h1 {
   .serif-headline(bold, 48px, 48px);
   margin: 0 0 30px;
@@ -62,6 +113,15 @@ p {
   &.caption {
     .sans-serif(@light, 14px, 14px);
     color: @gray;
+  }
+  &.caption-people {
+    .sans-serif(@light, 14px, 14px);
+    color: @gray;
+    text-align: center;
+  }
+  &.list {
+    .sans-serif(@light, 16px, 24px);
+    color: black;
   }
 }
 
@@ -223,6 +283,26 @@ table {
   }
 }
 
+.table-trial-chronology {
+  .table-narrow();
+
+  > thead > tr > th, > tbody > tr > td {
+    padding-left: 15px;
+    &.cell-indent {
+      padding-left: 40px;
+    }
+  }
+  > thead > tr > th {
+    .sans-serif(@light, 18px, 18px);
+    padding-bottom: 25px;
+    border: none;
+    text-align: left;
+  }
+  > tbody > tr > td {
+    border: 1px solid #DCDCDC;
+  }
+}
+
 mark {
   display: inline;
   padding: 2px;
@@ -230,4 +310,11 @@ mark {
 
   background-color: @yellow;
   color: black;
+}
+
+ul, ol {
+  &.list {
+  .sans-serif(@light, 16px, 24px);
+  color: black;    
+  }
 }

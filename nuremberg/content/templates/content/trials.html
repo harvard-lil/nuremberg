@@ -1,29 +1,75 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %} Approaches to the Collection {% endblock %}
-
 {% block body_class %}approaches{% endblock %}
-
-
 {% block content %}
 <nav class="sub-nav horizontal">
-  <li>
-    <a href="#people">People Involved</a>
-  </li>
-  <li>
-    <a href="#issues">Trial Issues &amp; Activities</a>
-  </li>
-  <li>
-    <a href="#documents">Documents</a>
-  </li>
 </nav>
 <section class="theme-white">
-  <div class="partial-width">
-    <h1> Placeholder File </h1>
-    <p class="intro">
-    The content for this page is still being developed.
+<div class="partial-width">
+    <h1>The Thirteen Nuremberg Trials</h1>
+    <p class="intro"> 
+        Trial summaries, persons involved, transcript tables of contents
     </p>
-  </div>
+</div>
+</section>
+<section class="theme-white">
+        <p>The website currently presents information about the documents used in NMT
+        Cases 1-4 and Case 7 (click on links).</p><br />
+        <table class="table-trial-chronology">
+          <tr>
+            <td>IMT</td>
+            <td>Major War Criminals (USA, France, UK, and USSR<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v. Hermann Goering et al. 1945-46)</td>
+          </tr>
+          <tr>
+            <td>NMT 1</td>
+            <td><a href="{% url 'content:nmt_1_intro' %}">Medical Case (USA v. Karl Brandt et al. 1946-47)</a></td>
+          </tr>
+          <tr>
+            <td>NMT 2</td>
+            <td><a href="{% url 'content:nmt_2_intro' %}">Milch Case (USA v. Erhard Milch 1946-47)</a></td>
+          </tr>
+          <tr>
+            <td>NMT 3</td>
+            <td><a href="{% url 'content:nmt_3_intro' %}">Justice Case (USA v. Josef Altstoetter et al. 1947)</a></td>
+          </tr>
+          <tr>
+            <td>NMT 4</td>
+            <td><a href="{% url 'content:nmt_4_intro' %}">Pohl Case (USA v. Oswald Pohl et al. 1947)</a></td>
+          </tr>
+          <tr>
+            <td>NMT 5</td>
+            <td>Flick Case (USA v. Friedrich Flick et al. 1947)</td>
+          </tr>
+          <tr>
+            <td>NMT 6</td>
+            <td>I. G. Farben (USA v. Carl Krauch et al. 1947-48)</td>
+          </tr>
+          <tr>
+            <td>NMT 7</td>
+            <td><a href="{% url 'content:nmt_7_intro' %}">Hostage Case (USA v. Wilhelm List et al. 1947-48)</a></td>
+          </tr>
+          <tr>
+            <td>NMT 8</td>
+            <td>RuSHA Case (USA v. Ulrich Greifelt et al. 1947-48)</td>
+          </tr>
+          <tr>
+            <td>NMT 9</td>
+            <td>Einsatzgruppen Case (USA v. Otto Ohlendorf et al. 1947-48)</td>
+          </tr>
+          <tr>
+            <td>NMT 10</td>
+            <td>Krupp Case (USA v. Alfred Krupp et al. 1947-48)</td>
+          </tr>
+          <tr>
+            <td>NMT 11</td>
+            <td>Ministries Case (USA v. Ernst von Weizsaecker et al. 1947-49)</td>
+          </tr>
+          <tr>
+            <td>NMT 12</td>
+            <td>High Command Case (USA v. Wilhelm von Leeb et al. 1947-48)</td>
+          </tr>
+        </table>
 </section>
 {% endblock %}

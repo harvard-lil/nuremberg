@@ -14,7 +14,7 @@
   <div class="landing-hero-content">
     <hgroup class="landing-header">
       <h1>
-        Search millions of historical documents related to the Nuremberg trials.
+        Search thousands of historical documents from to the Nuremberg trials.
       </h1>
       <h2>
         Examine trial transcripts, briefs, document books, evidence files, and other
@@ -46,17 +46,15 @@
 <section class="collection">
   <h2> Access the Collection </h2>
   <p class="partial-width">
-    The Harvard Law School Library's Nuremberg Trials Project is and open-access initiative to create
+    The Harvard Law School Library's Nuremberg Trials Project is an open-access initiative to create
     and present digitized images or full-text versions of the Library's Nuremberg documents,
     descriptions of each document, and general information about the trials.
   </p>
   <p class="hint-serif">
-    The Project currently provides access to the following materials for three
-    United States Nuremberg Military
-    <br />
-    Tribunals,
+    The Project currently provides access to most of the following materials for five of the 
+    United States Nuremberg Military Tribunals,
     NMT 1 (U.S.A. v. Karl Brandt et al.),
-    NMT 2 (U.S.A. v. Erhard Milch), and NMT 4 (U.S.A. v. Pohl et al.):
+    NMT 2 (U.S.A. v. Erhard Milch), NMT3 (U.S.A. v. Josef Altstoetter et al.), NMT 4 (U.S.A. v. Pohl et al.), and NMT7 (U.S.A. v. Wilhelm List et al.):
   </p>
   <div class="materials four-column-layout">
     <div class="column material-category material-documents">
@@ -94,20 +92,20 @@
   <div class="three-column-layout approaches-categories">
     <div class="column approach-category">
       <img src="{% static 'images/landing/topics.png' %}" />
-      <h3> Topics </h3>
+      <h3> Trial Issues </h3>
       <p class="module">
-        Uncover the topics related to the Nuremberg trials. Trial topics are criminal activities or subjects
-        at issue in a trial or pertaining to a document. Usually these are prosecution
+        Uncover the topics related to the Nuremberg trials. Trial issues are criminal activities or subjects
+        at issue in a trial that are addressed by a document. Usually these are prosecution
         charges&mdash;like <a>crimes against humanity</a>&mdash;or a defense response. Examine some of the
         collection's most-accessed trial topics.
       </p>
 
       <p class="tag-list">
-        <a class="button tag-button">Epidemic jaundice experiments</a>
-        <a class="button tag-button">High altitude experiments</a>
-        <a class="button tag-button">Jewish skeleton collection</a>
-        <a class="button tag-button">Malaria experiments</a>
-        <a class="button tag-button">Poison gas experiments</a>
+        <a class="button tag-button" href="/search/?q=issue%3Aepidemic+jaundice+experiments">Epidemic jaundice experiments</a>
+        <a class="button tag-button" href="/search/?q=issue%3Ahigh+altitude+experiments">High altitude experiments</a>
+        <a class="button tag-button" href="/search/?q=issue%3Ajewish+skeleton+collection">Jewish skeleton collection</a>
+        <a class="button tag-button" href="/search/?q=issue%3Amalaria+experiments">Malaria experiments</a>
+        <a class="button tag-button" href="/search/?q=issue%3Apoison+gas+experiments">Poison gas experiments</a>
       </p>
     </div>
     <div class="column approach-category">
@@ -119,13 +117,13 @@
       </p>
       <ul class="module">
         <li>
-          <a>Karl Brandt</a>: Reich Commissioner for Health and Sanitation
+          <a href="/search/?q=karl+brandt&m=documents&m=transcripts&m=photographs">Karl Brandt</a>: Reich Commissioner for Health and Sanitation
         </li>
         <li>
-          <a>Hermann Goering</a>: General of the Air Force, chief of the war economy, Minister for Aviation
+          <a href="/search/?q=hermann+goering&m=documents&m=transcripts&m=photographs">Hermann Goering</a>: General of the Air Force, chief of the war economy, Minister for Aviation
         </li>
         <li>
-          <a>Heinrich Himmler</a>: Reichsfuehrer-SS and Chief of the Police
+          <a href="/search/?q=heinrich+himmler&m=documents&m=transcripts&m=photographs">Heinrich Himmler</a>: Reichsfuehrer-SS and Chief of the Police
         </li>
       </ul>
     </div>
@@ -135,25 +133,22 @@
       <p class="module">
         Collections of documents assembled by IMT and NMT staff for possible use in the trials,
         evidence files provided nearly all of the documentary evidence used by the prosecution. The
-        documents were organized into sixteen subject groups. Here are three of the most interesting.
+        documents were organized into sixteen subject groups. Here are a couple of the most interesting.
       </p>
       <ul class="module">
         <li>
-          <strong> C: </strong> <a>Crimes</a>; IMT
-        </li>
-        <li>
-          <strong> NO: </strong> <a>Nuremberg Organizations</a>  concerning Nazi organizations,
+          <strong> NO: </strong> <a href="/search/?q=evidence%3Ano*">Nuremberg Organizations</a>  concerning Nazi organizations,
           such as the SS; NMT
         </li>
         <li>
-          <strong> NG: </strong> <a>Nuremberg Government</a>; concerning Nazi government
+          <strong> NG: </strong> <a href="/search/?q=evidence%3Ang*">Nuremberg Government</a>; concerning Nazi government
           agencies; NMT
         </li>
       </ul>
     </div>
   </div>
   <footer>
-    <a class="teaser"> More approaches to the Collection </a>
+    <a class="teaser" href="{% url 'content:people' %}"> More on the people at the trials </a>
   </footer>
 </section>
 
@@ -169,13 +164,10 @@
       <h3> NMT Case 1 <br /> USA v. Karl Brandt et al. 1946-47 </h3>
       <nav class="sub-nav vertical">
         <li>
-          <a> Table of Contents </a>
+          <a href="{% url 'content:nmt_1_intro' %}">Table of Contents</a>
         </li>
         <li>
-          <a> Detailed Summary </a>
-        </li>
-        <li>
-          <a> Begin Reading </a>
+          <a href="{% url 'content:nmt_1_intro' %}">Detailed Summary</a>
         </li>
       </nav>
     </div>
@@ -189,18 +181,15 @@
         experiment without the subject's consent.
       </blockquote>
       <cite>
-        Telford Taylor, Chief of Counsel for war crimes for all NMT trials, 9 December 1946
+        Telford Taylor, Chief of Counsel for war crimes for all NMT trials, NMT 1 transcript, 9 December 1946
       </cite>
       <p>
-        Currently, a portion of the Medical Case transcript is the only trial
-        transcript material we are able to make available. The portion offered
-        covers the first seven days of the proceedings. The full Medical Trial
-        extends from 21 November 1946 through 20 August 1947. It includes
+        Currently, we have been able to make available the full, keyword-searchable text of four trial transcripts, documenting the verbatim daily proceedings of NMT Trials 1, 2, 3 and 7, ranging in extent from 4,000 to 12,000 pages each. They include
         witness testimony, the presentation of exhibits, oral arguments by
         counsel, and rulings by the tribunal.
       </p>
       <footer>
-        <a class="teaser"> Begin reading </a>
+        <a class="teaser" href="/transcripts/1-transcript-for-nmt-1-medical-case?seq=1&q=+type:transcripts"> Begin reading </a>
       </footer>
     </div>
   </div>
@@ -209,23 +198,40 @@
 <section class="progress theme-blue">
   <h2> Project Progress </h2>
   <div class="project-progress sidebar-layout">
+
     <div class="progress-summary sidebar-column">
-      As of Spring 2016, we have digitized images of all documents in the collection
-      and are beginning to provide searchable text transcripts using
-      corrected OCR. The process is expected to take several years to complete.
+      <p>As of fall 2016, we have digitized images of all 650,000 pages of documents and transcripts in the collection
+     and have provided searchable text for 5 of the 13 transcripts using
+     corrected OCR.</p>
+      
+      <p>We have completed full document analysis -- and created searchable metadata for -- the document collections of 5 of the 13 trials.</p>
+      
     </div>
+
     <div class="progress-graph main-column">
       <div class="progress-bar">
-        <div class="completion-date start-date">2003</div>
-        <div class="bar-segment transcripts-keyed" style="width: 13%;">13%</div>
-        <div class="completion-date">2011</div>
-        <div class="bar-segment documents-digitized" style="width: 30%;">30%</div>
-        <div class="completion-date">2015</div>
-        <div class="completion-date end-date">2025</div>
+        <div class="bar-segment documents-digitized" style="width: 100%;">100%</div>
       </div>
       <div class="progress-legend">
-        <div class="legend transcripts-keyed">Transcripts Keyed</div>
-        <div class="legend documents-digitized">Documents Digitized</div>
+        Documents and Transcripts Digitized
+      </div>
+    </div>
+    
+    <div class="progress-graph main-column">
+      <div class="progress-bar">
+        <div class="bar-segment transcripts-keyed" style="width: 30%;">30%</div>
+      </div>
+      <div class="progress-legend">
+        Transcripts OCR-corrected
+      </div>
+    </div>
+
+    <div class="progress-graph main-column">
+      <div class="progress-bar">
+        <div class="bar-segment documents-analyzed" style="width: 10%;">10%</div>
+      </div>
+      <div class="progress-legend">
+        Documents Analyzed
       </div>
     </div>
   </div>
