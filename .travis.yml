@@ -7,7 +7,7 @@ install:
 services:
   - mysql
 before_script:
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS test_nuremberg_dev'
-  - mysql -e 'CREATE USER nuremberg; GRANT ALL ON test_nuremberg_dev.* TO nuremberg'
+  - mysql -uroot -e 'CREATE DATABASE IF NOT EXISTS test_nuremberg_dev'
+  - mysql -uroot -e 'CREATE USER nuremberg; GRANT ALL ON test_nuremberg_dev.* TO nuremberg'
   - mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
 script: py.test
