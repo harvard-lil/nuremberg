@@ -12,6 +12,7 @@ class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
     transcript_id = indexes.CharField(model_attr='transcript__id')
     title = indexes.CharField(model_attr='transcript__title')
 
+    total_pages = indexes.IntegerField(model_attr='transcript__total_pages', default=0, null=True)
     language = indexes.CharField(default='English', faceted=True)
     source = indexes.CharField(default='Trial Transcript', faceted=True)
 
@@ -55,8 +56,7 @@ class TranscriptPageIndex(indexes.SearchIndex, indexes.Indexable):
             return page.date.year
 
     def prepare_defendants(self, page):
-        # TODO
-        return []
+        return [defendant.full_name() for defendant in page.transcript.case.defendants.all()]
 
     def prepare_authors(self, page):
         # TODO

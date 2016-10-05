@@ -91,7 +91,7 @@ body {
         margin-right: 0;
       }
     }
-    li {
+    > li {
       float: left;
 
       > a {
@@ -110,7 +110,6 @@ body {
         &.active {
           border-bottom: 5px solid @header-dark-gray;
           cursor: pointer;
-          pointer-events: none;
         }
       }
     }
@@ -201,6 +200,30 @@ nav.sub-nav {
       &:last-child {
         border-bottom: none;
       }
+    }
+  }
+}
+
+.has-menu.open {
+  > .menu {
+    display: block;
+  }
+}
+.menu {
+  .dropdown-menu();
+  .border-radius(0px);
+  background-color: @dark-gray;
+  > li > a {
+    .sans-serif(@light, 16px, 16px);
+
+    display: block;
+    padding: 6px 10px 0 9px;
+    margin: 0;
+
+    border: none;
+    color: @white;
+    &:hover {
+      color: @light-gray;
     }
   }
 }

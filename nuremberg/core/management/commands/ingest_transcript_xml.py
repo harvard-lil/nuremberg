@@ -53,7 +53,7 @@ class Command(BaseCommand):
             try:
                 transcript = case.transcript
             except Transcript.DoesNotExist:
-                transcript = Transcript.objects.create(case=case, title="Case transcript for {}".format(case.short_name()))
+                transcript = Transcript.objects.create(case=case, title="Transcript for {}".format(case.short_name()))
                 print("Created transcript", transcript.title)
 
             volume_number = int(m.group('volume'))

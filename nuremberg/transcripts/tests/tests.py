@@ -15,7 +15,7 @@ def seq():
 def test_transcript_viewer(seq):
     page = seq(1)
 
-    page('h3').text().should.contain('Case transcript for NMT 1: Medical Case')
+    page('h3').text().should.contain('Transcript for NMT 1: Medical Case')
     page('p').text().should.contain('This is a corrected copy of transcript for 5 December 1946.')
 
 def test_transcript_search(seq):
@@ -145,7 +145,7 @@ def test_evidence_links(seq):
     page.text().should.contain('Results 1-2 of 2 for * evidence: "NO-417"')
     page.text().should.contain('Organizational chart of the SS Medical Service (from September 1943)')
 
-    page = follow_link(page('.document-row').with_text('Case transcript for NMT 1: Medical Case').find('a'))
+    page = follow_link(page('.document-row').with_text('Transcript for NMT 1: Medical Case').find('a'))
     page.text().should.contain('3 pages with results')
 
 def test_exhibit_links(seq):
@@ -156,7 +156,7 @@ def test_exhibit_links(seq):
     page.text().should.contain('Results 1-5 of 5 for * exhibit: "Prosecution 61"')
     page.text().should.contain('Letter to Heinrich Himmler, sending report on high altitude experiments')
 
-    page = follow_link(page('.document-row').with_text('Case transcript for NMT 1: Medical Case').find('a'))
+    page = follow_link(page('.document-row').with_text('Transcript for NMT 1: Medical Case').find('a'))
     page.text().should.contain('1 page with results')
 
     # defense exhibit number
@@ -166,7 +166,7 @@ def test_exhibit_links(seq):
     page.text().should.contain('Results 1-2 of 2 for * exhibit: "Rose 8"')
     page.text().should.contain('Extract from a report of a conference of consulting specialists, concerning dysentery')
 
-    page = follow_link(page('.document-row').with_text('Case transcript for NMT 1: Medical Case').find('a'))
+    page = follow_link(page('.document-row').with_text('Transcript for NMT 1: Medical Case').find('a'))
     page.text().should.contain('2 pages with results')
 
 

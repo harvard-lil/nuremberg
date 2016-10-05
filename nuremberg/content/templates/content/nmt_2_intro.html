@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} People {% endblock %}
+
+{% block body_class %}about{% endblock %}
+
+{% block header %}
+  {{ block.super }}
+  <nav class="sub-nav horizontal">
+    <li>
+      <a href="#summary">Summary</a>
+    </li>
+    <li>
+      <a href="#indictments">Indictments</a>
+    </li>
+    <li>
+      <a href="#detailed_chronology">Detailed Chronology</a>
+    </li>
+    <li>
+      <a href="#persons">Persons Involved</a>
+    </li>
+    <li>
+      <a href="#ef_groups">Evidence File Groups</a>
+    </li>
+  </nav>
+{% endblock %}
+
+{% block content %}
+<section class="theme-light">
+    <div class="partial-width">
+        <h1>NMT Case 2</h1>
+        <p class="intro">U.S.A. v. Erhard Milch</p>
+    </div>
+</section>
+<section class="theme-light">
+        <div class="anchor" id="summary"></div>
+        <h2>Summary</h2>
+        <p>Erhard Milch, a Field Marshal in the German Air Force, was chiefly responsible
+        for the production of aircraft during the war (e.g., the Jaegerstab program) and
+        was also, as a member of the Central Planning Board under Albert Speer, one of
+        the managers of the German war economy.</p>
+        <p>Milch was tried by Tribunal 2 at Nuremberg, from 13 Nov 1946 (indictment
+        filed) to 17 Apr 1947 (sentence). The indictment had three counts: 1. (War
+        crimes) Mistreatment of civilians of occupied territories and prisoners of war as
+        slave laborers; 2. (War crimes) Medical experiments (high altitude and freezing)
+        on concentration camp inmates; 3. (Crimes against humanity) Slave labor and
+        medical experiments on German nationals and citizens of other countries. Milch
+        was accused of direct participation in the conscription and mistreatment of slave
+        laborers, and of administrative responsibility for the medical experiments
+        conducted for the air force.</p>
+        <p>The prosecution presented 161 written exhibits and 3 witnesses. The defense
+        presented 51 written exhibits, 30 witnesses, and testimony by Milch himself. The
+        tribunal called one witness.</p>
+        <p>Milch was acquitted of the charges concerning medical experiments and found
+        guilty of the charges concerning slave labor. He was sentenced to life
+        imprisonment; in 1951 the sentence was commuted to a term of 15 years.</p>
+    </section>
+    <section class="theme-light">
+        <div class="anchor" id="indictments"></div>
+        <h2>Indictments</h2>
+        <h3>Three Counts:</h3>
+        <ol class="list">
+          <li><strong>War crimes:</strong> Mistreatment of civilians of
+          occupied territories and prisoners of war used as slave laborers</li>
+          <li><strong>War crimes:</strong> Medical experiments (high altitude
+          and freezing) on concentration camp inmates</li>
+          <li><strong>Crimes against humanity</strong>: Slave labor and
+          medical experiments on German nationals and citizens of other countries</li>
+        </ol>
+    </section>
+<section class="theme-light">
+        <div class="anchor" id="persons"></div>
+        <h2>Persons Involved</h2>
+        <h3>Tribunal 2</h3>
+        <p class="list">
+        Robert M. Toms, presiding<br />
+        Fitzroy D. Phillips<br />
+        Michael A. Musmanno<br />
+        John J. Speight, alternate<br />
+    </p>
+        <h3>Prosecution Counsel</h3>
+        <p class="list">
+        Telford Taylor, Chief of Counsel<br />
+        Clark Denney, Chief Trial Counsel<br />
+        James S. Conway<br />
+        Dorothy M. Hunt<br />
+        Henry T. King, Jr.<br />
+        Raymond J. McMahon, Jr.<br />
+        Maurice C. Myers<br />
+    </p>
+        <h3>Defense Counsel</h3>
+    <p class="list">
+        Dr. Friedrich Bergold<br />
+        Dr. Werner Milch<br />
+    </p>
+    </section>
+<section class="theme-light">
+        <div class="anchor" id="detailed_chronology"></div>
+        <h2>Detailed Chronology</h2>
+<table class="table-trial-chronology">
+<tr><td>Date</td><td>Proceeings</td><td>Transcript Pages</td></tr>
+<tr><td>13 Nov 1946</td><td>Indictment filed</td><td></td></tr>
+<tr><td>    14 Nov 1946</td><td>Indictment served</td><td></td></tr>
+<tr><td>    20 Dec 1946</td><td>Arraignment; indictment read</td><td> 1-8</td></tr>
+<tr><td>     2 Jan 1947</td><td>Prosecution opening statement & evidence</td><td> 9-494</td></tr>
+<tr><td>     3 Jan 1947</td><td>slave labor-general</td><td> 25-295</td></tr>
+<tr><td>    13 Jan 1947</td><td>slave labor-Jaegerstab</td><td> 295-360</td></tr>
+<tr><td>    14 Jan 1947</td><td>medical experiments</td><td> 369-487</td></tr>
+<tr><td>    27 Jan 1947</td><td>Defense opening statement & evidence</td><td> 494-2376</td></tr>
+<tr><td>     5 Feb 1947</td><td>Paul Koerner (D)</td><td> 652-710</td></tr>
+<tr><td>   6-7 Feb 1947</td><td>Fritz Schmelter (D)</td><td> 717-759</td></tr>
+<tr><td> 7, 11 Feb 1947</td><td>Erich Hippke (D)</td><td> 759-870</td></tr>
+<tr><td>    11 Feb 1947</td><td>Karl E. Richter (D)</td><td> 871-900</td></tr>
+<tr><td>    12 Feb 1947</td><td>Helmut Foerster (D)</td><td> 915-938</td></tr>
+<tr><td>    12 Feb 1947</td><td>Walter Neff (D)</td><td> 939-943</td></tr>
+<tr><td>    12 Feb 1947</td><td>Walter Hertel (D)</td><td> 944-979</td></tr>
+<tr><td>    13 Feb 1947</td><td>Artur Eschenauer (D)</td><td> 980-996</td></tr>
+<tr><td>    14 Feb 1947</td><td>Hans W. Romberg (D)</td><td> 1021A-1050</td></tr>
+<tr><td>    14 Feb 1947</td><td>Wolfram Sievers (D)</td><td> 1050-1057</td></tr>
+<tr><td>    14 Feb 1947</td><td>Hermann Becker-Freyseng (D)</td><td> 1061-1066</td></tr>
+<tr><td>    14 Feb 1947</td><td>Georg A. Weltz (D)</td><td> 1066-1072</td></tr>
+<tr><td>    14 Feb 1947</td><td>Leo Alexander (D)</td><td> 1074-1092</td></tr>
+<tr><td>14, 17 Feb 1947</td><td>Siegfried Ruff (D)</td><td> 1092-1122</td></tr>
+<tr><td>17, 19 Feb 1947</td><td>Albert Speer (D)</td><td> 1136-1186, 1445-1457</td></tr>
+<tr><td>    17 Feb 1947</td><td>Max Koenig (D)</td><td> 1189-1204</td></tr>
+<tr><td>    18 Feb 1947</td><td>Max Pendele (D)</td><td> 1205-1227</td></tr>
+<tr><td>    18 Feb 1947</td><td>Karl Wolff (D)</td><td> 1228-1268</td></tr>
+<tr><td>    19 Feb 1947</td><td>Constantin von Neurath (D)</td><td> 1440-1443</td></tr>
+<tr><td>    20 Feb 1947</td><td>Berndt von Brauchitsch (D)</td><td> 1271-1289</td></tr>
+<tr><td>    20 Feb 1947</td><td>Helmut Felmy (D)</td><td> 1290-1296</td></tr>
+<tr><td>    20 Feb 1947</td><td>Walter Warlimont (D)</td><td> 1296-1299</td></tr>
+<tr><td>    24 Feb 1947</td><td>Otto Schniewind (D)</td><td> 1307-1329</td></tr>
+<tr><td>    24 Feb 1947</td><td>Rudolf Brandt (D)</td><td> 1330-1354</td></tr>
+<tr><td>    24 Feb 1947</td><td>Gerhard Engel (D)</td><td> 1355-1361</td></tr>
+<tr><td>    24 Feb 1947</td><td>Xaver Dorsch (D)</td><td> 1361-1379</td></tr>
+<tr><td>     3 Mar 1947</td><td>Manfred Roeder (D)</td><td> 1381-1403</td></tr>
+<tr><td>     3 Mar 1947</td><td>Walter Lichtenstein (T)</td><td> 1428-1432</td></tr>
+<tr><td>     4 Mar 1947</td><td>Erich Raeder (D)</td><td> 1434-1439</td></tr>
+<tr><td>   5-6 Mar 1947</td><td>Roland Ferrier (P)</td><td> 1481-1548</td></tr>
+<tr><td>     6, 10-11 Mar 1947</td><td>Paul Le Friec (P)</td><td> 1550-1584</td></tr>
+<tr><td> 20-21 Mar 1947</td><td>Wolfgang Vorwald (D)</td><td> 1586-1696, 2287-2340</td></tr>
+<tr><td> 11-20 Mar 1947</td><td>Erhard Milch (D)</td><td> 1696-2276</td></tr>
+<tr><td>    20 Mar 1947</td><td>Hermann Reinecke (D)</td><td> 2277-2287</td></tr>
+<tr><td>    21 Mar 1947</td><td>Joseph Krysiak (P)</td><td> 2362-2376</td></tr>
+<tr><td>    25 Mar 1947</td><td>Defense and prosecution defense closing statements</td><td> 2377-2490</td></tr>
+<tr><td>    16 Apr 1947</td><td>Judgment</td><td> 2491</td></tr>
+<tr><td>    17 Apr 1947</td><td>Sentence</td><td> 2527</td></tr>
+<tr><td>   17 June 1947</td><td>Affirmation of sentence by US Military Governor</td><td></td></tr>
+<tr><td>    20 Oct 1947</td><td>US Supreme Court denies writ of habeas corpus</td><td></td></tr>
+</table>
+</section>
+<section class="theme-light">
+        <div class="anchor" id="ef_groups"></div>
+        <h2>Evidence File Document Groups Used in the Trial</h2>
+        <table class="table-trial-chronology">
+<tr><td>D</td><td>Industry</td></tr>
+<tr><td>EC</td><td>Economics</td></tr>
+<tr><td>F</td><td>[675, 824]</td></tr>
+<tr><td>L</td><td>London</td></tr>
+<tr><td>NI</td><td>Nuremberg Industrialist</td></tr>
+<tr><td>NO</td><td>Nuremberg Organizations</td></tr>
+<tr><td>NOKW</td><td>Nuremberg Armed Forces High Command </td></tr>
+<tr><td>PS</td><td>Paris-Storey </td></tr>
+<tr><td>R</td><td>Rothschild</td></tr>
+</table>
+</section>
+{% endblock %}

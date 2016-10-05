@@ -7,17 +7,26 @@
     </a>
   </div>
   <ul class="nav-links">
-    <li> <a href="{% url 'content:trials' %}"
+    <li class="has-menu"> <a href="#" data-toggle="dropdown"
       {% if request.resolver_match.url_name == 'trials' %}class="active"{% endif %}
-      > Trials </a> </li>
-    <li> <a href="{% url 'content:approaches' %}"
-      {% if request.resolver_match.url_name == 'approaches' %}class="active"{% endif %}
-      >  Approaches </a> </li>
-    <li> <a href="{% url 'content:history' %}"
-      {% if request.resolver_match.url_name == 'history' %}class="active"{% endif %}
-      >  History </a> </li>
-    <li> <a href="{% url 'content:about' %}"
+      > Trials </a>
+        <ul class="menu">
+          <li><a href="{% url 'content:people' %}">People</a></li>
+          <li><a href="{% url 'content:trials' %}">Trials</a></li>
+        </ul>
+    </li>
+
+    <li> <a href="{% url 'content:documents' %}"
+      {% if request.resolver_match.url_name == 'documents' %}class="active"{% endif %}
+      >  Documents </a> </li>
+
+    <li class="has-menu"> <a href="#" data-toggle="dropdown"
       {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}
-      >  About the Project </a> </li>
+      > About the Project </a>
+        <ul class="menu">
+          <li><a href="{% url 'content:intro' %}">Intro</a></li>
+          <li><a href="{% url 'content:funding' %}">Funding</a></li>
+        </ul>
+    </li>
   </ul>
 </nav>

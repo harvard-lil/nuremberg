@@ -118,7 +118,7 @@ class FieldedSearchForm(SearchForm):
             included = self.data.getlist('m')
             self.data = self.data.copy()
             if len(included) < 3:
-                self.data['q'] += ' type:{}'.format(', '.join(included))
+                self.data['q'] += ' type:{}'.format('|'.join(included))
 
     def search(self):
         sort = self.sort_fields.get(self.sort_results, 'score')
@@ -137,7 +137,7 @@ class FieldedSearchForm(SearchForm):
             else:
                 sort += ' asc'
             sqs = sqs.group_by('grouping_key', {
-                'group.sort': 'seq_number asc',
+                'group.sort': sort + ', seq_number asc',
                 'group.limit': 3,
                 'sort': sort,
             })

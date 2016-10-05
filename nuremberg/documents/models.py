@@ -3,6 +3,8 @@ from django.db import models
 import datetime
 import re
 
+global_slug_count = 0
+
 IMAGE_URL_ROOT="http://nuremberg.law.harvard.edu/imagedir/HLSL_NMT01"
 
 class Document(models.Model):
@@ -28,12 +30,21 @@ class Document(models.Model):
             return date.as_date()
 
     def slug(self): # pragma: no cover
+        global global_slug_count
+        global_slug_count += 1
         # Try to extract the "genre term" from the descriptive title
-        words = self.title.split(' ')
-        n = 4
-        while n < len(words) and words[n-1] in ('a', 'an', 'the', 'in', 'of', 'to', 'at', 'on', 'and', 'for'):
-            n += 1
-        return slugify(' '.join(words[:n]))
+        try:
+            words = self.title.split(' ')
+            n = 4
+            while n < len(words) and words[n-1] in ('a', 'an', 'the', 'in', 'of', 'to', 'at', 'on', 'and', 'for'):
+                n += 1
+            testing =  slugify(' '.join(words[:n]))
+            print ("{0}. DocID: {1} TitleDescriptive slug: {2}".format(global_slug_count, self.id, testing))
+            return slugify(' '.join(words[:n]))
+        except:
+            testing = "descriptive-title-missing"
+            print ("{0}. DocID: {1} TitleDescriptive slug: {2}".format(global_slug_count, self.id, testing))
+            return testing
 
     class Meta:
         managed = False
@@ -208,36 +219,6 @@ class DocumentsToGroupAuthors(models.Model):
         managed = False
         db_table = 'tblGroupAuthorsList'
 
-
-class DocumentDefendant(models.Model):
-    id = models.AutoField(primary_key=True, db_column='DefendantID')
-    last_name = models.CharField(max_length=110, db_column='DefLName')
-    first_name = models.CharField(max_length=25, db_column='DefFName')
-    case = models.IntegerField( db_column='CaseID')
-
-    documents = models.ManyToManyField(Document, related_name='defendants', through='DocumentsToDefendants', through_fields=('defendant', 'document'))
-
-    def full_name(self):
-        if self.first_name and self.last_name:
-            return '{} {}'.format(self.first_name, self.last_name)
-        else:
-            return self.first_name or self.last_name or 'Unknown'
-
-    class Meta:
-        managed = False
-        db_table = 'tblDefendants'
-
-
-class DocumentsToDefendants(models.Model):
-    id = models.AutoField(primary_key=True, db_column='DefendantsListID')
-    document = models.ForeignKey(Document, db_column='DocID')
-    defendant = models.ForeignKey(DocumentDefendant, db_column='DefNameID')
-
-    class Meta:
-        managed = False
-        db_table = 'tblDefendantsList'
-
-
 class DocumentCase(models.Model):
     id = models.AutoField(primary_key=True, db_column='CaseID')
     name = models.CharField(max_length=100, db_column='Case_temp')
@@ -270,6 +251,44 @@ class DocumentsToCases(models.Model):
     class Meta:
         managed = False
         db_table = 'tblCasesList'
+
+class DocumentDefendantManager(models.Manager):
+    """
+    Filters out null names
+    """
+    use_for_related_fields = True
+    def get_queryset(self):
+        return super().get_queryset().exclude(first_name__isnull=True)
+
+class DocumentDefendant(models.Model):
+    objects = DocumentDefendantManager()
+
+    id = models.AutoField(primary_key=True, db_column='DefendantID')
+    last_name = models.CharField(max_length=110, db_column='DefLName')
+    first_name = models.CharField(max_length=25, db_column='DefFName')
+    case = models.ForeignKey(DocumentCase, related_name='defendants', db_column='CaseID')
+
+    documents = models.ManyToManyField(Document, related_name='defendants', through='DocumentsToDefendants', through_fields=('defendant', 'document'))
+
+    def full_name(self):
+        if self.first_name and self.last_name:
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name or self.last_name or 'Unknown'
+
+    class Meta:
+        managed = False
+        db_table = 'tblDefendants'
+
+class DocumentsToDefendants(models.Model):
+    id = models.AutoField(primary_key=True, db_column='DefendantsListID')
+    document = models.ForeignKey(Document, db_column='DocID')
+    defendant = models.ForeignKey(DocumentDefendant, db_column='DefNameID')
+
+    class Meta:
+        managed = False
+        db_table = 'tblDefendantsList'
+
 
 class DocumentActivityManager(models.Manager):
     """

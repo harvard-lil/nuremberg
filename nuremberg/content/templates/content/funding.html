@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} People {% endblock %}
+
+{% block body_class %}about{% endblock %}
+
+{% block header %}
+  {{ block.super }}
+  <nav class="sub-nav horizontal">
+  </nav>
+{% endblock %}
+
+{% block content %}
+<section class="theme-light">
+    <div class="partial-width">
+        <h1>Funding</h1>
+        <p class="intro">History of funding sources for the project</p>
+    </div>
+</section>
+<section class="theme-light">
+<h3>1998-2000</h3>
+<ol class="list">
+    <li>Kenneth & Evelyn Lipper Foundation ($100,000)</li>
+<li>Support for Nuremberg Trials Project pilot project: initial design and implementation of document metadata schema and data-entry tool; creation of document metadata for Trials 1, 2 and 4; digitization of prototype set of Trial 1 documents; machine-readable text extraction for Trial 1 transcript (keyboarding)</li>
+</ol>
+
+<h3>2004-2005</h3>
+<ol class="list">
+<li>Harvard’s Library Digital Initiative ($74,861)</li>
+<li><a href="http://hul.harvard.edu/ois//ldi/resources/Nuremberg_LDI_grant_final_report-PublicVer.pdf">http://hul.harvard.edu/ois//ldi/resources/Nuremberg_LDI_grant_final_report-PublicVer.pdf</a></li>
+<li>Support for Nuremberg Trials Project one-year position responsible for editing Trial 1 transcript and various tasks connected with completion of digitization of Trial 1 documents</li>
+</ol>
+
+<h3>2010-2011</h3>
+<ol class="list">
+<li>Harvard Law Library internal funding ($15,695)</li>
+<li>Support for Nuremberg Trials Project one-year effort to digitize Trial 2 and Trial 4 documents (18,587 pages)</li>
+</ol>
+
+<h3>2014-2015</h3>
+<ol class="list">
+<li>Harvard’s Open Your Hidden Collections Project ($140,000)</li>
+<li><a href="http://library.harvard.edu/06112015-1629/nineteen-open-your-hidden-collections-proposals-funded">http://library.harvard.edu/06112015-1629/nineteen-open-your-hidden-collections-proposals-funded</a></li>
+<li>Support for Nuremberg Trials Project one-year effort to create content for posting Trial 3 online as part of its website offerings; support to finish digitization of all typescript and some photostat document pages in scope for the project (646,413 pages)</li>
+</ol>
+
+<h3>2015-2016</h3>
+<ol class="list">
+<li>Harvard’s Open Your Hidden Collections Project ($86,220)</li>
+<li><a href="http://library.harvard.edu/open-collections-review">http://library.harvard.edu/open-collections-review</a></li>
+<li>Support for Nuremberg Trials Project one-year effort to create content for posting Trial 7 online as part of its website offerings; support to digitize transcripts for all 13 trials</li>
+</ol>
+
+<h3>2016</h3>
+<ol class="list">
+<li>Harvard Law Library internal funding ($98,829)</li>
+<li>Support for digitizing oversize and remaining photostat evidence documents (64,034 pages), and for  machine- readable text extraction (raw OCR, OCR correction and keyboarding) for transcripts of Trials 1-4 and 7  </li> 
+</ol>
+    
+</section>
+{% endblock %}

@@ -61,24 +61,28 @@ class PyQuery(pyquery.PyQuery):
                 url = self.pathname + url
         return url
 
-    def submit_url(self, params={}):
+    def submit_url(self, params={}, defaults=True):
         """
         Return a form submit url with the given params.
         """
         action = self.attr('action')
         values = QueryDict('', mutable=True)
-        for el in self.find('input'):
-            if el.get('type') in ('checkbox', 'radio'):
-                if el.get('checked'):
+        if defaults:
+            for el in self.find('input'):
+                if el.get('type') in ('checkbox', 'radio'):
+                    if el.get('checked'):
+                        values.appendlist(el.name, el.value or '')
+                else:
                     values.appendlist(el.name, el.value or '')
-            else:
-                values.appendlist(el.name, el.value or '')
         #overwrite the querydict
-        for key, val in params.items():
-            if val is None:
-                del values[key]
-            else:
-                values[key] = val
+        if isinstance(params, QueryDict):
+            values.update(params)
+        else:
+            for key, val in params.items():
+                if val is None:
+                    del values[key]
+                else:
+                    values[key] = val
         return self.absolute_url(action or '') + '?' + values.urlencode()
 
     def submit_value(self, val=None):

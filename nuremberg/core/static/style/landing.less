@@ -26,7 +26,7 @@ nav.site-nav {
     }
   }
   ul.nav-links {
-    a {
+    > li > a {
       .sans-serif(@light, 20px, 20px);
     }
   }
@@ -38,13 +38,13 @@ nav.site-nav {
     ul.nav-links {
       margin: 0;
       float: none !important;
-      li {
+      > li {
         margin-left: 0;
         margin-right: 14px;
         &:last-child {
           margin-right: 0px;
         }
-        a {
+        > a {
           font-size: 18px;
         }
       }
@@ -240,8 +240,11 @@ section {
 
 }
 
-.progress-summary {
-  .serif-text(normal, 15px, 23px);
+.progress-summary p {
+    font-family: 'Tiempos Text', serif;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 26px;
 }
 .progress-graph {
   padding: 35px 20px 0 55px;
@@ -287,6 +290,9 @@ section {
     &.transcripts-keyed {
       background-color: @dark-blue;
     }
+    &.documents-analyzed {
+      background-color: #7A7C8D;
+    }
   }
   .progress-legend {
     margin-top: 10px;
@@ -311,5 +317,18 @@ section {
     &.transcripts-keyed::before {
       background-color: @dark-blue;
     }
+    &.documents-analyzed::before {
+      background-color: #7A7C8D;
+    }
   }
+}
+
+.sidebar-layout .main-column:last-child {
+    margin-left: 0%;
+}
+
+.sidebar-layout .sidebar-column {
+    float: left;
+    width: 33.33333333%;
+    height: 300px;
 }

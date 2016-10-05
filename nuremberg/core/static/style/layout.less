@@ -132,6 +132,25 @@ hr {
   }
 }
 
+.three-column-layout-people {
+  &:extend(.row);
+
+  .column {
+    .make-md-column(4);
+  }
+
+  &.serif p {
+    .serif-text(normal, 16px, 25px);
+  }
+
+  img {
+    background-color: @gray;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
+
 .four-column-layout {
   &:extend(.row);
 
