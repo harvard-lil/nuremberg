@@ -10,6 +10,6 @@ before_script:
   - mysql -uroot -e 'CREATE DATABASE IF NOT EXISTS test_nuremberg_dev'
   - mysql -uroot -e 'CREATE USER nuremberg; GRANT ALL ON test_nuremberg_dev.* TO nuremberg'
   - mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
-  - curl -sSO http://archive.apache.org/dist/lucene/solr/4.10.4/solr-4.10.4.tgz
-  - curl -sSL https://raw.githubusercontent.com/moliware/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.10.4 SOLR_CONFS="schema.xml" bash
+  - curl -sSO http://archive.apache.org/dist/lucene/solr/4.10.3/solr-4.10.3.tgz
+  - curl -sSL https://raw.githubusercontent.com/ksclarke/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.10.3 SOLR_CONFS="schema.xml" bash
 script: py.test
