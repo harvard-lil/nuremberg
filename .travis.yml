@@ -22,6 +22,6 @@ before_script:
   - mkdir nuremberg_dev
   - rsync -avz solr-4.10.3/example/solr/collection1/conf nuremberg_dev/
   - cp schema.xml nuremberg_dev/conf/
-  - curl -sSL 'http://localhost:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&instanceDir=nuremberg_dev&schema=schema.xml'
+  - curl -sSL 'http://localhost:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&instanceDir=/home/travis/build/harvard-lil/nuremberg/nuremberg_dev&schema=schema.xml'
   - python manage.py rebuild_index --noinput
 script: py.test
