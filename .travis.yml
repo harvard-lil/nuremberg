@@ -19,6 +19,6 @@ before_script:
   - mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
   - curl -sSO http://archive.apache.org/dist/lucene/solr/4.10.3/solr-4.10.3.tgz
   - curl -sSL https://raw.githubusercontent.com/ksclarke/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.10.3 SOLR_CONFS="schema.xml" bash
-  - curl -sSL 'http://localhost:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&schema=schema.xml'
+  - curl -sSL 'http://localhost:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&instanceDir=.&schema=schema.xml'
   - python manage.py rebuild_index --noinput
 script: py.test
