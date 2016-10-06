@@ -14,7 +14,7 @@ before_script:
   - mysql -uroot -e 'CREATE DATABASE IF NOT EXISTS nuremberg_dev'
   - mysql -uroot -e 'CREATE DATABASE IF NOT EXISTS test_nuremberg_dev'
   - mysql -uroot -e 'CREATE USER nuremberg; GRANT ALL ON nuremberg_dev.* TO nuremberg'
-  - mysql -uroot -e 'CREATE USER nuremberg; GRANT ALL ON test_nuremberg_dev.* TO nuremberg'
+  - mysql -uroot -e 'GRANT ALL ON test_nuremberg_dev.* TO nuremberg'
   - mysql -unuremberg nuremberg_dev < nuremberg/core/tests/data.sql
   - mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
   - curl -sSO http://archive.apache.org/dist/lucene/solr/4.10.3/solr-4.10.3.tgz
