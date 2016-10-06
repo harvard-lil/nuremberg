@@ -21,4 +21,4 @@ before_script:
   - curl -sSL https://raw.githubusercontent.com/ksclarke/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.10.3 SOLR_CONFS="schema.xml" bash
   - curl -sSL http://localhost:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&schema=schema.xml
   - yes | python manage.py rebuild_index
-script: py.test nuremberg/core
+script: py.test
