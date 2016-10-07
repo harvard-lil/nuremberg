@@ -22,8 +22,13 @@ class Document(models.Model):
         return range(1, (self.image_count or 0) + 1)
 
     def images_screen(self):
-        return (image for image in self.images.all() if image.scale == DocumentImage.SCREEN)
-
+        test_empty = self.images.all()
+        test_empty = len(test_empty)
+        if test_empty:
+            return (image for image in self.images.all() if image.scale == DocumentImage.SCREEN)
+        else:
+            return "no images"
+            
     def date(self):
         date = self.dates.first()
         if date:

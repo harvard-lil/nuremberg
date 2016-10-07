@@ -184,20 +184,24 @@
       <div class="viewport-content scrollable" data-document-id="{{document.id}}">
         {% block viewport %}
           <div class="document-image-layout">
-            {% for image in document.images_screen %}
-              <div data-screen-url="{{image.url}}" data-thumb-url="{{image.thumb_url|default_if_none:""}}"  data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image {% if not image.url %}image-missing loading{% else %}loaded{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
-                {% if image.url %}
-                  <noscript><img src="{{image.url}}" /></noscript>
-                  <div class="image-label">
-                    {{image.page_number}}
-                  </div>
-                {% else %}
-                  <div class="image-label">
-                    Missing Image No. {{image.page_number}}
-                  </div>
-                {% endif %}
-              </div>
-            {% endfor %}
+            {% if document.images_screen == "no images" %}
+              <div class="no-image-block"><p class="no-image-note">Images for this document are not yet available.</p></div>
+            {% else %}
+              {% for image in document.images_screen %}
+                <div data-screen-url="{{image.url}}" data-thumb-url="{{image.thumb_url|default_if_none:""}}"  data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image {% if not image.url %}image-missing loading{% else %}loaded{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
+                  {% if image.url %}
+                    <noscript><img src="{{image.url}}" /></noscript>
+                    <div class="image-label">
+                      {{image.page_number}}
+                    </div>
+                  {% else %}
+                    <div class="image-label">
+                      Missing Image No. {{image.page_number}}
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            {% endif %}
           </div>
         {% endblock %}
       </div>
