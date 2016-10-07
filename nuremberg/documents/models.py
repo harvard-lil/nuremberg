@@ -22,8 +22,13 @@ class Document(models.Model):
         return range(1, (self.image_count or 0) + 1)
 
     def images_screen(self):
-        return (image for image in self.images.all() if image.scale == DocumentImage.SCREEN)
-
+        test_empty = self.images.all()
+        test_empty = len(test_empty)
+        if test_empty:
+            return (image for image in self.images.all() if image.scale == DocumentImage.SCREEN)
+        else:
+            return "no images"
+            
     def date(self):
         date = self.dates.first()
         if date:
@@ -39,11 +44,11 @@ class Document(models.Model):
             while n < len(words) and words[n-1] in ('a', 'an', 'the', 'in', 'of', 'to', 'at', 'on', 'and', 'for'):
                 n += 1
             testing =  slugify(' '.join(words[:n]))
-            print ("{0}. DocID: {1} TitleDescriptive slug: {2}".format(global_slug_count, self.id, testing))
+            #print ("{0}. DocID: {1} TitleDescriptive slug: {2}".format(global_slug_count, self.id, testing))
             return slugify(' '.join(words[:n]))
         except:
             testing = "descriptive-title-missing"
-            print ("{0}. DocID: {1} TitleDescriptive slug: {2}".format(global_slug_count, self.id, testing))
+            #print ("{0}. DocID: {1} TitleDescriptive slug: {2}".format(global_slug_count, self.id, testing))
             return testing
 
     class Meta:
