@@ -17,9 +17,9 @@ before_script:
   - mysql -uroot -e 'GRANT ALL ON test_nuremberg_dev.* TO nuremberg'
   - mysql -unuremberg nuremberg_dev < nuremberg/core/tests/data.sql
   - mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
-  - curl -sSL https://raw.githubusercontent.com/ksclarke/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.10.3 SOLR_CONFS="schema.xml" bash
+  - curl -sSL https://raw.githubusercontent.com/ksclarke/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.10.4 SOLR_CONFS="schema.xml" bash
   - mkdir nuremberg_dev
-  - rsync -avz solr-4.10.3/example/solr/collection1/conf nuremberg_dev/
+  - rsync -avz solr-4.10.4/example/solr/collection1/conf nuremberg_dev/
   - cp schema.xml nuremberg_dev/conf/
   - curl -sSL 'http://localhost:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&instanceDir=/home/travis/build/harvard-lil/nuremberg/nuremberg_dev&schema=schema.xml'
   - python manage.py rebuild_index --noinput
