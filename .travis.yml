@@ -17,7 +17,6 @@ before_script:
   - mysql -uroot -e 'GRANT ALL ON test_nuremberg_dev.* TO nuremberg'
   - mysql -unuremberg nuremberg_dev < nuremberg/core/tests/data.sql
   - mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
-  - curl -sSO http://archive.apache.org/dist/lucene/solr/4.10.3/solr-4.10.3.tgz
   - curl -sSL https://raw.githubusercontent.com/ksclarke/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.10.3 SOLR_CONFS="schema.xml" bash
   - mkdir nuremberg_dev
   - rsync -avz solr-4.10.3/example/solr/collection1/conf nuremberg_dev/
