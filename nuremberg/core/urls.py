@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from httpproxy.views import HttpProxy
 from django.views.generic.base import RedirectView
+from django.http import HttpResponse
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -16,6 +17,7 @@ urlpatterns = [
     url(r'^proxy_image/(?P<url>.*)$',
         # RedirectView.as_view(url='http://s3.amazonaws.com/nuremberg-dev/%(url)s'))
         HttpProxy.as_view(base_url='http://s3.amazonaws.com/nuremberg-dev')),
+    url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /search/", content_type="text/plain")),
 ]
 
 handler400 = 'nuremberg.core.views.handler400'
