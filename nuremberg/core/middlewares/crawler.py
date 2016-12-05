@@ -15,3 +15,5 @@ class BlockCrawlerMiddleware:
 
         if request.is_crawler and request.path.startswith("/search/"):
             return HttpResponseForbidden('This address is removed from crawling. Check robots.txt')
+
+        return None
