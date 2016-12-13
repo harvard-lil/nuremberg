@@ -70,7 +70,7 @@ class Command(BaseCommand):
             if not page:
                 page = TranscriptPage( transcript=transcript, volume=volume, volume_seq_number=volume_seq_number)
             page.xml = xml
-            page.image_url = "//s3.amazonaws.com/nuremberg-transcripts-dev/{}".format(filename.replace('.xml', '.jpg'))
+            page.image_url = "//s3.amazonaws.com/nuremberg-transcripts/{}".format(filename.replace('.xml', '.jpg'))
             try:
                 page.populate_from_xml()
             except Exception as e:
