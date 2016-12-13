@@ -15,8 +15,8 @@ urlpatterns = [
         # RedirectView.as_view(url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/%(url)s')),
         HttpProxy.as_view(base_url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing')),
     url(r'^proxy_image/(?P<url>.*)$',
-        # RedirectView.as_view(url='http://s3.amazonaws.com/nuremberg-dev/%(url)s'))
-        HttpProxy.as_view(base_url='http://s3.amazonaws.com/nuremberg-dev')),
+        # RedirectView.as_view(url='http://s3.amazonaws.com/nuremberg-documents/%(url)s'))
+        HttpProxy.as_view(base_url='http://s3.amazonaws.com/nuremberg-documents')),
     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /search/", content_type="text/plain")),
 ]
 
