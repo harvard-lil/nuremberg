@@ -1,5 +1,5 @@
 gunicorn==19.5.0
-Django==1.9.6
+Django==1.9.13
 django_compressor==2.0
 django-static-precompiler==1.4.0
 django-haystack==2.5.dev1
