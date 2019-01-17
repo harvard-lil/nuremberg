@@ -1,0 +1,45 @@
+version: '2'
+
+services:
+
+  db:
+    image: mysql:5.6
+    environment:
+        MYSQL_ROOT_PASSWORD: ''
+        MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      # NAMED VOLUMES
+      # If the volume contains a database (a subdirectory named mysql)
+      # when you start the container, it will be left untouched and unaffected
+      # by changes to environment variables like $MYSQL_ROOT_PASSWORD.
+      - db_data:/var/lib/mysql:delegated
+  solr:
+    build:
+      context: ./
+      dockerfile: solr.dockerfile
+    image: nuremberg-solr:0.1
+    volumes:
+      # NAMED VOLUMES
+      - solr_collection:/opt/solr/example/solr/nuremberg_dev/
+  web:
+    build:
+      context: ./
+      dockerfile: web.dockerfile
+    image: nuremberg:0.1
+    tty: true
+    command: bash
+    volumes:
+      # BIND MOUNTS
+      - ./:/nuremberg
+    environment:
+      # let Django load Docker-specific settings conditionally
+      - DOCKERIZED=True
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - solr
+
+volumes:
+  db_data:
+  solr_collection:
