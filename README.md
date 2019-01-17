@@ -235,6 +235,9 @@ Run the python tests:
 Run the browser tests:
 (not yet supported)
 
+Update `requirements.txt` and `nuremberg/core/tests/requirements.txt`
+`$ docker-compose exec web bash -c "pip-compile && pip-compile requirements.in nuremberg/core/tests/requirements.in -o nuremberg/core/tests/requirements.txt"`
+
 ### Starting Fresh
 
 Take down the Docker containers:

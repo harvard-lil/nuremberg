@@ -1,0 +1,30 @@
+# After updating this file, run
+#
+# `pip-compile && pip-compile requirements.in nuremberg/core/tests/requirements.in -o nuremberg/core/tests/requirements.txt`
+#
+# to update requirements.txt and nuremberg/core/tests/requirements.txt
+
+Django==1.9.13
+
+# DB
+mysqlclient==1.3.7
+dj-database-url==0.4.1
+
+# Search
+lxml==3.6.0
+django-haystack==2.5.dev1
+pysolr==3.5.0
+
+# Assets
+django_compressor==2.0
+django-static-precompiler==1.4.0
+
+# Serving images not hosted locally
+django-http-proxy==0.4.3
+
+# Web Server (non-development)
+gunicorn==19.5.0
+whitenoise==3.1
+
+# Development
+pip-tools==3.2.0
