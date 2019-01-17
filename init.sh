@@ -5,7 +5,7 @@ docker-compose exec db mysql -e "CREATE DATABASE IF NOT EXISTS nuremberg_dev"
 docker-compose exec db mysql -e "CREATE USER nuremberg; GRANT ALL ON nuremberg_dev.* TO nuremberg"
 docker-compose exec -T db mysql -unuremberg nuremberg_dev < nuremberg/core/tests/data.sql
 
-echo "Setting up peristent test database"
+echo "Setting up persistent test database"
 docker-compose exec db mysql -e "CREATE DATABASE IF NOT EXISTS test_nuremberg_dev"
 docker-compose exec db mysql -e "GRANT ALL ON test_nuremberg_dev.* TO nuremberg"
 docker-compose exec -T db mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
