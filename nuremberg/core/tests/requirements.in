@@ -1,0 +1,15 @@
+# After updating this file, run `pip-compile` to update requirements.txt.
+#
+# (If running from the top-level directory, run:
+# `pip-compile requirements.in nuremberg/core/tests/requirements.in` -o nuremberg/core/tests/requirements.txt)
+
+coverage==4.5.2
+pyquery==1.2.13
+pytest==3.10.1
+pytest-django==3.4.5
+pytest-cov==2.6.1
+pytest-instafail==0.3.0
+selenium==2.53.5
+sure==1.2.24
+
+-e git+https://github.com/emmalemma/django_coverage_plugin.git@e083da1624831c9485ec44f569d0689a59249f36#egg=django_coverage_plugin
