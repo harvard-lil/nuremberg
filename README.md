@@ -3,6 +3,9 @@
 > This is a Django client for the digital archives of the Nuremberg Trials Project maintained by the Harvard Law Library.
 > It is intended as a open-access web app for scholars, researchers, and members of the public, exposing the digitized documents, full-text trial transcripts, and rich search features for the same in a friendly, modern interface.
 
+1) Project Structure
+2) Appendix: Docker Development Environment
+
 ## Project Structure
 
 The project is organized into several feature-oriented modules ("apps" in Django parlance). Each module includes all URL routing, model and view code, tests, templates, JavaScript code, and static assets for the corresponding feature set:
@@ -234,6 +237,9 @@ Run the python tests:
 
 Run the browser tests:
 (not yet supported)
+
+Update `requirements.txt` and `nuremberg/core/tests/requirements.txt`
+`$ docker-compose exec web bash -c "pip-compile && pip-compile requirements.in nuremberg/core/tests/requirements.in -o nuremberg/core/tests/requirements.txt"`
 
 ### Starting Fresh
 

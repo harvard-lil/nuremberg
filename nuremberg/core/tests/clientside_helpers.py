@@ -3,7 +3,7 @@ import pytest
 pytestmark = [pytest.mark.live_server, pytest.mark.django_db(transaction=False)]
 
 import sure
-from django.core.urlresolvers import reverse as url
+from django.urls import reverse as url
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select

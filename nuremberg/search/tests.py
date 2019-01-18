@@ -90,7 +90,7 @@ def test_keyword_search(query):
 
     page = follow_link(transcript_row.find('a'))
     page.text().should.contain('5680 pages with results')
-    page('p').text().should.contain('We will than proceed to the next experiment')
+    page('p').text().should.contain('We will than proceed to the next\nexperiment')
 
     page = follow_link(page('a').with_text('Page 32'))
     page.text().should.contain('HLSL Seq. No. 8')
@@ -101,7 +101,7 @@ def count_results(query):
         page = query(q)
         if page_count == None: page_count = 15
         if first_count == None: first_count = 1
-        page('.results-count').text().should.contain('Results {}-{} of {} for {}'.format(first_count, page_count, count, q.replace(':', ': ')))
+        page('.results-count').text().should.contain('Results {}-{} of {} for {}'.format(first_count, page_count, count, q))
     return _count
 
 def test_field_search(count_results):
@@ -172,12 +172,12 @@ def test_landing_search(query):
         ['transcripts', 'photographs'])
     page = go_to(form.submit_url(values, defaults=False))
 
-    page.text().should.contain('Results 1-6 of 6 for workers type: transcripts|photographs')
+    page.text().should.contain('Results 1-6 of 6 for workers type:transcripts|photographs')
 
 def test_transcript_snippets(query):
     page = query('documents type:transcript')
 
-    page.text().should.contain('Results 1-4 of 4 for documents type: transcript')
+    page.text().should.contain('Results 1-4 of 4 for documents type:transcript')
     page.text().should.contain('4039 results in this transcript')
 
     # snippets on several pages
@@ -188,13 +188,13 @@ def test_transcript_snippets(query):
     # test single page results
     page = query('documents hlsl:2')
 
-    page.text().should.contain('Results 1-1 of 1 for documents hlsl: 2')
+    page.text().should.contain('Results 1-1 of 1 for documents hlsl:2')
     page.text().should.contain('1 result in this transcript')
 
     # all snippets from first page
     page.text().should.contain('[ ... p. 26 ] can work on it')
-    page.text().should.contain('[ ... p. 26 ] possible with these few documents')
-    page.text().should.contain('[ ... p. 26 ] able to select which documents')
+    page.text().should.contain('[ ... p. 26 ] possible with these few\ndocuments')
+    page.text().should.contain('[ ... p. 26 ] able to select which\ndocuments')
 
     # test no snippets
     page = query('type:transcript')
