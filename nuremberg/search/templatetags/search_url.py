@@ -1,6 +1,6 @@
 from django import template
 from django.utils.safestring import SafeString
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http.request import QueryDict
 from urllib.parse import quote_plus
 
