@@ -57,13 +57,13 @@ def test_document_400():
     info = page('.document-info').text()
     info.should.contain('NMT 1')
     info.should.contain('24 October 1939')
-    info.should.contain('Defendants Karl Gebhardt')
-    info.should.contain('Authors Adolf Hitler')
+    info.should.contain('Defendants\nKarl Gebhardt')
+    info.should.contain('Authors\nAdolf Hitler')
     info.should.contain('Total Pages: 3')
     info.should.contain('Language of Text: English')
     info.should.contain('Source of Text: Case Files/English')
     info.should.contain('HLSL Item No.: 400')
-    info.should.contain('Trial Issue Sulfanilamide experiments')
+    info.should.contain('Trial Issue\nSulfanilamide experiments')
 
 
 def test_document_3799():
@@ -78,7 +78,7 @@ def test_document_3799():
     info = page('.document-info').text()
     info.should_not.contain('NMT 1')
     info.should.contain('02 December 1939')
-    info.should.contain('Author Hans Frank')
+    info.should.contain('Author\nHans Frank')
     info.should.contain('Total Pages: 492')
     info.should.contain('Language of Text: German')
     info.should.contain('Source of Text: Photostat')

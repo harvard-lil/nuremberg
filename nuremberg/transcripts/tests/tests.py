@@ -59,15 +59,15 @@ def test_transcript_joins(seq):
 
     # There should be four page joins in the first ten pages:
 
-    text.should.contain('purely speculative diffi culties. HLSL Seq. No. 5') # This page break moves to:
+    text.should.contain('purely speculative diffi culties.\nHLSL Seq. No. 5') # This page break moves to:
 
     text.should.contain('Wehrmacht, the Medical Service of the SS') # This page break moves to:
-    text.should.contain('and so forth. HLSL Seq. No. 7')
+    text.should.contain('and so forth.\nHLSL Seq. No. 7')
 
     text.should.contain('have to look through each individual document') # This page break moves to:
-    text.should.contain('carry this out in practice. HLSL Seq. No. 9')
+    text.should.contain('carry this out in practice.\nHLSL Seq. No. 9')
 
-    text.should.contain(' probably very relevant and important ones. HLSL Seq. No. 10')
+    text.should.contain(' probably very relevant and important ones.\nHLSL Seq. No. 10')
 
     # it should contain each page number once
     handles = page('.page-handle')
@@ -75,15 +75,15 @@ def test_transcript_joins(seq):
     print(handles.outerHtml())
     print([handles.text()])
     handles.with_text('HLSL SEQ. NO. 1 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 2\n').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 3\n').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 4\n').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 5\n').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 6\n').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 7\n').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 8\n').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 9\n').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 10\n').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 2 ').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 3 ').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 4 ').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 5 ').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 6 ').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 7 ').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 8 ').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 9 ').length.should.equal(1)
+    handles.with_text('HLSL SEQ. NO. 10 ').length.should.equal(1)
 
     # test not repeating page numbers after
     page = seq(330)
@@ -91,7 +91,7 @@ def test_transcript_joins(seq):
     page('.page-handle').with_text('HLSL SEQ. NO. 340').length.should.equal(1)
     text = page('.page-handle').text()
     for i in range(321,341):
-        text.should.contain('HLSL Seq. No. {}\n'.format(i))
+        text.should.contain('HLSL Seq. No. {}'.format(i))
     page = seq(150)
     page('.page-handle').with_text('HLSL SEQ. NO. 160').length.should.equal(1)
 
@@ -142,7 +142,7 @@ def test_evidence_links(seq):
     page = seq(136)
     page = follow_link(page('a').with_text('NO-417'))
 
-    page.text().should.contain('Results 1-2 of 2 for * evidence: "NO-417"')
+    page.text().should.contain('Results 1-2 of 2 for * evidence:"NO-417"')
     page.text().should.contain('Organizational chart of the SS Medical Service (from September 1943)')
 
     page = follow_link(page('.document-row').with_text('Transcript for NMT 1: Medical Case').find('a'))
@@ -153,7 +153,7 @@ def test_exhibit_links(seq):
     page = seq(210)
     page = follow_link(page('a').with_text('61'))
 
-    page.text().should.contain('Results 1-5 of 5 for * exhibit: "Prosecution 61"')
+    page.text().should.contain('Results 1-5 of 5 for * exhibit:"Prosecution 61"')
     page.text().should.contain('Letter to Heinrich Himmler, sending report on high altitude experiments')
 
     page = follow_link(page('.document-row').with_text('Transcript for NMT 1: Medical Case').find('a'))
@@ -163,7 +163,7 @@ def test_exhibit_links(seq):
     page = seq(6267)
     page = follow_link(page('a').with_text('8'))
 
-    page.text().should.contain('Results 1-2 of 2 for * exhibit: "Rose 8"')
+    page.text().should.contain('Results 1-2 of 2 for * exhibit:"Rose 8"')
     page.text().should.contain('Extract from a report of a conference of consulting specialists, concerning dysentery')
 
     page = follow_link(page('.document-row').with_text('Transcript for NMT 1: Medical Case').find('a'))
