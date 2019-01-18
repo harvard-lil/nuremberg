@@ -18,7 +18,7 @@ django-compressor==2.2
 django-haystack==2.5.dev1
 django-http-proxy==0.4.3
 django-static-precompiler==1.8.2
-django==1.10.8
+django==1.11.18
 gunicorn==19.5.0
 idna==2.8                 # via requests
 lxml==3.6.0
@@ -36,6 +36,7 @@ pytest-cov==2.6.1
 pytest-django==3.4.5
 pytest-instafail==0.3.0
 pytest==3.10.1
+pytz==2018.9              # via django
 rcssmin==1.0.6            # via django-compressor
 requests==2.21.0          # via pysolr
 rjsmin==1.0.12            # via django-compressor
