@@ -6,11 +6,10 @@ import sure
 import pyquery
 from lxml.html import FormElement
 from django.test import Client
-from django.core.urlresolvers import reverse as url
+from django.urls import reverse as url
 from django.http import QueryDict
 from urllib.parse import urlencode, urlparse
 
-@pytest.fixture
 def go_to(url, expected_status=200, follow_redirects=True):
     response = client.get(url, follow=follow_redirects)
     assert response.status_code == expected_status, \
@@ -20,7 +19,6 @@ def go_to(url, expected_status=200, follow_redirects=True):
     page.querystring = response.request['QUERY_STRING']
     return page
 
-@pytest.fixture
 def follow_link(element):
     a_tag = element.closest('a')
     assert len(a_tag) >= 1, \
