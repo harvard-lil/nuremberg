@@ -1,10 +1,11 @@
-# After updating this file, run `pip-compile` to update requirements.txt.
+# After updating this file, run
 #
-# (If running from the top-level directory, run:
-# `pip-compile requirements.in nuremberg/core/tests/requirements.in` -o nuremberg/core/tests/requirements.txt)
+# `pip-compile && pip-compile requirements.in nuremberg/core/tests/requirements.in -o nuremberg/core/tests/requirements.txt`
+#
+# to update requirements.txt and nuremberg/core/tests/requirements.txt
 
 coverage==4.5.2
-pyquery==1.2.13
+pyquery==1.4.0
 pytest==3.10.1
 pytest-django==3.4.5
 pytest-cov==2.6.1
