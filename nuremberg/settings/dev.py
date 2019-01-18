@@ -1,3 +1,4 @@
+import os
 from .generic import *
 
 SECRET_KEY = '@xf59!g4b(=z==*@#(0hdjc$_q5taw-t-1m#9@o!nzx_h1z@r9'
@@ -9,6 +10,8 @@ DATABASES['default'] = {
   'USER': 'nuremberg',
   'HOST': 'localhost',
 }
+if os.environ.get('DOCKERIZED'):
+    DATABASES['default']['HOST'] = 'db'
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -17,6 +20,8 @@ HAYSTACK_CONNECTIONS = {
         'URL': 'http://127.0.0.1:8983/solr/nuremberg_dev'
     },
 }
+if os.environ.get('DOCKERIZED'):
+    HAYSTACK_CONNECTIONS['default']['URL'] = 'http://solr:8983/solr/nuremberg_dev'
 
 CACHES = {
     'default': {

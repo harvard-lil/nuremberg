@@ -205,3 +205,43 @@ In production, all site javascript is compacted into a single minified blob by `
 When deploying, you should run `manage.py compress` to bundle, minify and compress CSS and JS files, and `manage.py collectstatic` to move the remaining assets into `static/`. This folder should not be committed to git.
 
 For deployment to Heroku, these static files will be served by the WhiteNoise server. In other environments it may be appropriate to serve them directly with Nginx or Apache. If necessary, the output directory can be controlled with an environment-specific override of the `STATIC_ROOT` settings variable.
+
+
+## Appendix: Docker Development Environment
+
+We have initial support for local development via `docker-compose`.
+
+### Initial Setup
+
+`$ docker-compose up -d --build`
+
+This will build a 1.07GB image for the Nuremberg app and a 573MB image for the solr index, which may take a few minutes.
+
+Then, run `./init.sh` to set up the development and test databases and to populate the solr index. The database initializes quickly; the solr index takes several minutes.
+
+### Subsequently
+
+Start up the Docker containers in the background:
+`$ docker-compose up -d`
+
+Fire up the web server:
+`$ docker-compose exec web ./manage.py runserver 0.0.0.0:8000`
+Then visit [localhost:8000](http://localhost:8000).
+Press `control + c` to quit the web server.
+
+Run the python tests:
+`$ docker-compose exec web pytest`
+
+Run the browser tests:
+(not yet supported)
+
+### Starting Fresh
+
+Take down the Docker containers:
+`$ docker-compose down`
+
+Remove the databases and the solr index:
+`$ docker volume rm nuremberg_db_data nuremberg_solr_collection`
+
+Remove the images:
+`$ docker rmi nuremberg nuremberg-solr`
