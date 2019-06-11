@@ -13,7 +13,7 @@ django-compressor==2.2
 django-haystack==2.5.dev1
 django-http-proxy==0.4.3
 django-static-precompiler==1.8.2
-django==1.11.20
+django==1.11.21
 gunicorn==19.5.0
 idna==2.8                 # via requests
 lxml==3.6.0
