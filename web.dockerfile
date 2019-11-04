@@ -16,6 +16,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
 
 COPY requirements.txt ./requirements.txt
 COPY nuremberg/core/tests/requirements.txt ./test-requirements.txt
-RUN pip install -r requirements.txt -r test-requirements.txt \
+RUN pip install pip==19.3.1 \
+    && pip install -r requirements.txt -r test-requirements.txt \
     && rm requirements.txt \
     && rm test-requirements.txt
