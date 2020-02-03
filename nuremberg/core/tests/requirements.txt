@@ -18,7 +18,7 @@ django-compressor==2.2
 django-haystack==2.5.dev1
 django-http-proxy==0.4.3
 django-static-precompiler==1.8.2
-django==1.11.27
+django==1.11.28
 gunicorn==19.5.0
 idna==2.8                 # via requests
 lxml==3.6.0
@@ -46,4 +46,4 @@ urllib3==1.24.2
 whitenoise==4.1.2
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==42.0.2        # via pytest
+# setuptools==45.1.0        # via pytest
