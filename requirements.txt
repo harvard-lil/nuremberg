@@ -10,7 +10,7 @@ click==7.0                # via pip-tools
 dj-database-url==0.4.1
 django-appconf==1.0.2     # via django-compressor
 django-compressor==2.2
-django-haystack==2.5.dev1
+django-haystack==2.8.0
 django-http-proxy==0.4.3
 django-static-precompiler==1.8.2
 django==1.11.28

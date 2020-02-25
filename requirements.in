@@ -12,7 +12,7 @@ dj-database-url==0.4.1
 
 # Search
 lxml==3.6.0
-django-haystack==2.5.dev1
+django-haystack==2.8.0
 pysolr==3.5.0
 urllib3==1.24.2  ## from pysolr via requests
 
