@@ -216,56 +216,46 @@ We have initial support for local development via `docker-compose`.
 
 ### Initial Setup
 
-`$ docker-compose up -d --build`
+    docker-compose up -d --build
 
 This will build a 1.07GB image for the Nuremberg app and a 573MB image for the solr index, which may take a few minutes.
 
-Then, run `./init.sh` to set up the development and test databases and to populate the solr index. The database initializes quickly; the solr index takes several minutes.
+    ./init.sh
+
+This will set up the development and test databases and populate the solr index. The database initializes quickly; the solr index takes several minutes.
 
 ### Subsequently
 
 Start up the Docker containers in the background:
-`$ docker-compose up -d`
 
-Set up the dev database:
-
-    docker-compose exec db mysql -uroot -e "CREATE DATABASE IF NOT EXISTS nuremberg_dev"
-    docker-compose exec db mysql -uroot -e "GRANT ALL ON nuremberg_dev.* TO nuremberg"
-    docker-compose exec -T db mysql -unuremberg nuremberg_dev < nuremberg/core/tests/data.sql
-
-Set up the Solr index:
-
-    docker-compose exec web curl -sSL 'http://solr:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&instanceDir=/opt/solr/example/solr/nuremberg_dev&schema=schema.xml'
-    docker-compose exec web curl 'http://solr:8983/solr/admin/cores?action=RELOAD&core=nuremberg_dev'
-    docker-compose exec web python ./manage.py rebuild_index
+    docker-compose up -d
 
 Fire up the web server:
-`$ docker-compose exec web ./manage.py runserver 0.0.0.0:8000`
-Then visit [localhost:8000](http://localhost:8000).
-Press `control + c` to quit the web server.
 
-Set up the test database:
+    docker-compose exec web ./manage.py runserver 0.0.0.0:8000
 
-    docker-compose exec db mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test_nuremberg_dev"
-    docker-compose exec db mysql -uroot -e "GRANT ALL ON test_nuremberg_dev.* TO nuremberg"
-    docker-compose exec -T db mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
+Then visit [localhost:8000](http://localhost:8000). Press `Ctrl-c` to quit the web server.
 
 Run the python tests:
-`$ docker-compose exec web pytest`
 
-Run the browser tests:
-(not yet supported)
+    docker-compose exec web pytest
 
-Update `requirements.txt` and `nuremberg/core/tests/requirements.txt`
-`$ docker-compose exec web bash -c "pip-compile && pip-compile requirements.in nuremberg/core/tests/requirements.in -o nuremberg/core/tests/requirements.txt"`
+~Run the browser tests~: (not yet supported)
+
+Update `requirements.txt` and `nuremberg/core/tests/requirements.txt`:
+
+    docker-compose exec web bash -c "pip-compile && pip-compile requirements.in nuremberg/core/tests/requirements.in -o nuremberg/core/tests/requirements.txt"
 
 ### Starting Fresh
 
 Take down the Docker containers:
-`$ docker-compose down`
+
+    $ docker-compose down
 
 Remove the databases and the solr index:
-`$ docker volume rm nuremberg_db_data nuremberg_solr_collection`
+
+    docker volume rm nuremberg_db_data nuremberg_solr_collection
 
 Remove the images:
-`$ docker rmi nuremberg nuremberg-solr`
+
+    docker rmi nuremberg nuremberg-solr
