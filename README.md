@@ -227,10 +227,28 @@ Then, run `./init.sh` to set up the development and test databases and to popula
 Start up the Docker containers in the background:
 `$ docker-compose up -d`
 
+Set up the dev database:
+
+    docker-compose exec db mysql -uroot -e "CREATE DATABASE IF NOT EXISTS nuremberg_dev"
+    docker-compose exec db mysql -uroot -e "GRANT ALL ON nuremberg_dev.* TO nuremberg"
+    docker-compose exec -T db mysql -unuremberg nuremberg_dev < nuremberg/core/tests/data.sql
+
+Set up the Solr index:
+
+    docker-compose exec web curl -sSL 'http://solr:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&instanceDir=/opt/solr/example/solr/nuremberg_dev&schema=schema.xml'
+    docker-compose exec web curl 'http://solr:8983/solr/admin/cores?action=RELOAD&core=nuremberg_dev'
+    docker-compose exec web python ./manage.py rebuild_index
+
 Fire up the web server:
 `$ docker-compose exec web ./manage.py runserver 0.0.0.0:8000`
 Then visit [localhost:8000](http://localhost:8000).
 Press `control + c` to quit the web server.
+
+Set up the test database:
+
+    docker-compose exec db mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test_nuremberg_dev"
+    docker-compose exec db mysql -uroot -e "GRANT ALL ON test_nuremberg_dev.* TO nuremberg"
+    docker-compose exec -T db mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
 
 Run the python tests:
 `$ docker-compose exec web pytest`
