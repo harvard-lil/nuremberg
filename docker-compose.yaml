@@ -35,7 +35,7 @@ services:
       # let Django load Docker-specific settings conditionally
       - DOCKERIZED=True
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       - db
       - solr
