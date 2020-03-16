@@ -18,6 +18,8 @@ services:
       context: ./
       dockerfile: solr.dockerfile
     image: nuremberg-solr:0.1
+    ports:
+      - "127.0.0.1:8983:8983"
     volumes:
       # NAMED VOLUMES
       - solr_collection:/opt/solr/example/solr/nuremberg_dev/
