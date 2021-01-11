@@ -27,7 +27,7 @@ services:
     build:
       context: ./
       dockerfile: web.dockerfile
-    image: nuremberg:0.13
+    image: nuremberg:0.14
     tty: true
     command: bash
     volumes:
