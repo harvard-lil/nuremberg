@@ -5,7 +5,7 @@ This deployment branch contains all settings and files needed to deploy to Herok
 ```bash
 git checkout heroku
 git merge master
-git push heroku heroku:master
+git push heroku heroku:main
 git checkout master
 ```
 
