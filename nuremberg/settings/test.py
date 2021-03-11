@@ -2,6 +2,8 @@ from .dev import *
 
 COMPRESS_ENABLED = False
 
+ALLOWED_HOSTS = ['web']
+
 # Needed for template coverage report
 TEMPLATES[0]['OPTIONS']['debug'] = True
 

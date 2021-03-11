@@ -14,5 +14,5 @@ echo "Migrating databases"
 docker-compose exec web python manage.py migrate
 
 echo "Setting up solr index (slow)"
-docker-compose exec solr curl -sSL 'http://localhost:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&instanceDir=/opt/solr/example/solr/nuremberg_dev&schema=schema.xml'
+docker-compose exec solr curl -sSL 'http://localhost:8983/solr/admin/cores?action=CREATE&name=nuremberg_dev&instanceDir=/var/solr/data/nuremberg_dev&schema=schema.xml'
 docker-compose exec web python manage.py rebuild_index --noinput

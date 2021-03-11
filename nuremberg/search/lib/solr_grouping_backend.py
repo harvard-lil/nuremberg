@@ -62,6 +62,7 @@ class GroupedSearchQuery(SolrSearchQuery):
 
     def build_params(self, *args, **kwargs):
         res = super(GroupedSearchQuery, self).build_params(*args, **kwargs)
+        res.update({'q.op': 'AND'})
         if self.grouping_field is not None:
             res.update({'group': 'true',
                         'group.field': self.grouping_field,

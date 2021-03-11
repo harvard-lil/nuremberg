@@ -3,7 +3,10 @@ bots = ["Baiduspider"]
 
 
 class BlockCrawlerMiddleware:
-    def process_request(self, request):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
         user_agent = request.META.get('HTTP_USER_AGENT', None)
         request.is_crawler = False
 
@@ -15,4 +18,4 @@ class BlockCrawlerMiddleware:
         if request.is_crawler and request.path.startswith("/search/"):
             return HttpResponseForbidden('This address is removed from crawling. Check robots.txt')
 
-        return None
+        return self.get_response(request)

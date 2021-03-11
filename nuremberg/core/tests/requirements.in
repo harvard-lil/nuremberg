@@ -4,13 +4,12 @@
 #
 # to update requirements.txt and nuremberg/core/tests/requirements.txt
 
-coverage==4.5.2
-pyquery==1.4.0
-pytest==3.10.1
-pytest-django==3.4.5
-pytest-cov==2.6.1
-pytest-instafail==0.3.0
-selenium==2.53.5
-sure==1.2.24
-
--e git+https://github.com/emmalemma/django_coverage_plugin.git@e083da1624831c9485ec44f569d0689a59249f36#egg=django_coverage_plugin
+coverage==5.5
+django_coverage_plugin==1.8.0
+pyquery==1.4.3
+pytest==6.2.2
+pytest-django==4.1.0
+pytest-cov==2.11.1
+pytest-instafail==0.4.2
+selenium==3.141.0
+sure==1.4.11

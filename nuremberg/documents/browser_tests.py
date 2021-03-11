@@ -1,9 +1,9 @@
 from nuremberg.core.tests.clientside_helpers import *
 
 @pytest.fixture(scope='module')
-def document(browser, live_server):
+def document(browser, unblocked_live_server):
     document_id = 1
-    browser.get(live_server.url + url('documents:show', kwargs={'document_id': document_id}))
+    browser.get(unblocked_live_server.url + url('documents:show', kwargs={'document_id': document_id}))
     browser.execute_script("$('html').removeClass('touchevents'); $('html').removeClass('no-xhrresponsetypeblob'); Modernizr.touchevents = false; Modernizr.xhrresponsetypeblob = true;")
     browser.title.should.contain('List of Case 1 documents, prosecution and defense, in English.')
     return browser
@@ -62,9 +62,9 @@ def test_zooming(document, viewport, preloaded):
     img.size['width'].should.be.within(viewport.size['width']*expected_scale-40, viewport.size['width']*expected_scale)
 
     # zoom in
-    ActionChains(document).move_to_element_with_offset(viewport, 50, 50).click().perform()
+    ActionChains(document).move_to_element(viewport).move_by_offset(50, 50).click().perform()
     sleep(0.5)
-    ActionChains(document).move_to_element_with_offset(viewport, 50, 50).click().perform()
+    ActionChains(document).move_to_element(viewport).move_by_offset(50, 50).click().perform()
     sleep(0.5)
     expected_scale = 1.5
 

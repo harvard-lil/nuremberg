@@ -1,23 +1,32 @@
-from django.conf.urls import include, url
+from django.conf.urls import include, url, re_path
 from django.contrib import admin
-from httpproxy.views import HttpProxy
+from proxy.views import proxy_view
 from django.views.generic.base import RedirectView
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from proxy.views import proxy_view
+
+@csrf_exempt
+def proxied(base_url):
+    def proxy_handler(request, path):
+    	remoteurl = base_url + path
+    	return proxy_view(request, remoteurl)
+    return proxy_handler
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^transcripts/', include('nuremberg.transcripts.urls')),
-    url(r'^documents/', include('nuremberg.documents.urls')),
-    url(r'^photographs/', include('nuremberg.photographs.urls')),
-    url(r'^search/', include('nuremberg.search.urls')),
-    url(r'^', include('nuremberg.content.urls')),
-    url(r'^proxy_image/printing/(?P<url>.*)$',
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^transcripts/', include('nuremberg.transcripts.urls')),
+    re_path(r'^documents/', include('nuremberg.documents.urls')),
+    re_path(r'^photographs/', include('nuremberg.photographs.urls')),
+    re_path(r'^search/', include('nuremberg.search.urls')),
+    re_path(r'^', include('nuremberg.content.urls')),
+    re_path(r'^proxy_image/printing/(?P<path>.*)$',
         # RedirectView.as_view(url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/%(url)s')),
-        HttpProxy.as_view(base_url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing')),
-    url(r'^proxy_image/(?P<url>.*)$',
+        proxied(base_url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/')),
+    re_path(r'^proxy_image/(?P<path>.*)$',
         # RedirectView.as_view(url='http://s3.amazonaws.com/nuremberg-documents/%(url)s'))
-        HttpProxy.as_view(base_url='http://s3.amazonaws.com/nuremberg-documents')),
-    url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /search/", content_type="text/plain")),
+        proxied(base_url='http://s3.amazonaws.com/nuremberg-documents/')),
+    re_path(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /search/", content_type="text/plain")),
 ]
 
 handler400 = 'nuremberg.core.views.handler400'

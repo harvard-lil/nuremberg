@@ -143,7 +143,7 @@ def test_document_search(query):
 
     page = go_to(search_bar.submit_value('instructions'))
     page.text().should.contain('Results 1-15 of 323 for instructions')
-    page = follow_link(page('.document-row a'))
+    page = follow_link(page('.document-row a').with_text('Instructions for air force medical officers regarding freezing'))
 
     search_bar = page('input[type=search]')
     search_bar.should.not_be.empty

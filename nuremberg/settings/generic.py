@@ -46,11 +46,11 @@ INSTALLED_APPS = [
     'compressor',
 
     'haystack',
-    'httpproxy',
+    'proxy',
     'static_precompiler',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'nuremberg.core.middlewares.crawler.BlockCrawlerMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -60,7 +60,6 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.gzip.GZipMiddleware',
@@ -161,3 +160,4 @@ COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 # https://warehouse.python.org/project/whitenoise/
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+HAYSTACK_DEFAULT_OPERATOR = 'AND'
