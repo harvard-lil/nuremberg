@@ -24,7 +24,7 @@
     <form class="landing-search" action='{% url 'search:search' %}' method='GET'>
       {% include 'search/search-bar.html' %}
 
-      <div class="include-materials">
+      <fieldset class="include-materials">
         <legend>Include these materials:</legend>
         <label>
           <input type="checkbox" name="m" value="documents" checked />
@@ -38,7 +38,7 @@
           <input type="checkbox" name="m" value="photographs" checked />
           Photographs
         </label>
-      </div>
+      </fieldset>
     </form>
   </div>
 </section>
@@ -51,7 +51,7 @@
     descriptions of each document, and general information about the trials.
   </p>
   <p class="hint-serif">
-    The Project currently provides access to most of the following materials for five of the 
+    The Project currently provides access to most of the following materials for five of the
     United States Nuremberg Military Tribunals,
     NMT 1 (U.S.A. v. Karl Brandt et al.),
     NMT 2 (U.S.A. v. Erhard Milch), NMT3 (U.S.A. v. Josef Altstoetter et al.), NMT 4 (U.S.A. v. Pohl et al.), and NMT7 (U.S.A. v. Wilhelm List et al.):
@@ -91,7 +91,7 @@
   <h2> Approaches </h2>
   <div class="three-column-layout approaches-categories">
     <div class="column approach-category">
-      <img src="{% static 'images/landing/topics.png' %}" />
+      <img src="{% static 'images/landing/topics.png' %}" alt="Photograph of Nuremberg courtroom" />
       <h3> Trial Issues </h3>
       <p class="module">
         Uncover the topics related to the Nuremberg trials. Trial issues are criminal activities or subjects
@@ -109,7 +109,7 @@
       </p>
     </div>
     <div class="column approach-category">
-      <img src="{% static 'images/landing/people.jpg' %}" />
+      <img src="{% static 'images/landing/people.jpg' %}" alt="Photograph of Hermann Goering and Rudolph Hess reviewing a document at the trial" />
       <h3> People </h3>
       <p class="module">
         Access documents and transcripts related to specific people&mdash;defendants, authors, prosecutors,
@@ -128,7 +128,7 @@
       </ul>
     </div>
     <div class="column approach-category">
-      <img src="{% static 'images/landing/documents.jpg' %}" />
+      <img src="{% static 'images/landing/documents.jpg' %}" alt="A snippet from the header of the typewritten transcript for NMT-1, USA v. Karl Brandt" />
       <h3> Evidence File Documents </h3>
       <p class="module">
         Collections of documents assembled by IMT and NMT staff for possible use in the trials,
@@ -159,10 +159,10 @@
     <div class="sidebar-column transcript-links">
       <a class="unstyled trial-overlay" href="trial">
         <span class="trial-flag trial-nmt-1">NMT 1</span>
-        <img src="{% static 'images/landing/trial-transcripts.jpg' %}" />
+        <img src="{% static 'images/landing/trial-transcripts.jpg' %}" alt="A snippet from the header of the typewritten transcript for NMT-1, USA v. Karl Brandt" />
       </a>
       <h3> NMT Case 1 <br /> USA v. Karl Brandt et al. 1946-47 </h3>
-      <nav class="sub-nav vertical">
+      <nav class="sub-nav vertical" aria-label="Information about NMT-1">
         <li>
           <a href="{% url 'content:nmt_1_intro' %}">Table of Contents</a>
         </li>
@@ -203,9 +203,9 @@
       <p>As of fall 2016, we have digitized images of all 650,000 pages of documents and transcripts in the collection
      and have provided searchable text for 5 of the 13 transcripts using
      corrected OCR.</p>
-      
+
       <p>We have completed full document analysis -- and created searchable metadata for -- the document collections of 5 of the 13 trials.</p>
-      
+
     </div>
 
     <div class="progress-graph main-column">
@@ -216,7 +216,7 @@
         Documents and Transcripts Digitized
       </div>
     </div>
-    
+
     <div class="progress-graph main-column">
       <div class="progress-bar">
         <div class="bar-segment transcripts-keyed" style="width: 30%;">30%</div>

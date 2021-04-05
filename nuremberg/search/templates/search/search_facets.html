@@ -2,17 +2,17 @@
 
 {% for facet in labeled_facets %}
   {% if facet.label == 'Date' %}
-    <nav class="facet">
-      <h5>Date</h5>
+    <nav role="search" aria-label="filter by date" class="facet">
+      <div class="h5">Date</div>
       <div class="collapse">Hide</div>
       {% for value in facet.counts %}
         <p class="{% if forloop.counter > 5 %}hide{% endif %}" data-year="{{value.0|default:""}}">
           {{value.0|default:"Unknown"}}
           {% facet_exists facet.field value.0 as existing_facet %}
           {% if existing_facet %}
-            <a  class="exists" href="{% remove_facet existing_facet %}"> &times; </a>
+            <a  class="exists" href="{% remove_facet existing_facet %}" aria-label="remove {{value.0}} filter"> &times; </a>
           {% else %}
-            <a href="{% add_facet facet.field value.0 %}"> ({{value.1}}) </a>
+            <a href="{% add_facet facet.field value.0 %}" aria-label="show {{value.1}} results with {{facet.label}} {{value.0|default:"Unknown"}}"> ({{value.1}}) </a>
           {% endif %}
         </p>
       {% empty %}
@@ -23,16 +23,16 @@
           <a class="show-all">{{facet.counts|length|add:"-5"}} more</a>
         </p>
       {% endif %}
-      <p> Range: </p>
-      <form class="date-filter-form" action="">
+      <p> Year range: </p>
+      <form class="date-filter-form" role="search" aria-label="Filter by date range" action="">
         <input type="hidden" name="q" value="{{query}}" />
         {% for filter in form.applied_filters %}
           <input type="hidden" name="f" value="{{filter.2}}" />
         {% endfor %}
         <p class="date-filter">
-            <input type="number" name="year_min" value="{{ form.date_range.0|default:"" }}"/>
+            <input type="number" name="year_min" title="Beginning of year range" value="{{ form.date_range.0|default:"" }}"/>
             to
-            <input type="number" name="year_max" value="{{ form.date_range.1|default:"" }}" />
+            <input type="number" name="year_max" title="End of year range" value="{{ form.date_range.1|default:"" }}" />
             <button class="go-button">Filter</button>
         </p>
     </form>
@@ -43,17 +43,17 @@
       </div>
     </nav>
   {% else %}
-    <nav class="facet">
-      <h5>{{facet.label}}</h5>
+    <nav role="search" aria-label="filter by {{facet.label}}" class="facet">
+      <div class="h5">{{facet.label}}</div>
       <div class="collapse">Hide</div>
       {% for value in facet.counts %}
         <p class="{% if forloop.counter > 5 %}hide{% endif %}">
           {{value.0|default:"Unknown"}}
           {% facet_exists facet.field value.0 as existing_facet %}
           {% if existing_facet %}
-            <a class="exists" href="{% remove_facet existing_facet %}"> &times; </a>
+            <a class="exists" href="{% remove_facet existing_facet %}" aria-label="remove {{value.0}} filter"> &times; </a>
           {% else %}
-            <a href="{% add_facet facet.field value.0 %}"> ({{value.1}}) </a>
+            <a href="{% add_facet facet.field value.0 %}" aria-label="show {{value.1}} results with {{facet.label}} {{value.0|default:"Unknown"}}"> ({{value.1}}) </a>
           {% endif %}
         </p>
       {% empty %}

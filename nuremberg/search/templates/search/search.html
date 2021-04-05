@@ -9,8 +9,11 @@
 
 {% block content %}
 <section class="theme-beige thin">
+  <h1 class="h4">Search the archive
+    <a class="h5" tabindex="1" href="#results">Jump to results</a>
+  </h1>
   <div class="full-width">
-    <form class="results-search" action='{% url 'search:search' %}' method='GET'>
+    <form class="results-search" role="search" aria-label="full-text search" action='{% url 'search:search' %}' method='GET'>
       {% include 'search/search-bar.html' %}
       <div class="show-advanced-search"><a>Advanced Search</a></div>
     </form>
@@ -19,10 +22,10 @@
 <section class="theme-light results">
   <div class="sidebar-layout">
     <div class="sidebar-column search-facets">
-      <h4>Filter Results</h4>
+      <div class="h4">Filter Results</div>
       {% include 'search/search_facets.html' %}
     </div>
-    <div class="main-column search-results">
+    <div class="main-column search-results" id="results">
       <div class="results-summary">
         <div class="loading-indicator hide">
           Loading results...
@@ -80,6 +83,7 @@
         </div>
       {% else %}
         <table>
+          <caption>Search results</caption>
           <thead>
             <tr>
               <th class="material-col"> Material </th>

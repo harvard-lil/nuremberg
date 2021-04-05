@@ -104,7 +104,7 @@ class DocumentImage(models.Model):
         return self.find_url(self.FULL)
 
     def image_tag(self):
-        return '<a href="{0}"><img src="{0}" width=100 /></a>'.format(self.url)
+        return '<a href="{0}"><img src="{0}" alt="Scanned document page {1}" width=100 /></a>'.format(self.url, self.page_number)
     image_tag.allow_tags = True
 
     def __str__(self):

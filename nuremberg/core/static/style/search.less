@@ -8,6 +8,7 @@
   }
 }
 
+
 section.results {
   padding-top: 20px;
 }
@@ -73,7 +74,7 @@ section.results {
 }
 
 .search-facets {
-  h4 {
+  .h4 {
     font-size: 18px;
   }
   p {
@@ -91,10 +92,10 @@ section.results {
 
     overflow: auto;
 
-    h5 {
+    .h5 {
       margin: 0 0 10px;
     }
-    h6 {
+    .h6 {
       .sans-serif(normal, 14px, 19px);
       color: @black;
       margin: 5px 0;
@@ -104,6 +105,7 @@ section.results {
     }
     a.exists {
       color: @dark-gray;
+      font-weight: bold;
       border: none;
       font-size: 20px;
       line-height: 17px;
@@ -164,6 +166,7 @@ section.results {
   }
   .start-year, .end-year {
     &:extend(p.small);
+    color: @darker-gray;
     margin-top: 16px;
   }
   .start-year {
@@ -350,6 +353,7 @@ p.snippets {
   .page-number {
     border: none;
 
+    text-decoration: underline !important;
     &.current {
       color: @black;
     }

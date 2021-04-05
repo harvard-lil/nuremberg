@@ -7,7 +7,7 @@
 
 {% block header %}
   {{ block.super }}
-  <nav class="sub-nav horizontal">
+  <nav  aria-label="Categories of people charged in the trials" class="sub-nav horizontal">
     <li>
       <a href="#gov">Government</a>
     </li>
@@ -29,26 +29,26 @@
 {% block content %}
 <section class="theme-light">
   <div class="partial-width">
-  <h1>People</h1>  
-    <p class="intro"> 
+  <h1>People</h1>
+    <p class="intro">
         Who was who in Nazi Germany
     </p>
-    </div> 
+    </div>
     </section>
     <section class="theme-light">
-        <h2></h2><br />
-        
+      <br />
+
   <div class="three-column-layout-people">
     <div class="column">
-        <img src="{% static 'images/people/streicher.jpg' %}" width="188" height="280" />
+        <img src="{% static 'images/people/streicher.jpg' %}" width="188" height="280" alt="Photo of Julius Streicher at the trial"/>
       <p class="caption-people">Julius Streicher</p>
     </div>
     <div class="column">
-        <img src="{% static 'images/people/goering.jpg' %}" width="239" height="280"/>
+        <img src="{% static 'images/people/goering.jpg' %}" width="239" height="280" alt="Photo of Hermann Goering at the trial"/>
       <p class="caption-people">Hermann Goering</p>
     </div>
     <div class="column">
-        <img src="{% static 'images/people/ribbentrop.jpg' %}" width="189" height="280"/>
+        <img src="{% static 'images/people/ribbentrop.jpg' %}" width="189" height="280" alt="Photo of Joachim von Ribbentrop at the trial"/>
       <p class="caption-people">Joachim von Ribbentrop</p>
     </div>
   </div>

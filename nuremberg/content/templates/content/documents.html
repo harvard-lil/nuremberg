@@ -7,7 +7,7 @@
 
 {% block header %}
   {{ block.super }}
-  <nav class="sub-nav horizontal">
+  <nav  aria-label="Information about documents in the collection" class="sub-nav horizontal">
     <li>
       <a href="#doc_analysis">Document Analysis</a>
     </li>
@@ -28,13 +28,13 @@
 
 {% block content %}
 <div class="sub-nav-padding"></div>
-<section class="theme-light">   
+<section class="theme-light">
   <div class="partial-width">
-  <h1>Documents</h1>  
-    <p class="intro"> 
+  <h1>Documents</h1>
+    <p class="intro">
         Document structure and schema used in analyzing documents
     </p>
-    </div>  
+    </div>
 </section>
 <section class="theme-light">
   <h2>Analysis</h2>
@@ -71,7 +71,7 @@
   documents. For trial documents we note the trial issues (a prosecution charge or a
   defense response) and the defendant(s) to which the document relates. Since evidence
   file documents are not part of any one trial, these attributes do not apply.</p>
-  
+
   <div class="anchor" id="data_structure"></div>
   <h3>Database Fields for Each Document</h3>
 
@@ -148,7 +148,6 @@
 </section>
 
 <section class="theme-light">
-  <div class="anchor" id="doc_structure"></div>
   <h2 id="doc_structure"> Documents Related to the Nuremberg Trials </h2>
   <div class="three-column-layout serif">
     <div class="column">
@@ -198,26 +197,26 @@
   </div>
   <div class="four-column-layout">
     <div class="column">
-      <a class="unstyled" href="/documents/1264-letter-to-heinrich-himmler?q=hlsl:1264#p.1">
-        <img src="{% static 'images/approaches/document-photostat.png' %}" />
+      <a aria-label="link to photostat" class="unstyled" href="/documents/1264-letter-to-heinrich-himmler?q=hlsl:1264#p.1">
+        <img src="{% static 'images/approaches/document-photostat.png' %}" alt="Thumbnail of scanned photostat of original evidence document" />
       </a>
       <p class="caption">Photostat of original document</p>
     </div>
     <div class="column">
-      <a class="unstyled" href="/documents/1265-letter-to-heinrich-himmler?q=hlsl:1265#p.1">
-        <img src="{% static 'images/approaches/document-german.png' %}" />
+      <a aria-label="link to German typescript" class="unstyled" href="/documents/1265-letter-to-heinrich-himmler?q=hlsl:1265#p.1">
+        <img src="{% static 'images/approaches/document-german.png' %}" alt="Thumbnail of scanned typewritten page of German transcription of the evidence document" />
       </a>
       <p class="caption">German typescript</p>
     </div>
     <div class="column">
-      <a class="unstyled" href="/documents/1266-letter-to-heinrich-himmler?q=hlsl:1266#p.1">
-        <img src="{% static 'images/approaches/document-english.png' %}" />
+      <a aria-label="link to English translation" class="unstyled" href="/documents/1266-letter-to-heinrich-himmler?q=hlsl:1266#p.1">
+        <img src="{% static 'images/approaches/document-english.png' %}" alt="Thumbnail of scanned typewritten page of the English translation of the document" />
       </a>
       <p class="caption">English translation</p>
     </div>
     <div class="column">
-      <a class="unstyled" href="/documents/1263-letter-to-heinrich-himmler?q=hlsl:1263#p.1">
-        <img src="{% static 'images/approaches/document-analysis.png' %}" />
+      <a aria-label="link to English analysis" class="unstyled" href="/documents/1263-letter-to-heinrich-himmler?q=hlsl:1263#p.1">
+        <img src="{% static 'images/approaches/document-analysis.png' %}" alt="Thumbnail of scanned typewritten page of the English analysis of the document"  />
       </a>
       <p class="caption">Staff analysis</p>
     </div>
@@ -232,13 +231,13 @@
   </div>
   <div class="centered-column">
     <a class="unstyled" href="/documents/119-letter-to-heinrich-himmler?q=hlsl:119#p.1">
-      <img src="{% static 'images/approaches/document-exhibit.png' %}" />
+      <img src="{% static 'images/approaches/document-exhibit.png' %}" alt="Thumbnail of scanned typewritten page of the English translation of the document" />
     </a>
     <p class="caption">Prosecution Exhibit No. 166, Medical Case</p>
   </div>
 </section>
 
-<section class="theme-light">  
+<section class="theme-light">
   <div class="anchor" id="ef_doc_groups"></div>
   <h2>Evidence File Document Groups</h2>
   <p>These evidence sets were assembled by various war crimes staffs for use in the IMT
@@ -248,7 +247,7 @@
   <p>The subject area indicated for each group is approximate rather than strictly
   literal:</p>
 
-  <table border="0" cellspacing="0" cellpadding="0" width="100%">
+  <table>
     <tr>
       <td>C</td>
 
@@ -268,13 +267,13 @@
     </tr>
 
     <tr>
-      <td valign="top">ECH</td>
+      <td>ECH</td>
 
       <td>Economics-Heidelberg (IMT, Heidelberg Document Center)</td>
     </tr>
 
     <tr>
-      <td valign="top">ECR</td>
+      <td>ECR</td>
 
       <td>Economics-Reichskreditkassen (IMT, Rosenheim Document Center)</td>
     </tr>
@@ -286,19 +285,19 @@
     </tr>
 
     <tr>
-      <td valign="top">M</td>
+      <td>M</td>
 
       <td>Melvin (IMT) (Melvin Jones, Assistant Prosecutor of the United Kingdom)</td>
     </tr>
 
     <tr>
-      <td valign="top">NG</td>
+      <td>NG</td>
 
       <td>Nuremberg Government (NMT; concerning Nazi government agencies)</td>
     </tr>
 
     <tr>
-      <td valign="top">NI</td>
+      <td>NI</td>
 
       <td>Nuremberg Industrialist (NMT; concerning industry and finance, including NID
       for Dresdener Bank and NIK for Krupp)</td>
@@ -311,14 +310,14 @@
     </tr>
 
     <tr>
-      <td valign="top">NO</td>
+      <td>NO</td>
 
       <td>Nuremberg Organizations (NMT; concerning Nazi organizations such as the
       SS)</td>
     </tr>
 
     <tr>
-      <td valign="top">NOKW&nbsp;</td>
+      <td>NOKW&nbsp;</td>
 
       <td>Nuremberg High Command (NMT; concerning the Oberkommando der Wehrmacht)</td>
     </tr>
@@ -330,28 +329,27 @@
     </tr>
 
     <tr>
-      <td valign="top">PS</td>
+      <td>PS</td>
 
       <td>Paris-Storey (IMT) (Col. R. Storey, Documentation Division, Paris; the
       principal US collection for the IMT)</td>
     </tr>
 
     <tr>
-      <td valign="top">R</td>
+      <td>R</td>
 
       <td>Rothschild (IMT) (Lt. Rothschild; from OSS collection in London)</td>
     </tr>
 
     <tr>
-      <td valign="top">TC</td>
+      <td>TC</td>
 
       <td>Treaty Committee (IMT; documents concerning international agreements)</td>
     </tr>
   </table>
 </section>
 
-<section>    
-  <div class="anchor" id="ef_doc_analysts"></div>
+<section>
   <h2 id="ef_doc_analysts">Evidence Document Analysts in the Office of the Chief of Counsel for War
   Crimes</h2>
 

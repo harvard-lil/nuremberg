@@ -10,14 +10,21 @@
     </p>
     {% if result.material_type == 'Document' %}
       <a class="unstyled" href="{% url 'documents:show' document_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
-        <h3>{{result.title}}</h3>
+        <div class="h3">{{result.title}}</div>
         {% if result.literal_title %}
           <p>{{result.literal_title|truncatewords:35|truncatechars:300}}</p>
+        {% endif %}
+
+        {% if result.material_type == 'Document' %}
+          <p>
+            <strong>HLSL Item No.:</strong>
+            {{result.pk}}
+          </p>
         {% endif %}
       </a>
     {% elif result.material_type == 'Photograph' %}
       <a class="unstyled" href="{% url 'photographs:show' photograph_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
-        <h3>{{result.title}}</h3>
+        <div class="h3">{{result.title}}</div>
         <p>
           {% if result.highlighted %}
             {% for snippet in result.highlighted.highlight|slice:":1" %}
@@ -34,7 +41,7 @@
       </a>
     {% elif result.material_type == 'Transcript' %}
       <a class="unstyled" href="{% url 'transcripts:search' transcript_id=result.transcript_id slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
-        <h3>{{result.title}}</h3>
+        <div class="h3">{{result.title}}</div>
         <p>{{group.hits}} result{{ group.hits|pluralize }} in this transcript</p>
         <p class="snippets">
           {% if group.hits == 1 %}
@@ -72,12 +79,6 @@
         {{result.language}}
       </p>
       {% endcomment %}
-      {% if result.material_type == 'Document' %}
-        <p>
-          <strong>HLSL Item No.:</strong>
-          {{result.pk}}
-        </p>
-      {% endif %}
       {% if result.source %}
         <p>
           <strong>Source of Text:</strong>
@@ -130,7 +131,7 @@
   <td>
     {% if result.material_type == 'Photograph' %}
       <a class="unstyled" href="{% url 'photographs:show' photograph_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
-        <img src="{{result.thumb_url}}" />
+        <img src="{{result.thumb_url}}" alt="Thumbnail: {{result.inscription}}" />
       </a>
     {% else %}
       {% for author in result.authors %}
@@ -141,13 +142,13 @@
     {% endif %}
   </td>
   <td>
-    <h5 class="date">
+    <span class="date">
         {% if result.date %}
           {{result.date}}
         {% else %}
           Unknown
         {% endif %}
-      </h5>
+      </span>
   </td>
   <td class="type-col">
     <div class="document-type-icon type-{{result.material_type|slugify}}">

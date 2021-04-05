@@ -7,7 +7,7 @@
 
 {% block header %}
   {{ block.super }}
-  <nav class="sub-nav horizontal">
+  <nav aria-label="Approaches to the collection" class="sub-nav horizontal">
     <li>
       <a href="#people">People Involved</a>
     </li>
@@ -47,13 +47,13 @@
       </p>
     </div>
     <div class="main-column">
-      <img src="{% static 'images/approaches/people-hero.png' %}" />
+      <img src="{% static 'images/approaches/people-hero.png' %}" alt="Photograph of judges at the Nuremberg tribunal" />
     </div>
   </div>
   <h3 class="serif"> The People of the Nuremberg Trials </h3>
   <div class="three-column-layout modules">
     <div class="column">
-      <img src="{% static 'images/approaches/people-defendants.jpg' %}" />
+      <img src="{% static 'images/approaches/people-defendants.jpg' %}" alt="Photograph of Hermann Goering and Karl Brandt at the trial" />
       <h4>Defendants</h4>
       <p>
         This section outlines the organizations and leading individuals in four overlapping spheres
@@ -63,7 +63,7 @@
       </p>
     </div>
     <div class="column">
-      <img src="{% static 'images/approaches/people-authors.jpg' %}" />
+      <img src="{% static 'images/approaches/people-authors.jpg' %}" alt="Photograph of Hermann Goering and Karl Brandt at the trial" />
       <h4>Authors</h4>
       <p>
         This section outlines the organizations and leading individuals in four overlapping spheres
@@ -73,7 +73,7 @@
       </p>
     </div>
     <div class="column">
-      <img src="{% static 'images/approaches/people-speakers.jpg' %}" />
+      <img src="{% static 'images/approaches/people-speakers.jpg' %}" alt="Photograph of Hermann Goering and Karl Brandt at the trial" />
       <h4>Speakers</h4>
       <p>
         This section outlines the organizations and leading individuals in four overlapping spheres
@@ -251,25 +251,25 @@
   <div class="four-column-layout">
     <div class="column">
       <a class="unstyled" href="/documents/1264-letter-to-heinrich-himmler?q=hlsl:1264#p.1">
-        <img src="{% static 'images/approaches/document-photostat.png' %}" />
+        <img src="{% static 'images/approaches/document-photostat.png' %}" alt="Thumbnail of scanned photostat of original evidence document" />
       </a>
       <p class="caption">Photostat of original document</p>
     </div>
     <div class="column">
       <a class="unstyled" href="/documents/1265-letter-to-heinrich-himmler?q=hlsl:1265#p.1">
-        <img src="{% static 'images/approaches/document-german.png' %}" />
+        <img src="{% static 'images/approaches/document-german.png' %}" alt="Thumbnail of scanned typewritten page of German transcription of the evidence document" />
       </a>
       <p class="caption">German typescript</p>
     </div>
     <div class="column">
       <a class="unstyled" href="/documents/1266-letter-to-heinrich-himmler?q=hlsl:1266#p.1">
-        <img src="{% static 'images/approaches/document-english.png' %}" />
+        <img src="{% static 'images/approaches/document-english.png' %}" alt="Thumbnail of scanned typewritten page of the English translation of the document" />
       </a>
       <p class="caption">English translation</p>
     </div>
     <div class="column">
       <a class="unstyled" href="/documents/1263-letter-to-heinrich-himmler?q=hlsl:1263#p.1">
-        <img src="{% static 'images/approaches/document-analysis.png' %}" />
+        <img src="{% static 'images/approaches/document-analysis.png' %}" alt="Thumbnail of scanned typewritten page of the English analysis of the document" />
       </a>
       <p class="caption">Staff analysis</p>
     </div>
@@ -285,7 +285,7 @@
   </div>
   <div class="centered-column">
     <a class="unstyled" href="/documents/119-letter-to-heinrich-himmler?q=hlsl:119#p.1">
-      <img src="{% static 'images/approaches/document-exhibit.png' %}" />
+      <img src="{% static 'images/approaches/document-exhibit.png' %}" alt="Thumbnail of scanned typewritten page of the English translation of the document" />
     </a>
     <p class="caption">Prosecution Exhibit No. 166, Medical Case</p>
   </div>
