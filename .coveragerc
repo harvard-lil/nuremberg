@@ -3,6 +3,7 @@ data_file=coverage/.coverage
 plugins=
   django_coverage_plugin
 omit=
+  */content/templates/*
   */management/*
   */lib/*
   */settings/*
