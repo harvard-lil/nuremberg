@@ -217,7 +217,7 @@ def test_pagination(query):
 
     page.text().should.contain('Results 1-15 of 6065 for *')
 
-    page = follow_link(page('a').with_text('404'))
+    page = follow_link(page('a.page-number').with_text('404'))
 
     page.text().should.contain('Results 6046-6060 of 6065 for *')
 
