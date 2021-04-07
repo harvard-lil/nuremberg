@@ -3,8 +3,28 @@
 > This is a Django client for the digital archives of the Nuremberg Trials Project maintained by the Harvard Law Library.
 > It is intended as a open-access web app for scholars, researchers, and members of the public, exposing the digitized documents, full-text trial transcripts, and rich search features for the same in a friendly, modern interface.
 
+0) Upgrade notes
 1) Project Structure
 2) Appendix: Docker Development Environment
+
+## Upgrade Notes
+
+This codebase has been updated to Django 3, with the latest version of all required pip modules. The codebase is functionally unchanged, and it should be easy to upgrade a deployment in-place without upgrading other infrastructure.
+
+1. update codebase: `git checkout django-3`
+1. upgrade pip modules: `pip install -r requirements.txt`
+1. run Django 3 migrations (Upgrading the default tables is necessary for Django to run, but the app schema has not changed): `manage.py migrate`
+
+### Dev environment
+
+If upgrading a dev environment, the best thing to do is rebuild the Docker setup from scratch following the instructions in the appendix below. That will set up Solr 8 for development, as well as the Selenium container which is used to run front-end tests in a headless browser.
+
+### Solr 8
+
+The Django 3 codebase should be compatible with current backend services, including Solr 4, and the existing `schema.xml` file in the project root should continue to work for that. However, the app's configuration has been upgraded to support Solr 8.
+
+In order to migrate, the simplest thing is to create a new Solr 8 deployment, and reindex as instructed below. Make sure to upload both the `schema.xml` and `solrconfig.xml` files from the `solr_conf/` directory, as otherwise Solr 8 will attempt to use its default "managed schema". Then connect the app to the new deployment and run the reindex command to populate the new indexes.
+
 
 ## Project Structure
 
@@ -29,12 +49,14 @@ This document covers the following topics:
 
 ### Setup
 
+The easiest way to set up the app is using Docker, as described in the appendix to this document. The following legacy setup information may be useful for deployment and debugging.
+
 To run the app in a development environment, you'll need:
 
 - Python 3.5
 - Python dependencies
 - MySQL
-- Solr 4
+- Solr 8
 
 #### Python
 
@@ -82,16 +104,15 @@ mysql -unuremberg test_nuremberg_dev < nuremberg/core/tests/data.sql
 
 #### Solr
 
-Solr is needed for the Haystack search engine to run. The app is developed against Solr 4.10.4 -- Solr 5, the latest version, is incompatible with Haystack. Make sure it's installed and configured in the appropriate `settings/` file.
-
-You will need to install the Solr schema by running:
+For the latest Solr 8, build the Solr schema by running:
 
 ```bash
-manage.py build_solr_schema --filename=/location/of/solr/schema.xml
-curl 'http://localhost:8983/solr/admin/cores?action=RELOAD&core=$SOLR_CORE'
+docker-compose exec web python manage.py build_solr_schema --configure-dir=solr_conf
 ```
 
-Then update the index itself:
+This will generate both `schema.xml` and `solrconfig.xml` under the `solr_conf` directory. You can then rebuild the Solr docker container to use the updated config files.
+
+To update the index itself:
 
 ```bash
 manage.py rebuild_index
@@ -99,7 +120,7 @@ manage.py rebuild_index
 
 (It will take a couple of minutes to reindex fully.)
 
-Do this any time you make changes to `search_indexes.py` or `solr.xml`.
+Do this any time you make changes to `search_indexes.py` or `schema.xml`.
 
 #### Run the server
 
@@ -125,13 +146,13 @@ py.test
 
 Pytest is configured in `pytest.ini` to run all files named `tests.py`.
 
-There is also a Selenium/PhantomJS suite to test the behavior of the document viewer front-end. These tests take a while to run, don't produce coverage data, and are relatively unreliable, so they aren't run as part of the default suite. However they are still useful, as they exercise the full stack all the way through image downloading and preloading. They can be run explicitly when necessary:
+There is also a Selenium suite to test the behavior of the document viewer front-end. These tests take a while to run, don't produce coverage data, and are relatively unreliable, so they aren't run as part of the default suite. However they are still useful, as they exercise the full stack all the way through image downloading and preloading. They can be run explicitly when necessary.
+
+The browser tests require use of the Docker development environment, which includes an isolated Selenium container for running the tests.
 
 ```bash
-py.test nuremberg/documents/browser_tests.py
+docker-compose exec web pytest nuremberg/documents/browser_tests.py
 ```
-
-The browser tests require PhantomJS to be installed (`npm install -g phantomjs`), and they generate screenshots in `/screenshots` to aid in debugging.
 
 
 #### Coverage
@@ -169,9 +190,9 @@ The test fixture database dump is, for all intents and purposes, a production-re
 
 #### Solr
 
-Solr indexes are defined in relevant `search_indexes.py` files, and additional indexing configuration is in the `search/templates/search_configuration/solr.xml` file used to generate `schema.xml`.
+Solr indexes are defined in relevant `search_indexes.py` files, and additional indexing configuration is in the `search/templates/search_configuration/schema.xml` file used to generate `solr_conf/schema.xml`.
 
-The Solr schema must be maintained as part of the deploy process. When deploying an updated schema, make sure to generate and upload the `schema.xml` file using `manage.py build_solr_schema`, then run a complete reindexing.
+The Solr schema must be maintained as part of the deploy process. When deploying an updated schema, make sure to generate and upload the `schema.xml` and `solrconfig.xml` files created by using `manage.py build_solr_schema --configure-dir=solr_conf`, then run a complete reindexing.
 
 > WARNING: Be cautious when doing this in production-- although in general reindexing will happen transparently, certain schema changes will cause a `SCHEMA-INDEX-MISMATCH` error that will cause search pages to crash until reindexing completes.
 
@@ -210,7 +231,7 @@ When deploying, you should run `manage.py compress` to bundle, minify and compre
 For deployment to Heroku, these static files will be served by the WhiteNoise server. In other environments it may be appropriate to serve them directly with Nginx or Apache. If necessary, the output directory can be controlled with an environment-specific override of the `STATIC_ROOT` settings variable.
 
 
-## Appendix: Docker Development Environment
+## Docker Development Environment
 
 We have initial support for local development via `docker-compose`.
 
@@ -238,13 +259,13 @@ Then visit [localhost:8000](http://localhost:8000). Press `Ctrl-c` to quit the w
 
 Run the python tests:
 
-    docker-compose exec web pytest
+    `docker-compose exec web pytest`
 
-~Run the browser tests~: (not yet supported)
+Run the browser tests:
 
-Update `requirements.txt` and `nuremberg/core/tests/requirements.txt`:
+    `docker-compose exec web pytest nuremberg/documents/browser_tests.py`
 
-    docker-compose exec web bash -c "pip-compile && pip-compile requirements.in nuremberg/core/tests/requirements.in -o nuremberg/core/tests/requirements.txt"
+(These tests run in a separate Selenium docker container, so no further setup should be required.)
 
 ### Starting Fresh
 
