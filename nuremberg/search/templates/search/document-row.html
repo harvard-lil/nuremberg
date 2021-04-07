@@ -131,7 +131,7 @@
   <td>
     {% if result.material_type == 'Photograph' %}
       <a class="unstyled" href="{% url 'photographs:show' photograph_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
-        <img src="{{result.thumb_url}}" alt="Thumbnail: {{result.inscription}}" />
+        <img src="{{result.thumb_url}}" alt="Thumbnail of a photograph: {{result.literal_title}}" />
       </a>
     {% else %}
       {% for author in result.authors %}

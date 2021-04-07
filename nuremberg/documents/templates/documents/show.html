@@ -98,7 +98,7 @@
           {% endwith %}
         </p>
         {% with document.personal_authors.all as personal_authors %}
-        <div class="h6">Author{{personal_authors|length|pluralize}}</div>
+        <h2 class="h6">Author{{personal_authors|length|pluralize}}</h2>
         {% for author in personal_authors %}
           <p>
             <a href="{% search_query author=author.full_name %}" aria-label="search for author {{author.full_name}}">{{author.first_name}} {{author.last_name}}</a>
@@ -110,7 +110,7 @@
         {% endwith %}
         {% with document.group_authors.all as group_authors %}
         {% if group_authors %}
-          <div class="h6">Institutional Author{{group_authors|length|pluralize}}</div>
+          <h2 class="h6">Institutional Author{{group_authors|length|pluralize</h2>
           {% for author in group_authors %}
             <p>
               <a href="{% search_query author=author.short_name %}" aria-label="search for author {{author.name}}">{{author.name}}</a>
@@ -121,7 +121,7 @@
 
         {% with document.defendants.all as defendants %}
         {% if defendants %}
-          <div class="h6">Defendant{{defendants|length|pluralize}}</div>
+          <h2 class="h6">Defendant{{defendants|length|pluralize}}</h2>
           {% for defendant in defendants %}
             <p>
               <a href="{% search_query defendant=defendant.full_name %}" aria-label="search for defendant {{defendant.full_name}}">{{defendant.first_name}} {{defendant.last_name}}</a>
@@ -171,7 +171,7 @@
       {% endblock %}
       {% with document.activities.all as activities %}
       {% if activities %}
-        <div class="h6">Trial Issue{{activities|length|pluralize}}</div>
+        <h2 class="h6">Trial Issue{{activities|length|pluralize}}</h2>
         <p>
           {% for activity in activities %}
               <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
