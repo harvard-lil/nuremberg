@@ -10,7 +10,7 @@
 {% block content %}
 <section role="search" aria-label="Search the archive" class="theme-beige thin">
   <h1 class="h4">Search the archive
-    <a class="h5" tabindex="1" href="#results">Jump to results</a>
+    <!-- <a class="h5" tabindex="1" href="#results">Jump to results</a> -->
   </h1>
   <div class="full-width">
     <form class="results-search" role="search" aria-label="full-text search" action='{% url 'search:search' %}' method='GET'>
@@ -63,6 +63,7 @@
           </label>
         </div>
       </div>
+      <div id="content"></div>
       {% if form.applied_filters %}
         <div class="applied-filters">
           {% for filter in form.applied_filters %}
