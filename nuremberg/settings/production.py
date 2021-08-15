@@ -12,12 +12,13 @@ STATIC_PRECOMPILER_DISABLE_AUTO_COMPILE = False
 COMPRESS_OFFLINE = True
 
 DATABASES['default'] = dj_database_url.config(env='CLEARDB_DATABASE_URL')
-del DATABASES['default']['OPTIONS']['reconnect'] # not supported by mysqlclient apparently
+if 'OPTIONS' in DATABASES['default']:
+    del DATABASES['default']['OPTIONS']['reconnect'] # not supported by mysqlclient apparently
 
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'nuremberg.search.lib.solr_grouping_backend.GroupedSolrEngine',
-        'URL': os.environ.get('OPENSOLR_URL', ''),
+        'URL': os.environ.get('WEBSOLR_URL', ''),
     },
 }
 

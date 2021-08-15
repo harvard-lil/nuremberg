@@ -23,6 +23,10 @@ HAYSTACK_CONNECTIONS = {
 if os.environ.get('DOCKERIZED'):
     HAYSTACK_CONNECTIONS['default']['URL'] = 'http://solr:8983/solr/nuremberg_dev'
 
+# this can be used to index a local db to a remote Solr instance
+if os.environ.get('SOLR_REMOTE'):
+    HAYSTACK_CONNECTIONS['default']['URL'] = os.environ.get('SOLR_REMOTE')
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
