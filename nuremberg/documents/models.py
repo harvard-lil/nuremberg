@@ -15,8 +15,8 @@ class Document(models.Model):
 
     image_count = models.IntegerField(db_column='NoOfImages', default=0)
 
-    language = models.ForeignKey('DocumentLanguage', db_column='DocLanguageID')
-    source = models.ForeignKey('DocumentSource', db_column='DocVersionID')
+    language = models.ForeignKey('DocumentLanguage', db_column='DocLanguageID', on_delete=models.PROTECT)
+    source = models.ForeignKey('DocumentSource', db_column='DocVersionID', on_delete=models.PROTECT)
 
     def page_range(self):
         return range(1, (self.image_count or 0) + 1)
@@ -28,7 +28,7 @@ class Document(models.Model):
             return (image for image in self.images.all() if image.scale == DocumentImage.SCREEN)
         else:
             return "no images"
-            
+
     def date(self):
         date = self.dates.first()
         if date:
@@ -82,7 +82,7 @@ class DocumentImage(models.Model):
     width = models.IntegerField(blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
 
-    image_type = models.ForeignKey('DocumentImageType')
+    image_type = models.ForeignKey('DocumentImageType', on_delete=models.PROTECT)
 
     def find_url(self, scale):
         if self.scale == scale:
@@ -104,7 +104,7 @@ class DocumentImage(models.Model):
         return self.find_url(self.FULL)
 
     def image_tag(self):
-        return '<a href="{0}"><img src="{0}" width=100 /></a>'.format(self.url)
+        return '<a href="{0}"><img src="{0}" alt="Scanned document page {1}" width=100 /></a>'.format(self.url, self.page_number)
     image_tag.allow_tags = True
 
     def __str__(self):
@@ -124,7 +124,7 @@ class OldDocumentImage(models.Model):
 
     filename = models.CharField(db_column='FileName', max_length=8, blank=True, null=True)
 
-    image_type = models.ForeignKey('DocumentImageType', db_column='PageTypeID')
+    image_type = models.ForeignKey('DocumentImageType', db_column='PageTypeID', on_delete=models.PROTECT)
 
     class Meta:
         managed = False
@@ -195,8 +195,8 @@ class DocumentPersonalAuthor(models.Model):
 
 class DocumentsToPersonalAuthors(models.Model):
     id = models.AutoField(primary_key=True, db_column='PersonalAuthorsListID')
-    document = models.ForeignKey(Document, db_column='DocID')
-    author = models.ForeignKey(DocumentPersonalAuthor, db_column='PAuthNameID')
+    document = models.ForeignKey(Document, db_column='DocID', on_delete=models.CASCADE)
+    author = models.ForeignKey(DocumentPersonalAuthor, db_column='PAuthNameID', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
@@ -217,8 +217,8 @@ class DocumentGroupAuthor(models.Model):
 
 class DocumentsToGroupAuthors(models.Model):
     id = models.AutoField(primary_key=True, db_column='GroupAuthorsListID')
-    document = models.ForeignKey(Document, db_column='DocID')
-    author = models.ForeignKey(DocumentGroupAuthor, db_column='GANameID')
+    document = models.ForeignKey(Document, db_column='DocID', on_delete=models.CASCADE)
+    author = models.ForeignKey(DocumentGroupAuthor, db_column='GANameID', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
@@ -250,8 +250,8 @@ class DocumentCase(models.Model):
 
 class DocumentsToCases(models.Model):
     id = models.AutoField(primary_key=True, db_column='CasesListID')
-    document = models.ForeignKey(Document, db_column='DocID')
-    case = models.ForeignKey(DocumentCase, db_column='DocCaseID')
+    document = models.ForeignKey(Document, db_column='DocID', on_delete=models.CASCADE)
+    case = models.ForeignKey(DocumentCase, db_column='DocCaseID', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
@@ -271,7 +271,7 @@ class DocumentDefendant(models.Model):
     id = models.AutoField(primary_key=True, db_column='DefendantID')
     last_name = models.CharField(max_length=110, db_column='DefLName')
     first_name = models.CharField(max_length=25, db_column='DefFName')
-    case = models.ForeignKey(DocumentCase, related_name='defendants', db_column='CaseID')
+    case = models.ForeignKey(DocumentCase, related_name='defendants', db_column='CaseID', on_delete=models.CASCADE)
 
     documents = models.ManyToManyField(Document, related_name='defendants', through='DocumentsToDefendants', through_fields=('defendant', 'document'))
 
@@ -287,8 +287,8 @@ class DocumentDefendant(models.Model):
 
 class DocumentsToDefendants(models.Model):
     id = models.AutoField(primary_key=True, db_column='DefendantsListID')
-    document = models.ForeignKey(Document, db_column='DocID')
-    defendant = models.ForeignKey(DocumentDefendant, db_column='DefNameID')
+    document = models.ForeignKey(Document, db_column='DocID', on_delete=models.CASCADE)
+    defendant = models.ForeignKey(DocumentDefendant, db_column='DefNameID', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
@@ -308,7 +308,7 @@ class DocumentActivity(models.Model):
 
     id = models.AutoField(primary_key=True, db_column='ActivityID')
     name = models.CharField(max_length=100, db_column='Activity')
-    case = models.ForeignKey(DocumentCase, related_name='activities', db_column='CaseID')
+    case = models.ForeignKey(DocumentCase, related_name='activities', db_column='CaseID', on_delete=models.CASCADE)
 
     @property
     def short_name(self):
@@ -323,8 +323,8 @@ class DocumentActivity(models.Model):
 
 class DocumentsToActivities(models.Model):
     id = models.AutoField(primary_key=True, db_column='ActivitiesListID')
-    document = models.ForeignKey(Document, db_column='DocID')
-    activity = models.ForeignKey(DocumentActivity, db_column='ActNameID')
+    document = models.ForeignKey(Document, db_column='DocID', on_delete=models.CASCADE)
+    activity = models.ForeignKey(DocumentActivity, db_column='ActNameID', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
@@ -342,8 +342,8 @@ class DocumentEvidencePrefix(models.Model):
 
 class DocumentEvidenceCode(models.Model):
     id = models.AutoField(db_column='NMTListID', primary_key=True)  # Field name made lowercase.
-    prefix = models.ForeignKey(DocumentEvidencePrefix, db_column='NMTListCodeID')  # Field name made lowercase.
-    document = models.ForeignKey(Document, related_name='evidence_codes', db_column='DocID')
+    prefix = models.ForeignKey(DocumentEvidencePrefix, db_column='NMTListCodeID', on_delete=models.PROTECT)  # Field name made lowercase.
+    document = models.ForeignKey(Document, related_name='evidence_codes', db_column='DocID', on_delete=models.CASCADE)
     number = models.IntegerField(db_column='NMTNo', blank=True, null=True)  # Field name made lowercase.
     suffix = models.CharField(db_column='NMTNoText', max_length=25, blank=True, null=True)  # Field name made lowercase.
 
@@ -357,7 +357,7 @@ class DocumentEvidenceCode(models.Model):
 class DocumentExhibitCodeName(models.Model):
     id = models.AutoField(db_column='DefenseExhNameID', primary_key=True)  # Field name made lowercase.
     name = models.CharField(db_column='DefenseExhName', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    case = models.ForeignKey(DocumentCase, db_column='CaseID')
+    case = models.ForeignKey(DocumentCase, db_column='CaseID', on_delete=models.CASCADE)
 
     class Meta:
         managed = False
@@ -365,15 +365,15 @@ class DocumentExhibitCodeName(models.Model):
 
 class DocumentExhibitCode(models.Model):
     id = models.AutoField(db_column='CasesListID', primary_key=True)  # Field name made lowercase.
-    document = models.ForeignKey(Document, related_name='exhibit_codes', db_column='DocID')
+    document = models.ForeignKey(Document, related_name='exhibit_codes', db_column='DocID', on_delete=models.CASCADE)
 
-    case = models.ForeignKey(DocumentCase, db_column='DocCaseID')
+    case = models.ForeignKey(DocumentCase, db_column='DocCaseID', on_delete=models.CASCADE)
     prosecution_number = models.IntegerField(db_column='ProsExhNo', blank=True, null=True)  # Field name made lowercase.
     prosecution_suffix = models.CharField(db_column='ProsExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
     prosecution_doc_book_number = models.IntegerField(db_column='ProsDocBkNo', blank=True, null=True)  # Field name made lowercase.
     prosecution_doc_book_suffix = models.CharField(db_column='ProsDocBkNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
 
-    defense_name = models.ForeignKey(DocumentExhibitCodeName, db_column='DefExhNameID', blank=True, null=True)  # Field name made lowercase.
+    defense_name = models.ForeignKey(DocumentExhibitCodeName, db_column='DefExhNameID', blank=True, null=True, on_delete=models.SET_NULL)  # Field name made lowercase.
     defense_suffix = models.CharField(db_column='DefExhNoSuffix', max_length=5, blank=True, null=True)  # Field name made lowercase.
     defense_name_denormalized = models.CharField(db_column='DefExhName', max_length=50, blank=True, null=True)
     defense_number = models.IntegerField(db_column='DefExhNo', blank=True, null=True)  # Field name made lowercase.

@@ -38,7 +38,7 @@
       {% endblock %}
       <div class="page-buttons">
         {% block page_selection %}
-          <select>
+          <select title="Jump to document page">
             {% for page in document.page_range %}
               <option value="{{page}}">Sequence No. {{page}} </option>
             {% endfor %}
@@ -77,16 +77,16 @@
           <button class="download-pdf">PDF</button>
           <div class="download-options hide">
             Page
-            <input type="number" class="page-range" name="from-page" min="1" max="{{document.image_count}}"/>
+            <input type="number" class="page-range" name="from-page" title="First page to export" min="1" max="{{document.image_count}}"/>
             to
-            <input type="number" class="page-range" name="to-page" min="1" max="{{document.image_count}}"/>
+            <input type="number" class="page-range" name="to-page" title="Last page to export" min="1" max="{{document.image_count}}"/>
             <a class="do-download">Save PDF</a>
           </div>
           <div class="pdf-loading hide">Downloading images for PDF... <span class="progress"></span></div>
         </div>
       </div>
-      <h3>{{document.title}}</h3>
-      <h5>{{document.literal_title}}</h5>
+      <h1 class="h3" aria-role="heading" aria-level="1">{{document.title}}</h1>
+      <div class="h5">{{document.literal_title}}</div>
       {% block document_details %}
         <p class="date">
           {% with document.date as date %}
@@ -98,10 +98,10 @@
           {% endwith %}
         </p>
         {% with document.personal_authors.all as personal_authors %}
-        <h6>Author{{personal_authors|length|pluralize}}</h6>
+        <h2 class="h6">Author{{personal_authors|length|pluralize}}</h2>
         {% for author in personal_authors %}
           <p>
-            <a href="{% search_query author=author.full_name %}">{{author.first_name}} {{author.last_name}}</a>
+            <a href="{% search_query author=author.full_name %}" aria-label="search for author {{author.full_name}}">{{author.first_name}} {{author.last_name}}</a>
             ({{author.title}})
           </p>
         {% empty %}
@@ -110,10 +110,10 @@
         {% endwith %}
         {% with document.group_authors.all as group_authors %}
         {% if group_authors %}
-          <h6>Institutional Author{{group_authors|length|pluralize}}</h6>
+          <h2 class="h6">Institutional Author{{group_authors|length|pluralize</h2>
           {% for author in group_authors %}
             <p>
-              <a href="{% search_query author=author.short_name %}">{{author.name}}</a>
+              <a href="{% search_query author=author.short_name %}" aria-label="search for author {{author.name}}">{{author.name}}</a>
             </p>
           {% endfor %}
         {% endif %}
@@ -121,10 +121,10 @@
 
         {% with document.defendants.all as defendants %}
         {% if defendants %}
-          <h6>Defendant{{defendants|length|pluralize}}</h6>
+          <h2 class="h6">Defendant{{defendants|length|pluralize}}</h2>
           {% for defendant in defendants %}
             <p>
-              <a href="{% search_query defendant=defendant.full_name %}">{{defendant.first_name}} {{defendant.last_name}}</a>
+              <a href="{% search_query defendant=defendant.full_name %}" aria-label="search for defendant {{defendant.full_name}}">{{defendant.first_name}} {{defendant.last_name}}</a>
             </p>
           {% endfor %}
         {% endif %}
@@ -171,7 +171,7 @@
       {% endblock %}
       {% with document.activities.all as activities %}
       {% if activities %}
-        <h6>Trial Issue{{activities|length|pluralize}}</h6>
+        <h2 class="h6">Trial Issue{{activities|length|pluralize}}</h2>
         <p>
           {% for activity in activities %}
               <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
@@ -180,6 +180,7 @@
       {% endif %}
       {% endwith %}
     </div>
+    <div id="content"></div>
     <div id="document-viewport" class="main-column">
       <div class="viewport-content scrollable" data-document-id="{{document.id}}">
         {% block viewport %}
@@ -188,9 +189,9 @@
               <div class="no-image-block"><p class="no-image-note">Images for this document are not yet available.</p></div>
             {% else %}
               {% for image in document.images_screen %}
-                <div data-screen-url="{{image.url}}" data-thumb-url="{{image.thumb_url|default_if_none:""}}"  data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image {% if not image.url %}image-missing loading{% else %}loaded{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;">
+                <div data-screen-url="{{image.url}}" data-thumb-url="{{image.thumb_url|default_if_none:""}}"  data-full-url="{{image.full_url|default_if_none:""}}" data-width="{{image.width}}" data-height="{{image.height}}" class="document-image {% if not image.url %}image-missing loading{% else %}loaded{% endif %}" data-page="{{forloop.counter}}" style="width: {{image.width}}px; height: {{image.height}}px;" data-alt="Document page {{forloop.counter}}">
                   {% if image.url %}
-                    <noscript><img src="{{image.url}}" /></noscript>
+                    <noscript><img src="{{image.url}}" alt="Scanned document page {{forloop.counter}}" /></noscript>
                     <div class="image-label">
                       {{image.page_number}}
                     </div>

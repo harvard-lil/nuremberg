@@ -21,7 +21,8 @@ modulejs.define('transcript-viewer', function () {
   $('.print-document').on('click', function () {
     $('.print-options, .print-document').toggleClass('hide');
   });
-  $('.do-print').on('click', function () {
+  $('.do-print').on('click', function (e) {
+    e.preventDefault();
     var pages = parseInt($('.print-options input[name=pages]').val());
     if (pages > 20 || pages < 1) {
       pages = Math.min(Math.max(pages, 1), 20);

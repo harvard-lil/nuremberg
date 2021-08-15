@@ -127,7 +127,8 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
         this.$el.find('img').css({
           'border-bottom-width': aspectRatio * 5 + 'px'
         })
-        .toggleClass('aspect-ratio-wide', aspectRatio < 11/8.5);
+        .toggleClass('aspect-ratio-wide', aspectRatio < 11/8.5)
+        .attr('alt', this.model.attributes.alt);
 
         view.model.on('change:preloaded', function () {
           view.$el.toggleClass('rendered-thumb', !view.model.attributes.preloaded && view.model.previous('preloaded') == 'thumb');
@@ -179,6 +180,7 @@ modulejs.define('Images', ['DownloadQueue'], function (DownloadQueue) {
             el: this,
             $el: $container,
             page: $container.data('page'),
+            alt: $container.data('alt'),
             urls: {
               full: $container.data('full-url'),
               screen: $container.data('screen-url'),

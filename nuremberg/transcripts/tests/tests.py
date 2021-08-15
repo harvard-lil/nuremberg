@@ -15,7 +15,7 @@ def seq():
 def test_transcript_viewer(seq):
     page = seq(1)
 
-    page('h3').text().should.contain('Transcript for NMT 1: Medical Case')
+    page('h1').text().should.contain('Transcript for NMT 1: Medical Case')
     page('p').text().should.contain('This is a corrected copy of transcript for 5 December 1946.')
 
 def test_transcript_search(seq):

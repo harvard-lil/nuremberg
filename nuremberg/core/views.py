@@ -6,7 +6,7 @@ def render_error(request, status, title, friendly_message, friendly_description)
     return response
 
 
-def handler404(request):
+def handler404(request, exception):
     return render_error(request,
         404,
         'Page Not Found',
@@ -19,7 +19,7 @@ def handler404(request):
         """
     )
 
-def handler400(request):
+def handler400(request, exception):
     return render_error(request,
         400,
         'Request Error',
@@ -29,7 +29,7 @@ def handler400(request):
         Make sure your software is up-to-date and try again.
         """
     )
-def handler403(request):
+def handler403(request, exception):
     return render_error(request,
         403,
         'Permission Denied',

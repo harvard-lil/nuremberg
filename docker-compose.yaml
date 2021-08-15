@@ -17,17 +17,17 @@ services:
     build:
       context: ./
       dockerfile: solr.dockerfile
-    image: nuremberg-solr:0.1
+    image: nuremberg-solr:0.3
     ports:
       - "127.0.0.1:8983:8983"
     volumes:
       # NAMED VOLUMES
-      - solr_collection:/opt/solr/example/solr/nuremberg_dev/
+      - solr_data:/var/solr
   web:
     build:
       context: ./
       dockerfile: web.dockerfile
-    image: nuremberg:0.14
+    image: nuremberg:0.15
     tty: true
     command: bash
     volumes:
@@ -41,7 +41,16 @@ services:
     depends_on:
       - db
       - solr
+  selenium:
+    image: selenium/standalone-chrome:3.141.59
+    ports:
+      - "4444:4444"
+    environment:
+      PORT: 4444
+      SCREEN_WIDTH: 1200
+      SCREEN_HEIGHT: 900
+      SCREEN_DEPTH: 24
 
 volumes:
   db_data:
-  solr_collection:
+  solr_data:

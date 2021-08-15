@@ -22,6 +22,9 @@
     <![endif]-->
   </head>
   <body class="{% block body_class %}{% endblock %} {% if show_mockup %}mockups{% endif %}">
+    <nav aria-labelledby="bypass-link">
+      <a class="bypass-link" id="bypass-link" href="#content" tabindex="1">Jump to content</a>
+    </nav>
     <header>
       {% block header %}
         {% include 'nav.html' %}

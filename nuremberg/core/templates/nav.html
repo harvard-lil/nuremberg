@@ -1,4 +1,4 @@
-<nav class="site-nav">
+<nav class="site-nav" aria-label="Site navigation">
   <div class="site-brand">
     <a class="unstyled" href="{% url 'content:landing' %}">
       <div class="brand-harvard"> Harvard Law School Library </div>
@@ -7,9 +7,9 @@
     </a>
   </div>
   <ul class="nav-links">
-    <li class="has-menu"> <a href="#" data-toggle="dropdown"
+    <li class="has-menu"> <a tabindex="0" role="button" href="#" data-toggle="dropdown"
       {% if request.resolver_match.url_name == 'trials' %}class="active"{% endif %}
-      > Trials </a>
+      aria-haspopup="true" aria-label="Trials dropdown" > Trials </a>
         <ul class="menu">
           <li><a href="{% url 'content:people' %}">People</a></li>
           <li><a href="{% url 'content:trials' %}">Trials</a></li>
@@ -20,9 +20,9 @@
       {% if request.resolver_match.url_name == 'documents' %}class="active"{% endif %}
       >  Documents </a> </li>
 
-    <li class="has-menu"> <a href="#" data-toggle="dropdown"
+    <li class="has-menu"> <a tabindex="0" role="button" href="#" data-toggle="dropdown"
       {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}
-      > About the Project </a>
+      aria-haspopup="true" aria-label="About dropdown"> About the Project </a>
         <ul class="menu">
           <li><a href="{% url 'content:intro' %}">Intro</a></li>
           <li><a href="{% url 'content:funding' %}">Funding</a></li>

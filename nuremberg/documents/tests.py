@@ -7,7 +7,7 @@ def document(document_id):
 def test_document_1():
     page = document(1)
 
-    page('h3').text().should.contain('List of Case 1 documents, prosecution and defense, in English.')
+    page('h1').text().should.contain('List of Case 1 documents, prosecution and defense, in English.')
 
     images = page('.document-image')
     images.length.should.be(20)
@@ -29,7 +29,7 @@ def test_document_1():
 def test_document_2():
     page = document(2)
 
-    page('h3').text().should.contain('Argument: prosecution closing argument against all defendants')
+    page('h1').text().should.contain('Argument: prosecution closing argument against all defendants')
 
     images = page('.document-image')
     images.length.should.be(78)
@@ -48,7 +48,7 @@ def test_document_2():
 def test_document_400():
     page = document(400)
 
-    page('h3').text().should.contain('Decree concerning the administration of Polish territories')
+    page('h1').text().should.contain('Decree concerning the administration of Polish territories')
 
     images = page('.document-image')
     images.length.should.be(3)
@@ -69,7 +69,7 @@ def test_document_400():
 def test_document_3799():
     page = document(3799)
 
-    page('h3').text().should.contain('Journal and office records of Hans Frank, Governor General of Poland, 1939-1944')
+    page('h1').text().should.contain('Journal and office records of Hans Frank, Governor General of Poland, 1939-1944')
 
     images = page('.document-image img')
     images.length.should.equal(492)

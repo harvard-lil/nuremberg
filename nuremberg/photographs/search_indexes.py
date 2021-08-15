@@ -5,7 +5,7 @@ class PhotographId(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     highlight = indexes.CharField(model_attr='description')
     material_type = indexes.CharField(default='Photograph', faceted=True)
-    grouping_key = indexes.FacetField(facet_for='grouping_key') # not really a facet, just an exact key
+    grouping_key = indexes.FacetCharField(facet_for='grouping_key') # not really a facet, just an exact key
 
     slug = indexes.CharField(model_attr='slug', indexed=False)
     title = indexes.CharField(model_attr='title')

@@ -10,12 +10,12 @@ t
   <div class="zoom-buttons pull-left">
     <form action="" method="GET">
       <input type="hidden" name="seq" value="{{ seq }}" />
-      <select name="date" class="select-date">
+      <select title="Jump to date" name="date" class="select-date">
         {% for date in dates %}
           <option value="{{ date|date:'Y-m-d' }}" {% if date == current_page.date %}selected{% endif %}>{{ date|date:'d F Y' }}</option>
         {% endfor %}
       </select>
-      <noscript><button class="go-button">Go to date</button></noscript>
+      <button class="go-button">Go to date</button>
     </form>
   </div>
 {% endblock %}
@@ -28,6 +28,7 @@ t
       Go to page:
       <input type="number" name="page" value="{{ current_page.page_number|default:"" }}"/>
     </label>
+    <button class="go-button">Go</button>
   </form>
 {% endblock %}
 
@@ -65,20 +66,20 @@ t
       <button class="print-document">Print</button>
       <form class="print-options hide">
         Next
-        <input type="number" class="page-range" name="pages" value="20" min="1" max="20"/>
+        <input type="number" title="number of pages to print" class="page-range" name="pages" value="20" min="1" max="20"/>
         pages
-        <a class="do-print">Print</a>
+        <button class="do-print">Print</button>
       </form>
       <div class="print-loading hide">Downloading pages to print... <span class="progress"></span></div>
     </div>
   {% endblock %}
 
-  <h3>{{transcript.title}}</h3>
+  <h1 class="h3">{{transcript.title}}</h1>
   <p class="module">{{transcript.description}}</p>
   <div class="print-show"></div>
   {% with transcript.activities.all as activities %}
   {% if activities %}
-    <h6>Trial Issue{{activities|length|pluralize}}</h6>
+    <h2 class="h6">Trial Issue{{activities|length|pluralize}}</h2>
     <p>
       {% for activity in activities %}
           <a class="tag-button" href="{% search_query issue=activity.short_name %}">{{activity.short_name}}</a>
@@ -88,7 +89,7 @@ t
   {% endwith %}
   {% with transcript.case.defendants.all as defendants %}
   {% if defendants %}
-    <h6>Defendant{{defendants|length|pluralize}}</h6>
+    <h2 class="h6">Defendant{{defendants|length|pluralize}}</h2>
     <p>
       {% for defendant in defendants %}
           <a href="{% search_query defendant=defendant.full_name %}">{{defendant.full_name}}</a>{% if not forloop.last %}, {% endif %}

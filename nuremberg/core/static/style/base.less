@@ -91,3 +91,31 @@ div, button, a, input, li, section, footer {
   background-repeat: no-repeat;
   background-position: center;
 }
+
+.h4 {
+
+}
+
+a.bypass-link {
+  position: fixed;
+  top: -40px;
+  left: 45%;
+  z-index: 1000;
+
+  display: block;
+  height: 35px;
+  padding: 10px;
+
+  background-color: @dark-blue;
+  color: @white;
+
+  .transition(top 0.1s);
+
+  border: 1px solid @blue;
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+
+  &:focus {
+    top: 0px;
+  }
+}

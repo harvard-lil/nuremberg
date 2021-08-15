@@ -86,7 +86,7 @@ def test_keyword_search(query):
     page = follow_link(page('.facet').with_text('Material Type').find('p').with_text('Transcript').find('a'))
     transcript_row = page('.document-row').with_text('Transcript for NMT 1: Medical Case')
     transcript_row.should.not_be.empty
-    transcript_row.text().should.contain('30 June 1947')
+    transcript_row.text().should.contain('30 January 1947')
 
     page = follow_link(transcript_row.find('a'))
     page.text().should.contain('5680 pages with results')
@@ -135,7 +135,7 @@ def test_field_search(count_results):
 def test_document_search(query):
     page = query('workers')
     page.text().should.contain('Results 1-15 of 603 for workers')
-    page = follow_link(page('.document-row a'))
+    page = follow_link(page('.document-row a').with_text('Instructions to employment offices concerning the replacement of Jewish workers in Germany'))
 
     search_bar = page('input[type=search]')
     search_bar.should.not_be.empty
@@ -143,7 +143,7 @@ def test_document_search(query):
 
     page = go_to(search_bar.submit_value('instructions'))
     page.text().should.contain('Results 1-15 of 323 for instructions')
-    page = follow_link(page('.document-row a'))
+    page = follow_link(page('.document-row a').with_text('Instructions for air force medical officers regarding freezing'))
 
     search_bar = page('input[type=search]')
     search_bar.should.not_be.empty
@@ -182,7 +182,7 @@ def test_transcript_snippets(query):
 
     # snippets on several pages
     page.text().should.contain('... p. 8350')
-    page.text().should.contain('... p. 2789')
+    page.text().should.contain('... p. 8963')
     page.text().should.contain('... p. 144')
 
     # test single page results
@@ -217,7 +217,7 @@ def test_pagination(query):
 
     page.text().should.contain('Results 1-15 of 6065 for *')
 
-    page = follow_link(page('a').with_text('404'))
+    page = follow_link(page('a.page-number').with_text('404'))
 
     page.text().should.contain('Results 6046-6060 of 6065 for *')
 

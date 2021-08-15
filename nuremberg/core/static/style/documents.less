@@ -54,7 +54,7 @@
   }
 }
 .zoom-buttons {
-  .make-md-column(4);
+  .make-sm-column(5);
 
   height: 30px;
   line-height: 0;
@@ -159,11 +159,11 @@ html.touchevents & {
       margin: 14px 0;
     }
   }
-  h5 {
+  h5, .h5 {
     .sans-serif(@light, 16px, 25px);
     margin: 0 0 20px;
   }
-  h6 {
+  h6, .h6 {
     .sans-serif(bold, 14px, 14px);
 
     margin: 37px 0 10px;
@@ -225,6 +225,9 @@ html.touchevents & {
   }
   .do-download, .do-print {
     .sans-serif(normal, 14px, 10px);
+    text-decoration: underline;
+    color: @dark-blue;
+    line-height: 25px;
     margin-left: 5px;
   }
 }
