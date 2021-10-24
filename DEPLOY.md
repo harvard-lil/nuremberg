@@ -26,6 +26,8 @@ This instructs git to push to the `heroku` remote, send the local `heroku` branc
 
 # SQL Import
 
+First, unzip the `nuremberg_prod.sql.zip` file.
+
 To seed the production database, retrieve the ClearDB database URL by running:
 
 ```heroku config -a [app name]```
