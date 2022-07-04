@@ -59,7 +59,6 @@ USER nuremberg
 COPY --chown=nuremberg:nuremberg ./nuremberg /home/nuremberg/nuremberg
 COPY --chown=nuremberg:nuremberg manage.py pytest.ini /home/nuremberg/
 COPY --from=python-build --chown=nuremberg:nuremberg /venv /venv
-# COPY --from=node-build --chown=nuremberg:nuremberg /app/node_modules/less/bin/lessc /venv/bin
 
 # When Docker image is stopped, send a SIGINT (KeyboardInterrupt exception by
 # default in Python) instead of SIGTERM. Really you should listen for SIGTERM,
