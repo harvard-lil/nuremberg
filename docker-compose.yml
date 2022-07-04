@@ -1,0 +1,62 @@
+version: '3'
+
+networks:
+    nuremberg:
+
+services:
+    solr:
+      image: solr:8-slim
+      container_name: nuremberg-solr
+      ports:
+        - "8983:8983"
+      volumes:
+      #   - ./solr/conf/schema.xml:/opt/solr/conf/schema.xml
+      #   - ./solr/conf/solrconfig.xml:/opt/solr/conf/solrconfig.xml
+        - .docker/.solr:/var/solr
+      # command: 'bash -e -c "precreate-core mycore; cp /opt/solr/conf/schema.xml /opt/solr/server/solr/mycores/mycore/conf/schema.xml; cp /opt/solr/conf/solrconfig.xml /opt/solr/server/solr/mycores/mycore/conf/solrconfig.xml; rm /opt/solr/server/solr/mycores/mycore/conf/managed-schema; solr-foreground;"'
+      # healthcheck:
+      #   test: ["CMD", "wget", "-O /dev/null", "http://localhost:8983/solr/"]
+      #   interval: 1s
+      #   timeout: 3s
+      #   retries: 30
+      networks:
+        - nuremberg
+
+    db:
+      container_name: nuremberg-db
+      image: mysql:5.6
+      environment:
+        MYSQL_DATABASE: nuremberg
+        MYSQL_ROOT_PASSWORD: ''
+        MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      command: --init-file /var/lib/mysql/init.sql
+      volumes:
+        - .docker/.mysql:/var/lib/mysql
+        - .docker/init.sql:/var/lib/mysql/init.sql
+      healthcheck:
+        test: "/etc/init.d/mysql status"
+        interval: 1s
+        timeout: 3s
+        retries: 30
+      networks:
+        - nuremberg
+
+    web:
+      image: nuremberg
+      container_name: nuremberg-web
+      build:
+        context: .
+        dockerfile: .docker/Dockerfile
+      working_dir: /home/nuremberg
+      volumes:
+        - ./:/home/nuremberg
+      ports:
+        - "8000:8000"
+      depends_on:
+        - solr
+        - db
+      environment:
+        PORT: 8000
+        DATABASE_URL: mysql://root@db/nuremberg
+      networks:
+        - nuremberg

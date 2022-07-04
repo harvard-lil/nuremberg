@@ -1,17 +1,19 @@
 import os
+import dj_database_url
+
 from .generic import *
+
 
 SECRET_KEY = '@xf59!g4b(=z==*@#(0hdjc$_q5taw-t-1m#9@o!nzx_h1z@r9'
 DEBUG = True
 COMPRESS_ENABLED = False
-DATABASES['default'] = {
-  'ENGINE': 'django.db.backends.mysql',
-  'NAME': 'nuremberg_dev',
-  'USER': 'nuremberg',
-  'HOST': 'localhost',
+
+DATABASES = {
+    "default": dj_database_url.config(
+        default="mysql://nuremberg@localhost/nuremberg_dev",
+        conn_max_age=500
+    )
 }
-if os.environ.get('DOCKERIZED'):
-    DATABASES['default']['HOST'] = 'db'
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -37,6 +39,10 @@ STATIC_PRECOMPILER_COMPILERS = (
 )
 
 # MIDDLEWARE_CLASSES.append('django_cprofile_middleware.middleware.ProfilerMiddleware')
+
+ALLOWED_HOSTS = [
+    "localhost",
+]
 
 LOGGING = {
     'version': 1,

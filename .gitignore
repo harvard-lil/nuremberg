@@ -9,3 +9,5 @@ debug.txt
 venv
 src
 *.pyc
+.docker/.solr
+.docker/.mysql
