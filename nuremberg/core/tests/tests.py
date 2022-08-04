@@ -4,4 +4,4 @@ def test_404():
     response = client.get("THIS_URL_DOES_NOT_EXIST")
     page = PyQuery(response.content)
 
-    page('h1').text().should.contain("can't find")
+    assert "can't find" in page('h1').text()

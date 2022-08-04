@@ -33,3 +33,10 @@ pip-tools==5.5.0
 
 # testing
 pytest >= 7.1.2
+coverage==5.5
+django_coverage_plugin==1.8.0
+pyquery==1.4.3
+pytest-django==4.1.0
+pytest-cov==2.11.1
+pytest-instafail==0.4.2
+selenium==3.141.0

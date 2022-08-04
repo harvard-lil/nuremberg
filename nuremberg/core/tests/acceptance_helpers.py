@@ -2,7 +2,6 @@ import pytest
 pytestmark = pytest.mark.django_db
 
 import re
-import sure
 import pyquery
 from lxml.html import FormElement
 from django.test import Client

@@ -5,7 +5,7 @@ def document(browser, unblocked_live_server):
     document_id = 1
     browser.get(unblocked_live_server.url + url('documents:show', kwargs={'document_id': document_id}))
     browser.execute_script("$('html').removeClass('touchevents'); $('html').removeClass('no-xhrresponsetypeblob'); Modernizr.touchevents = false; Modernizr.xhrresponsetypeblob = true;")
-    browser.title.should.contain('List of Case 1 documents, prosecution and defense, in English.')
+    assert 'List of Case 1 files, prosecution and defense, in English' in browser.title
     return browser
 
 @pytest.fixture
@@ -28,16 +28,16 @@ def preloaded(document):
     wait(document, 10).until(element_has_attribute(img, 'src'))
     data_url = img.get_attribute('src')
     document.save_screenshot('screenshots/preload-first.png')
-    data_url.should.contain('data:image/jpeg;base64')
-    len(data_url).should.equal(148871)
+    assert 'data:image/jpeg;base64' in data_url
+    assert len(data_url) == 148871
 
     # last image should not be downloaded yet
     img = document.find_element_by_css_selector('.document-image:last-child img')
-    img.get_attribute('src').should.be.none
+    assert img.get_attribute('src') is None
     document.execute_script("$('.viewport-content').scrollTop(99999);")
     wait(document, 10).until(element_has_attribute(img, 'src'))
     document.save_screenshot('screenshots/preload-last.png')
-    img.get_attribute('src').should.contain('data:image/jpeg;base64')
+    assert 'data:image/jpeg;base64' in img.get_attribute('src')
 
     return True
 
@@ -49,7 +49,7 @@ def test_zooming(document, viewport, preloaded):
 
     # image is full-width (mod scrollbars)
     document.save_screenshot('screenshots/full-size.png')
-    img.size['width'].should.be.within(viewport.size['width']-40, viewport.size['width'])
+    assert img.size['width'] in range(viewport.size['width']-40, viewport.size['width'])
 
     # zoom out
     # context_click seems not to work?
@@ -59,7 +59,7 @@ def test_zooming(document, viewport, preloaded):
     expected_scale = 1/2
 
     document.save_screenshot('screenshots/zoomed-out.png')
-    img.size['width'].should.be.within(viewport.size['width']*expected_scale-40, viewport.size['width']*expected_scale)
+    assert int(img.size['width']) in range(int(viewport.size['width']*expected_scale-40), int(viewport.size['width']*expected_scale))
 
     # zoom in
     ActionChains(document).move_to_element(viewport).move_by_offset(50, 50).click().perform()
@@ -69,7 +69,7 @@ def test_zooming(document, viewport, preloaded):
     expected_scale = 1.5
 
     document.save_screenshot('screenshots/zoomed-in.png')
-    img.size['width'].should.be.within(viewport.size['width']*expected_scale-40, viewport.size['width']*expected_scale)
+    assert int(img.size['width']) in range(int(viewport.size['width']*expected_scale-40), int(viewport.size['width']*expected_scale))
 
 
 def test_page_navigation(document, viewport, preloaded):
@@ -78,28 +78,28 @@ def test_page_navigation(document, viewport, preloaded):
     document.find_element_by_css_selector('.page-buttons .last-page').click()
     sleep(0.1)
     document.save_screenshot('screenshots/last-page.png')
-    int(document.execute_script("return arguments[0].scrollTop;", viewport)).should.be.within(offsetTop-25, offsetTop+25)
+    assert int(document.execute_script("return arguments[0].scrollTop;", viewport)) in range(int(offsetTop-25), int(offsetTop+25))
 
     page = document.find_element_by_css_selector('.document-image[data-page="19"]')
     offsetTop = document.execute_script("return arguments[0].offsetTop;", page)
     document.find_element_by_css_selector('.page-buttons .prev-page').click()
     sleep(0.1)
     document.save_screenshot('screenshots/prev-page.png')
-    int(document.execute_script("return arguments[0].scrollTop;", viewport)).should.be.within(offsetTop-25, offsetTop+25)
+    assert int(document.execute_script("return arguments[0].scrollTop;", viewport)) in range(offsetTop-25, offsetTop+25)
 
     page = document.find_element_by_css_selector('.document-image[data-page="1"]')
     offsetTop = document.execute_script("return arguments[0].offsetTop;", page)
     document.find_element_by_css_selector('.page-buttons .first-page').click()
     sleep(0.1)
     document.save_screenshot('screenshots/first-page.png')
-    int(document.execute_script("return arguments[0].scrollTop;", viewport)).should.be.within(offsetTop-25, offsetTop+25)
+    assert int(document.execute_script("return arguments[0].scrollTop;", viewport)) in range(offsetTop-25, offsetTop+25)
 
     page = document.find_element_by_css_selector('.document-image[data-page="2"]')
     offsetTop = document.execute_script("return arguments[0].offsetTop;", page)
     document.find_element_by_css_selector('.page-buttons .next-page').click()
     sleep(0.1)
     document.save_screenshot('screenshots/next-page.png')
-    int(document.execute_script("return arguments[0].scrollTop;", viewport)).should.be.within(offsetTop-25, offsetTop+25)
+    assert int(document.execute_script("return arguments[0].scrollTop;", viewport)) in range(offsetTop-25, offsetTop+25)
 
     page = document.find_element_by_css_selector('.document-image[data-page="10"]')
     offsetTop = document.execute_script("return arguments[0].offsetTop;", page)
@@ -107,8 +107,8 @@ def test_page_navigation(document, viewport, preloaded):
     select.select_by_visible_text('Sequence No. 10')
     sleep(0.1)
     document.save_screenshot('screenshots/tenth-page.png')
-    int(document.execute_script("return arguments[0].scrollTop;", viewport)).should.be.within(offsetTop-25, offsetTop+25)
-    document.find_element_by_css_selector('.page-buttons .download-page').get_attribute('href').should.contain('00001010.jpg')
+    assert int(document.execute_script("return arguments[0].scrollTop;", viewport)) in range(offsetTop-25, offsetTop+25)
+    assert '00001010.jpg' in document.find_element_by_css_selector('.page-buttons .download-page').get_attribute('href')
 
 
 def test_pdf_generation(document, preloaded):
@@ -131,4 +131,4 @@ def test_pdf_generation(document, preloaded):
     save_link.click()
     document.save_screenshot('screenshots/building-pdf.png')
     download = wait(document, 30).until(element_has_attribute(inner_save_link, 'download'))
-    download.should.contain('HLSL Nuremberg Document #1 pages 1-20.pdf')
+    assert 'HLSL Nuremberg Document #1 pages 1-20.pdf' in download
