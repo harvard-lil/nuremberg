@@ -2,7 +2,7 @@ from .dev import *
 
 COMPRESS_ENABLED = False
 
-ALLOWED_HOSTS = ['web']
+ALLOWED_HOSTS = ['web', 'localhost']
 
 # Needed for template coverage report
 TEMPLATES[0]['OPTIONS']['debug'] = True

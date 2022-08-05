@@ -2,22 +2,8 @@ version: '2'
 
 services:
 
-  db:
-    image: mysql:5.6
-    environment:
-        MYSQL_ROOT_PASSWORD: ''
-        MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-    volumes:
-      # NAMED VOLUMES
-      # If the volume contains a database (a subdirectory named mysql)
-      # when you start the container, it will be left untouched and unaffected
-      # by changes to environment variables like $MYSQL_ROOT_PASSWORD.
-      - db_data:/var/lib/mysql:delegated
   solr:
-    build:
-      context: ./
-      dockerfile: solr.dockerfile
-    image: nuremberg-solr:0.3
+    image: solr:8
     ports:
       - "127.0.0.1:8983:8983"
     volumes:
@@ -39,7 +25,6 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
-      - db
       - solr
   selenium:
     image: selenium/standalone-chrome:3.141.59

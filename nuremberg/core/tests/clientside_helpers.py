@@ -4,7 +4,6 @@ pytestmark = pytest.mark.django_db
 
 from pytest_django.fixtures import live_server
 
-import sure
 from django.urls import reverse as url
 
 from selenium import webdriver

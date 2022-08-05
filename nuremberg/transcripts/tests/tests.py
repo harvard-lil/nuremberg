@@ -15,39 +15,39 @@ def seq():
 def test_transcript_viewer(seq):
     page = seq(1)
 
-    page('h1').text().should.contain('Transcript for NMT 1: Medical Case')
-    page('p').text().should.contain('This is a corrected copy of transcript for 5 December 1946.')
+    assert 'Transcript for NMT 1: Medical Case' in page('h1').text()
+    assert 'This is a corrected copy of transcript for 5 December 1946.' in page('p').text()
 
 def test_transcript_search(seq):
     page = go_to(url('transcripts:search', kwargs={'transcript_id':1}))
 
     search_bar = page('input[type="search"]')
-    search_bar.should.not_be.empty
-    search_bar.val().should.equal('*')
+    assert search_bar
+    assert search_bar.val() == "*"
 
-    page('mark').text().should.be.empty
-    page('a').with_text('Page 26').should.not_be.empty
+    assert not page('mark').text()
+    assert page('a').with_text('Page 26')
 
     page = go_to(search_bar.submit_value('exhibit'))
 
     search_bar = page('input[type="search"]')
-    search_bar.should.not_be.empty
-    search_bar.val().should.equal('exhibit')
+    assert search_bar
+    assert search_bar.val() == "exhibit"
 
-    page.text().should.contain('2333 pages with results')
+    assert "2333 pages with results" in page.text()
 
-    page('mark').text().should.contain('exhibit')
+    assert "exhibit" in page('mark').text()
 
     page_link = page('a').with_text('Page 88')
-    page_link.should.not_be.empty
+    assert page_link
 
     page = follow_link(page_link)
 
     search_bar = page('input[type="search"]')
-    search_bar.should.not_be.empty
-    search_bar.val().should.equal('exhibit')
+    assert search_bar
+    assert search_bar.val() == "exhibit"
 
-    page.text().should.contain('Page 88')
+    assert "Page 88" in page.text()
 
 
 def test_transcript_joins(seq):
@@ -55,146 +55,145 @@ def test_transcript_joins(seq):
 
     text = page.text()
 
-    text.should.contain('HLSL Seq. No. 1')
+    assert "HLSL Seq. No. 1" in text
 
     # There should be four page joins in the first ten pages:
 
-    text.should.contain('purely speculative diffi culties.\nHLSL Seq. No. 5') # This page break moves to:
+    assert "purely speculative diffi culties.\nHLSL Seq. No. 5" in text
+    assert "Wehrmacht, the Medical Service of the SS" in text  # This page break moves to:
+    assert "and so forth.\nHLSL Seq. No. 7" in text
 
-    text.should.contain('Wehrmacht, the Medical Service of the SS') # This page break moves to:
-    text.should.contain('and so forth.\nHLSL Seq. No. 7')
+    assert "have to look through each individual document" in text
+    assert "carry this out in practice.\nHLSL Seq. No. 9" in text
 
-    text.should.contain('have to look through each individual document') # This page break moves to:
-    text.should.contain('carry this out in practice.\nHLSL Seq. No. 9')
-
-    text.should.contain(' probably very relevant and important ones.\nHLSL Seq. No. 10')
+    assert " probably very relevant and important ones.\nHLSL Seq. No. 10" in text
 
     # it should contain each page number once
     handles = page('.page-handle')
-    handles.length.should.equal(10)
+    assert handles.length == 10
     print(handles.outerHtml())
     print([handles.text()])
-    handles.with_text('HLSL SEQ. NO. 1 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 2 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 3 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 4 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 5 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 6 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 7 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 8 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 9 ').length.should.equal(1)
-    handles.with_text('HLSL SEQ. NO. 10 ').length.should.equal(1)
+    assert len(handles.with_text('HLSL SEQ. NO. 1 ')) == 1
+    assert len(handles.with_text('HLSL SEQ. NO. 2 ')) == 1
+    assert len(handles.with_text('HLSL SEQ. NO. 3 ')) == 1
+    assert len(handles.with_text('HLSL SEQ. NO. 4 ')) == 1
+    assert len(handles.with_text('HLSL SEQ. NO. 5 ')) == 1
+    assert len(handles.with_text('HLSL SEQ. NO. 6 ')) == 1
+    assert len(handles.with_text('HLSL SEQ. NO. 7 ')) == 1
+    assert len(handles.with_text('HLSL SEQ. NO. 8 ')) == 1
+    assert len(handles.with_text('HLSL SEQ. NO. 9 ')) == 1
+    assert len(handles.with_text('HLSL SEQ. NO. 10 ')) == 1
 
     # test not repeating page numbers after
     page = seq(330)
-    page('.page-handle').length.should.equal(20)
-    page('.page-handle').with_text('HLSL SEQ. NO. 340').length.should.equal(1)
+    assert len(page('.page-handle')) == 20
+    assert len(page('.page-handle').with_text('HLSL SEQ. NO. 340')) == 1
     text = page('.page-handle').text()
     for i in range(321,341):
-        text.should.contain('HLSL Seq. No. {}'.format(i))
+        assert "HLSL Seq. No. {}".format(i) in text
     page = seq(150)
-    page('.page-handle').with_text('HLSL SEQ. NO. 160').length.should.equal(1)
+    assert len(page('.page-handle').with_text('HLSL SEQ. NO. 160')) == 1
 
 def test_seq_alignment(seq):
     # the first seq load for 40 and 49 should be the same
     page = seq(40)
-    page('.page-handle').nth(0).text().should.contain('Seq. No. 31')
+    assert "Seq. No. 31" in page('.page-handle').nth(0).text()
 
     page = seq(49)
-    page('.page-handle').nth(0).text().should.contain('Seq. No. 31')
+    assert 'Seq. No. 31' in page('.page-handle').nth(0).text()
 
     # it begins on a join and should not have the first incomplete sentence from seq 31
-    page.text().should_not.contain('directly responsible to Hitler himself is the defendant Karl Brandt')
+    assert 'directly responsible to Hitler himself is the defendant Karl Brandt' not in page.text()
 
     # the batch previous should end on the same join
     page = seq(25)
-    page('.page-handle').nth(-1).text().should.contain('Seq. No. 30')
-    page.text().should.contain('The only defendant in the dock who was directly responsible to Hitler himself is the defendant Karl Brandt.')
+    assert "Seq. No. 30" in page('.page-handle').nth(-1).text()
+    assert 'The only defendant in the dock who was directly responsible to Hitler himself is the defendant Karl Brandt.' in page.text()
 
 def test_go_to_date(seq):
     page = seq(100)
 
-    page('.page-handle').with_text('10 DECEMBER 1946').should.not_be.empty
-    page('select option').with_text('10 December 1946').attr('selected').should.be.true
+    assert page('.page-handle').with_text('10 DECEMBER 1946')
+    assert page('select option').with_text('10 December 1946').attr('selected')
 
     date_link = page('select option').with_text('29 January 1947')
-    date_link.should.not_be.empty
+    assert date_link
     page = go_to(date_link.submit_value())
 
-    page('.page-handle').with_text('29 JANUARY 1947').should.not_be.empty
+    assert page('.page-handle').with_text('29 JANUARY 1947')
 
 def test_go_to_page(seq):
     page = seq(500)
-    page('.page-handle').with_text('PAGE 482').should.not_be.empty
+    assert page('.page-handle').with_text('PAGE 482')
 
     page = go_to(page('form').with_text('Go to page:').find('input[type=number]').submit_value(4820))
-    page('.page-handle').with_text('PAGE 4,820').should.not_be.empty
+    assert page('.page-handle').with_text('PAGE 4,820')
 
     # test guesstimation: page 5000 is unlabeled
     page = go_to(page('form').with_text('Go to page:').find('input[type=number]').submit_value(5000))
-    page('.page-handle').with_text('PAGE 5,000').should.be.empty
+    assert not page('.page-handle').with_text('PAGE 5,000')
 
-    page('.page-handle').with_text('PAGE 4,999').should.not_be.empty
-    page('.page-handle').with_text('PAGE 5,001').should.not_be.empty
+    assert page('.page-handle').with_text('PAGE 4,999')
+    assert page('.page-handle').with_text('PAGE 5,001')
 
 def test_evidence_links(seq):
     # evidence file number
     page = seq(136)
     page = follow_link(page('a').with_text('NO-417'))
 
-    page.text().should.contain('Results 1-2 of 2 for * evidence:"NO-417"')
-    page.text().should.contain('Organizational chart of the SS Medical Service (from September 1943)')
+    assert 'Results 1-2 of 2 for * evidence:"NO-417"' in page.text()
+    assert 'Organizational chart of the SS Medical Service (from September 1943)' in page.text()
 
     page = follow_link(page('.document-row').with_text('Transcript for NMT 1: Medical Case').find('a'))
-    page.text().should.contain('3 pages with results')
+    assert '3 pages with results' in page.text()
 
 def test_exhibit_links(seq):
     # prosecution exhibit number
     page = seq(210)
     page = follow_link(page('a').with_text('61'))
 
-    page.text().should.contain('Results 1-5 of 5 for * exhibit:"Prosecution 61"')
-    page.text().should.contain('Letter to Heinrich Himmler, sending report on high altitude experiments')
+    assert 'Results 1-7 of 7 for * exhibit:"Prosecution 61"' in page.text()
+    assert 'Letter to Heinrich Himmler, sending report on high altitude experiments' in page.text()
 
     page = follow_link(page('.document-row').with_text('Transcript for NMT 1: Medical Case').find('a'))
-    page.text().should.contain('1 page with results')
+    assert '1 page with results' in page.text()
 
     # defense exhibit number
     page = seq(6267)
     page = follow_link(page('a').with_text('8'))
 
-    page.text().should.contain('Results 1-2 of 2 for * exhibit:"Rose 8"')
-    page.text().should.contain('Extract from a report of a conference of consulting specialists, concerning dysentery')
+    assert 'Results 1-2 of 2 for * exhibit:"Rose 8"' in page.text()
+    assert 'Extract from a report of a conference of consulting specialists, concerning dysentery' in page.text()
 
     page = follow_link(page('.document-row').with_text('Transcript for NMT 1: Medical Case').find('a'))
-    page.text().should.contain('2 pages with results')
+    assert '2 pages with results' in page.text()
 
 
 def test_xml_import():
     abspath = path.dirname(path.abspath(__file__))
     transcript_page = TranscriptPage.objects.get(transcript_id=1, volume_id=1, volume_seq_number=136)
-    transcript_page.seq_number.should.equal(136)
-    transcript_page.date.should.equal(datetime(1946, 12, 10))
-    transcript_page.page_number.should.equal(121)
+    assert transcript_page.seq_number == 136
+    assert transcript_page.date.replace(tzinfo=None) == datetime(1946, 12, 10)
+    assert transcript_page.page_number == 121
 
     # ingest a dummy xml file
     out = call_command('ingest_transcript_xml', path.join(abspath, 'bad/NRMB-NMT01-01_00136_0.xml'))
 
     transcript_page = TranscriptPage.objects.get(transcript_id=1, volume_id=1, volume_seq_number=136)
-    transcript_page.seq_number.should.equal(99999)
-    transcript_page.date.should.equal(datetime(1999, 1, 1))
-    transcript_page.page_number.should.equal(99999)
-    transcript_page.text().should.contain('No text in here')
-    transcript_page.extract_evidence_codes().should.be.empty
-    transcript_page.extract_exhibit_codes().should.be.empty
+    assert transcript_page.seq_number == 99999
+    assert transcript_page.date.replace(tzinfo=None) == datetime(1999, 1, 1)
+    assert transcript_page.page_number == 99999
+    assert 'No text in here' in transcript_page.text()
+    assert not transcript_page.extract_evidence_codes()
+    assert not transcript_page.extract_exhibit_codes()
 
     # ingest the correct xml file
     call_command('ingest_transcript_xml', path.join(abspath, 'good/NRMB-NMT01-01_00136_0.xml'))
 
     transcript_page = TranscriptPage.objects.get(transcript_id=1, volume_id=1, volume_seq_number=136)
-    transcript_page.seq_number.should.equal(136)
-    transcript_page.date.should.equal(datetime(1946, 12, 10))
-    transcript_page.page_number.should.equal(121)
-    transcript_page.text().should.contain('The defendants Karl Brandt, Genzken, Gebhardt, Rudolf Brandt')
-    transcript_page.extract_evidence_codes().should.equal(['NO-416', 'NO-417'])
-    transcript_page.extract_exhibit_codes().should.equal(['Prosecution 22'])
+    assert transcript_page.seq_number == 136
+    assert transcript_page.date.replace(tzinfo=None) == datetime(1946, 12, 10)
+    assert transcript_page.page_number == 121
+    assert 'The defendants Karl Brandt, Genzken, Gebhardt, Rudolf Brandt' in transcript_page.text()
+    assert transcript_page.extract_evidence_codes() == ['NO-416', 'NO-417']
+    assert transcript_page.extract_exhibit_codes() == ['Prosecution 22']
