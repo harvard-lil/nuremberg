@@ -173,3 +173,5 @@ e.g. //s3.amazonaws.com/nuremberg-transcripts/NRMB-NMT01-01_00001_0.jpg
 >>> TranscriptPage.objects.filter(image_url__iregex=r'//s3.amazonaws.com/nuremberg-transcripts/NRMB-NMT\d\d-\d\d_\d{5}_\d\.jpg').count()
 44728
 ```
+
+While investigating the purported existence of an `image_cache` directory for documents, I found [one for `transcripts`](https://github.com/harvard-lil/nuremberg/tree/master/nuremberg/transcripts/static/image_cache/transcripts). Best I can tell, these images are never served by the app. We might be able to confirm by watching the logs go by in Heroku, but there is probably not a way to prove definitively that they are not.
