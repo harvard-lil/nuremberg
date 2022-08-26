@@ -11,7 +11,7 @@
 The client uses docker.
 
 1. `docker-compose up`
-2. `mv dumps/nuremberg_prod_dump_2022-08-02.sqlite3.zip . && unzip nuremberg_prod_dump_2022-08-02.sqlite3`
+2. `cp dumps/nuremberg_prod_dump_2022-08-02.sqlite3.zip . && unzip nuremberg_prod_dump_2022-08-02.sqlite3`
 3. `mv nuremberg_prod_dump_2022-08-02.sqlite3 nuremberg_dev.db`
 4. `docker-compose cp solr_conf/ solr:/opt/solr-8.11.2/solr_conf`
 5. `docker-compose exec solr cp -r /opt/solr-8.11.2/solr_conf /var/solr/data/nuremberg_dev`
