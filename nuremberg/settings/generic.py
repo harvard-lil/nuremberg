@@ -161,3 +161,5 @@ COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 HAYSTACK_DEFAULT_OPERATOR = 'AND'
+
+S3_URL = 'http://s3.amazonaws.com/'

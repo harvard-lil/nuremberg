@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import include, url, re_path
 from django.contrib import admin
 from proxy.views import proxy_view
@@ -25,7 +26,7 @@ urlpatterns = [
         proxied(base_url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/')),
     re_path(r'^proxy_image/(?P<path>.*)$',
         # RedirectView.as_view(url='http://s3.amazonaws.com/nuremberg-documents/%(url)s'))
-        proxied(base_url='http://s3.amazonaws.com/nuremberg-documents/')),
+        proxied(base_url=f'{settings.S3_URL}/nuremberg-documents/')),
     re_path(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /search/", content_type="text/plain")),
 ]
 

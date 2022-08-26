@@ -53,3 +53,5 @@ LOGGING = {
         },
     },
 }
+
+S3_URL = 'http://minio:9000'
