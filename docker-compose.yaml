@@ -42,7 +42,7 @@ services:
       - MINIO_FORCE_NEW_KEYS=yes
       - MINIO_ROOT_USER=${MINIO_ROOT_USER:-accesskey}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-secretkey}
-      - MINIO_DEFAULT_BUCKETS=nuremberg-documents:none,nuremberg-transcripts:download
+      - MINIO_DEFAULT_BUCKETS=nuremberg-documents:download,nuremberg-transcripts:download
       # - MINIO_SCHEME=https
     volumes:
       # - ./services/docker/minio/certs:/certs
