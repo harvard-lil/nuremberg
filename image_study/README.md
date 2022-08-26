@@ -136,6 +136,7 @@ I checked and the same is true with document 2, page 13, the `last()` of the que
 
 This is something else we should check with Paul about.
 
+
 #### 492 at /static/image_cache/thumb/
 
 The rest match r'/static/image_cache/thumb/HLSL_NUR_\d{8}.jpg'
@@ -170,6 +171,21 @@ I don't think this is it either, but I looked to see if [Django's file system ca
 I suspect these are all safely in the S3 bucket; for instance, see http://nuremberg.law.harvard.edu/proxy_image/HLSL_NUR_03799001.jpg
 
 I will not download them all now, to avoid spending the money.
+
+We could do a data migration and update the fields, but to be less invasive, I overwrote the `url` accessor on DocumentImage to direct these images to the proxy if `settings.PROXY_DOCUMENT_IMAGE_THUMBS` is `True`; I set it `True` in dev and `False` in general.
+
+```
+>>> import requests
+>>>
+>>> cached_document_images = DocumentImage.objects.filter(url__iregex=r'/static/image_cache/thumb/HLSL_NUR_\d{8}.jpg')
+>>>
+>>> response_codes = set()
+>>> for image in cached_document_images:
+...     response_codes.add(requests.get(f'http://localhost:8000{image.url}').status_code)
+>>>
+>>> response_codes
+{200}
+```
 
 
 ## Photograph

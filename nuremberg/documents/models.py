@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.urls import reverse
 from django.utils.text import slugify
 from django.db import models
 import datetime
@@ -83,6 +85,12 @@ class DocumentImage(models.Model):
     height = models.IntegerField(blank=True, null=True)
 
     image_type = models.ForeignKey('DocumentImageType', on_delete=models.PROTECT)
+
+    def __getattribute__(self, attrname):
+        orig = super().__getattribute__(attrname)
+        if attrname == 'url' and settings.PROXY_DOCUMENT_IMAGE_THUMBS and orig.startswith('/static/image_cache/thumb/'):
+            return reverse('proxy_image', kwargs={'path': orig.split('/')[-1]})
+        return orig
 
     def find_url(self, scale):
         if self.scale == scale:
