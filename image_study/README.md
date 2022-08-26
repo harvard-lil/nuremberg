@@ -24,6 +24,9 @@ e.g. 41|/proxy_image/HLSL_NUR_00001001.jpg
 
 These images are served via [this view](https://github.com/harvard-lil/nuremberg/blob/post-heroku/nuremberg/core/urls.py#L26), which just takes whatever comes after `/proxy_image/` and sticks it onto `http://s3.amazonaws.com/nuremberg-documents/` and serves you that.
 
+I pointed the proxy at `settings.DOCUMENTS_URL`, set to `http://minio:9000/nuremberg-documents` in settings.dev and S3 as above in settings.general.
+
+
 ### Outliers
 
 There are 533 outliers.
@@ -77,6 +80,21 @@ This [custom Django management command](https://github.com/harvard-lil/nuremberg
 Ben reports that all six images are present in the S3 bucket in the normal way.
 
 My best guess, lacking any context on the project, is that this was a processing error of some kind... But we should ask Paulif those images are somehow special. If not, we can just remove the special handling. But if yes.... we need to know what is special, so we can recreate whatever the special handling was supposed to do lol.
+
+I pointed the proxy at `settings.DOCUMENTS_PRINTING_URL`, set to `settings.DOCUMENT_URL` in settings.dev and http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/ as above in settings.general.
+
+```
+>>> from nuremberg.documents.models import *
+>>> import requests
+
+>>> response_codes = set()
+
+>>> for image in DocumentImage.objects.filter(url__iregex=r'/proxy_image/printing/HLSL_NUR_\d{8}.jpg'):
+...     response_codes.add(requests.get(f"http://localhost:8000{image.url}").status_code)
+...
+>>> response_codes
+{200}
+```
 
 
 #### 35 with no URL

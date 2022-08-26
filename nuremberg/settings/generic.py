@@ -162,4 +162,5 @@ COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 HAYSTACK_DEFAULT_OPERATOR = 'AND'
 
-S3_URL = 'http://s3.amazonaws.com/'
+DOCUMENTS_URL = 'http://s3.amazonaws.com/nuremberg-documents/'
+DOCUMENTS_PRINTING_URL = 'http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/'

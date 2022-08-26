@@ -23,10 +23,10 @@ urlpatterns = [
     re_path(r'^', include('nuremberg.content.urls')),
     re_path(r'^proxy_image/printing/(?P<path>.*)$',
         # RedirectView.as_view(url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/%(url)s')),
-        proxied(base_url='http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/')),
+        proxied(base_url=settings.DOCUMENTS_PRINTING_URL)),
     re_path(r'^proxy_image/(?P<path>.*)$',
         # RedirectView.as_view(url='http://s3.amazonaws.com/nuremberg-documents/%(url)s'))
-        proxied(base_url=f'{settings.S3_URL}/nuremberg-documents/')),
+        proxied(base_url=settings.DOCUMENTS_URL)),
     re_path(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /search/", content_type="text/plain")),
 ]
 

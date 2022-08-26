@@ -54,4 +54,5 @@ LOGGING = {
     },
 }
 
-S3_URL = 'http://minio:9000'
+DOCUMENTS_URL = 'http://minio:9000/nuremberg-documents/'
+DOCUMENTS_PRINTING_URL = DOCUMENTS_URL
