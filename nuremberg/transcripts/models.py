@@ -2,6 +2,8 @@ import re
 from io import BytesIO
 from lxml import etree
 from datetime import datetime
+from django.conf import settings
+from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.functional import cached_property
 
@@ -82,6 +84,12 @@ class TranscriptPage(models.Model):
     image_url = models.TextField(blank=True, null=True)
 
     xml = models.TextField()
+
+    def __getattribute__(self, attrname):
+        orig = super().__getattribute__(attrname)
+        if attrname == 'image_url' and settings.PROXY_TRANSCRIPTS:
+            return reverse('proxy_transcript', kwargs={'path': orig.split('/')[-1]})
+        return orig
 
     def xml_tree(self):
         return etree.fromstring(self.xml.encode('utf8'))

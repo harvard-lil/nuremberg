@@ -56,4 +56,6 @@ LOGGING = {
 
 DOCUMENTS_URL = 'http://minio:9000/nuremberg-documents/'
 DOCUMENTS_PRINTING_URL = DOCUMENTS_URL
+TRANSCRIPTS_URL = 'http://minio:9000/nuremberg-transcripts/'
 PROXY_DOCUMENT_IMAGE_THUMBS = True
+PROXY_TRANSCRIPTS = True

@@ -164,4 +164,6 @@ HAYSTACK_DEFAULT_OPERATOR = 'AND'
 
 DOCUMENTS_URL = 'http://s3.amazonaws.com/nuremberg-documents/'
 DOCUMENTS_PRINTING_URL = 'http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/'
+TRANSCRIPTS_URL = ''
 PROXY_DOCUMENT_IMAGE_THUMBS = False
+PROXY_TRANSCRIPTS = False
