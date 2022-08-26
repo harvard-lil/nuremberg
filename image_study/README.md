@@ -209,3 +209,5 @@ e.g. //s3.amazonaws.com/nuremberg-transcripts/NRMB-NMT01-01_00001_0.jpg
 ```
 
 While investigating the purported existence of an `image_cache` directory for documents, I found [one for `transcripts`](https://github.com/harvard-lil/nuremberg/tree/master/nuremberg/transcripts/static/image_cache/transcripts). Best I can tell, these images are never served by the app. We might be able to confirm by watching the logs go by in Heroku, but there is probably not a way to prove definitively that they are not.
+
+For convenience and consistency, I decided to proxy these as well, similarly, by overwriting the `image_url` accessor on TranscriptImage to direct these images to a proxy if `settings.PROXY_TRANSCRIPTS` is `True`; I set it `True` in dev and `False` in general. The URL used by the proxy is configured by `settings.TRANSCRIPTS_URL`, set to minio in dev and the empty string in general.
