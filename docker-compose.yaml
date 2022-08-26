@@ -36,6 +36,21 @@ services:
       SCREEN_HEIGHT: 900
       SCREEN_DEPTH: 24
 
+  minio:
+    image: bitnami/minio:2022.8.22
+    environment:
+      - MINIO_FORCE_NEW_KEYS=yes
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-accesskey}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-secretkey}
+      - MINIO_DEFAULT_BUCKETS=nuremberg-documents:none,nuremberg-transcripts:download
+      # - MINIO_SCHEME=https
+    volumes:
+      # - ./services/docker/minio/certs:/certs
+      - ./minio/data:/data:delegated
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+
 volumes:
   db_data:
   solr_data:

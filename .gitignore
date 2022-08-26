@@ -9,3 +9,7 @@ debug.txt
 venv
 src
 *.pyc
+minio/data/*
+!minio/data/.gitkeep
+# minio/certs/*
+# !minio/certs/.gitkeep
