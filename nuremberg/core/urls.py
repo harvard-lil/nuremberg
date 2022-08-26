@@ -15,7 +15,7 @@ def proxied(base_url):
     return proxy_handler
 
 urlpatterns = [
-    re_path(r'^admin/', admin.site.urls),
+    # re_path(r'^admin/', admin.site.urls),
     re_path(r'^transcripts/', include('nuremberg.transcripts.urls')),
     re_path(r'^documents/', include('nuremberg.documents.urls')),
     re_path(r'^photographs/', include('nuremberg.photographs.urls')),
