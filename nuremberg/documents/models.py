@@ -88,7 +88,7 @@ class DocumentImage(models.Model):
 
     def __getattribute__(self, attrname):
         orig = super().__getattribute__(attrname)
-        if attrname == 'url' and settings.PROXY_DOCUMENT_IMAGE_THUMBS and orig.startswith('/static/image_cache/thumb/'):
+        if attrname == 'url' and settings.PROXY_DOCUMENT_IMAGE_THUMBS and orig and orig.startswith('/static/image_cache/thumb/'):
             return reverse('proxy_image', kwargs={'path': orig.split('/')[-1]})
         return orig
 
