@@ -7,11 +7,10 @@ COMPRESS_ENABLED = False
 DATABASES['default'] = {
   'ENGINE': 'django.db.backends.sqlite3',
   'NAME': 'nuremberg_dev.db',
-  'USER': 'nuremberg',
-  'HOST': 'localhost',
+  'USER': 'nuremberg'
 }
-if os.environ.get('DOCKERIZED'):
-    DATABASES['default']['HOST'] = 'db'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 HAYSTACK_CONNECTIONS = {
     'default': {
