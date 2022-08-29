@@ -9,6 +9,9 @@ services:
     volumes:
       # NAMED VOLUMES
       - solr_data:/var/solr
+    networks:
+      - default
+
   web:
     build:
       context: ./
@@ -24,8 +27,10 @@ services:
       - DOCKERIZED=True
     ports:
       - "127.0.0.1:8000:8000"
-    depends_on:
-      - solr
+    networks:
+      - default
+      - minio
+
   selenium:
     image: selenium/standalone-chrome:3.141.59
     ports:
@@ -35,6 +40,8 @@ services:
       SCREEN_WIDTH: 1200
       SCREEN_HEIGHT: 900
       SCREEN_DEPTH: 24
+    networks:
+      - default
 
   minio:
     image: bitnami/minio:2022.8.22
@@ -43,13 +50,14 @@ services:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER:-accesskey}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-secretkey}
       - MINIO_DEFAULT_BUCKETS=nuremberg-documents:download,nuremberg-transcripts:download
-      # - MINIO_SCHEME=https
     volumes:
-      # - ./services/docker/minio/certs:/certs
       - ./minio/data:/data:delegated
-    ports:
-      - "127.0.0.1:9000:9000"
-      - "127.0.0.1:9001:9001"
+    networks:
+      - minio
+
+networks:
+  default:
+  minio:
 
 volumes:
   db_data:
