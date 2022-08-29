@@ -6,18 +6,21 @@
 > exposing the digitized documents, full-text trial transcripts, and rich
 > search features for the same in a friendly, modern interface.
 
-## Running the client locally:
 
-The client uses docker.
+## Setup
 
-1. `docker-compose up`
+The client uses [Docker/Docker Compose](https://docs.docker.com/compose/).
+
+1. `docker compose up`
 2. `cp dumps/nuremberg_prod_dump_2022-08-02.sqlite3.zip . && unzip nuremberg_prod_dump_2022-08-02.sqlite3`
 3. `mv nuremberg_prod_dump_2022-08-02.sqlite3 nuremberg_dev.db`
-4. `docker-compose cp solr_conf/ solr:/opt/solr-8.11.2/solr_conf`
-5. `docker-compose exec solr cp -r /opt/solr-8.11.2/solr_conf /var/solr/data/nuremberg_dev`
-6. `docker-compose exec solr solr create_core -c nuremberg_dev -d solr_conf`
-7. `docker-compose exec web python manage.py rebuild_index`
-7. `docker-compose exec web python manage.py runserver 0.0.0.0:8000`
+4. `docker compose cp solr_conf/ solr:/opt/solr-8.11.2/solr_conf`
+5. `docker compose exec solr cp -r /opt/solr-8.11.2/solr_conf /var/solr/data/nuremberg_dev`
+6. `docker compose exec solr solr create_core -c nuremberg_dev -d solr_conf`
+7. `docker compose exec web python manage.py rebuild_index`
+7. `docker compose exec web python manage.py runserver 0.0.0.0:8000`
+
+Then visit [localhost:8000](http://localhost:8000).
 
 
 ## Project Structure
@@ -42,53 +45,20 @@ feature set:
 - suite](#testing) [Configuring project settings](#project-settings)
 - [Data](#data) [Packaging static assets](#static-assets)
 
-#### Solr
 
-For the latest Solr 8, build the Solr schema by running:
-
-```
-bash docker-compose exec web python manage.py build_solr_schema
---configure-dir=solr_conf
-```
-
-This will generate both `schema.xml` and `solrconfig.xml` under the `solr_conf`
-directory. You can then rebuild the Solr docker container to use the updated
-config files.
-
-To update the index itself:
-
-```
-bash manage.py rebuild_index
-```
-
-(It will take a couple of minutes to reindex fully.)
-
-Do this any time you make changes to `search_indexes.py` or `schema.xml`.
-
-#### Run the server
-
-You should now be all set to run the local server:
-
-```
-bash python manage.py runserver
-```
-
-Then visit [localhost:8000](http://localhost:8000).
-
-### Testing
+## Testing
 
 Tests in the project are generally high-level integration acceptance tests that
 exercise the full app stack in a deployed configuration. Since the app has the
 luxury of running off of a largely static dataset, the test database is
 persistent, greatly speeding up setup and teardown time.
 
-#### Running tests
+### Running tests
 
-Make sure you have installed test dependencies and initialized the test
-database in [Setup](#setup) above. Then simply:
+Make sure you have initialized the database and solr index as described in [Setup](#setup) above. Then run:
 
 ```
-bash py.test
+docker compose exec web pytest
 ```
 
 Pytest is configured in `pytest.ini` to run all files named `tests.py`.
@@ -100,39 +70,12 @@ However they are still useful, as they exercise the full stack all the way
 through image downloading and preloading. They can be run explicitly when
 necessary.
 
-The browser tests require use of the Docker development environment, which
-includes an isolated Selenium container for running the tests.
-
 ```
-bash docker-compose exec web pytest nuremberg/documents/browser_tests.py
+docker compose exec web python pytest nuremberg/documents/browser_tests.py
 ```
 
 
-#### Coverage
-
-Running the test suite will print a code coverage report to the terminal, as
-well as an interactive HTML report in `coverage/index.html`. Template code is
-included in the report. Coverage settings are configured in `.coveragerc`.
-
-> NOTE: There is an open issue
-> [#25](https://github.com/nedbat/django_coverage_plugin/issues/25) with
-> django_coverage_plugin which will hide certain warnings related to template
-> coverage settings, thus the requirement of the
-> [emmalemma@e083da1](https://github.com/emmalemma/django_coverage_plugin/commit/e083da1)
-> fork. The plugin works fine, but if you see 0% coverage in templates,
-> double-check your debug settings.
-
-#### Pre-commit hook
-
-To improve test compliance, there is a git pre-commit hook to run the test
-suite before each commit. It's self-installing, so just run:
-
-```bash bash ./nuremberg/core/tests/pre-commit-hook.sh ```
-
-Now if any test fails, or test coverage is below 95%, the hook will cancel the
-commit.
-
-### Project Settings
+## Project Settings
 
 > NOTE: An example configuration used for the demo site on Heroku is in the
 > [heroku](https://github.com/harvard-lil/nuremberg/tree/heroku) branch as
@@ -153,47 +96,66 @@ deployment process.
 (The only exception to this is the defaults used in the dev environment.)
 
 
-### Data
+## Data
 
-Since it is expected that this app will host a largely static dataset, there
-isn't an admin interface to speak of. Updates can go straight into MySQL. Just
-ensure that any changes are reindexed by Solr.
+Since it is expected that this app will host a largely static dataset, the Django admin is not enabled. Updates can be made directly in SQLite. Just ensure that any changes are reindexed by Solr.
 
-The test fixture database dump is, for all intents and purposes, a
-production-ready database at the time of this writing. However, that file
-should only be updated when necessary to support testing new features.
+A minimal admin interface can be manually enabled locally if desired in `core/urls.py`. For it to be operable, you will need to run migrations and use the Django management command to create an admin user for your use. If you choose to do so, make sure not to commit and deploy your changes!
 
-#### Solr
+
+## Solr
 
 Solr indexes are defined in relevant `search_indexes.py` files, and additional
 indexing configuration is in the
 `search/templates/search_configuration/schema.xml` file used to generate
 `solr_conf/schema.xml`.
 
-The Solr schema must be maintained as part of the deploy process. When
-deploying an updated schema, make sure to generate and upload the `schema.xml`
-and `solrconfig.xml` files created by using `manage.py build_solr_schema
---configure-dir=solr_conf`, then run a complete reindexing.
+### Starting fresh
 
-> WARNING: Be cautious when doing this in production-- although in general
-> reindexing will happen transparently, certain schema changes will cause a
-> `SCHEMA-INDEX-MISMATCH` error that will cause search pages to crash until
-> reindexing completes.
+To build a brand new Solr schema, run:
 
-#### Reindexing
+```
+docker compose exec web python manage.py build_solr_schema
+--configure-dir=solr_conf
+```
 
-If writes are relatively infrequent, manual reindexing using `manage.py
-update_index` should work fine. If writes happen relatively often, you should
-set up a `cron` script or similar to automate reindexing on a nightly or hourly
+This will generate both `schema.xml` and `solrconfig.xml` under the `solr_conf`
+directory. To use the updated config files, run `docker compose down` to dispose of the existing solr container and `docker compose up -d` to start a fresh one.
+
+### Reindexing
+
+To rebuild the index contents, run:
+
+```
+docker compose exec web python manage.py rebuild_index
+```
+
+(It will take a couple of minutes to reindex fully.)
+
+Do this any time you make changes to `search_indexes.py` or `schema.xml`.
+
+In the past, when this site was under active development and more frequent reindexing was required, `manage.py update_index` was run via a `cron` script or similar to automate reindexing on a nightly or hourly
 basis using `--age 24` or `--age 1`. (Note: This will restrict reindexing only
 for indexes that have an `updated_at` field defined; currently, `photographs`
 does not, but completely reindexing that model is fast anyway.)
 
-Even a full reindex should only take a few minutes to run, and the site can
-continue to serve requests while it happens. For more fine-grained information
-on indexing progress, use `--batch-size 100 --verbosity 2` or similar.
+For more fine-grained information on indexing progress, use `--batch-size 100 --verbosity 2` or similar.
 
-#### Transcripts
+### Deploying
+
+The Solr schema must be maintained as part of the deploy process. When
+deploying an updated schema, make sure you have generated and committed
+new `schema.xml` and `solrconfig.xml` files using `manage.py build_solr_schema
+--configure-dir=solr_conf`, and then run a complete reindexing.
+
+> WARNING: Be cautious when doing this in production-- although in general
+> reindexing will happen transparently and the site can continue to serve requests
+> while reindexing is in progress, certain schema changes will cause a
+> `SCHEMA-INDEX-MISMATCH` error that will cause search pages to crash until
+> reindexing completes.
+
+
+## Transcripts
 
 There is a management command `manage.py ingest_transcript_xml` which reads a
 file like `NRMB-NMT01-23_00512_0.xml` (or a directory of such files using `-d`)
@@ -203,12 +165,13 @@ is the preferred way to update transcript data. If database XML is modified
 directly, call `populate_from_xml` on the appropriate TranscriptPage model to
 update date, page, and sequence number.
 
-Remember to run `manage.py update_index transcripts` after ingesting XML to
+Remember to run `docker compose exec web python manage.py update_index transcripts` after ingesting XML to
 enable searching of the new content.
 
-### Static Assets
 
-#### CSS
+## Static Assets
+
+### CSS
 
 CSS code is generated from `.less` files that live in
 `nuremberg/core/static/styles`. The styles are built based on Bootstrap 3
@@ -218,7 +181,7 @@ design.
 Compilation is handled automatically by the `django-static-precompiler` module
 while the development server is running.
 
-#### JavaScript
+### JavaScript
 
 JavaScript code is organized simply. JS dependencies are in
 `core/static/scripts`, and are simply included in `base.html`. App code is
@@ -235,15 +198,14 @@ minor cosmetic features implemented in `search`.
 In production, all site javascript is compacted into a single minified blob by
 `compressor`. (The exception is the rarely-needed dependency `jsPDF`.)
 
-#### In Production
+### In Production
 
-When deploying, you should run `manage.py compress` to bundle, minify and
-compress CSS and JS files, and `manage.py collectstatic` to move the remaining
+When deploying, you should run `docker compose exec web python manage.py compress` to bundle, minify and
+compress CSS and JS files, and `docker compose exec web python manage.py collectstatic` to move the remaining
 assets into `static/`. This folder should not be committed to git.
 
 For deployment to Heroku, these static files will be served by the WhiteNoise
 server. In other environments it may be appropriate to serve them directly with
 Nginx or Apache. If necessary, the output directory can be controlled with an
 environment-specific override of the `STATIC_ROOT` settings variable.
-
 
