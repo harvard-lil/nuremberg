@@ -28,7 +28,7 @@ To run with production settings:
 3. `docker compose exec web ./manage.py compress`
 4. `docker compose exec web ./manage.py collectstatic`
 
-Then visit [localhost:8080](http://localhost:8080).
+Then visit [localhost:8080](http://localhost:8080). (If you get a 502 wait a few seconds and then refresh the page.)
 
 
 ## Project Structure

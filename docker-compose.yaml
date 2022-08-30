@@ -23,6 +23,10 @@ services:
     networks:
       - default
       - minio
+    depends_on:
+      - db
+      - solr
+      - minio
 
   minio:
     image: bitnami/minio:2022.8.22

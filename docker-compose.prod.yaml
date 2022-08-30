@@ -19,3 +19,6 @@ services:
       - ./nginx.conf:/opt/bitnami/nginx/conf/server_blocks/nuremberg.conf:ro
     ports:
       - "127.0.0.1:8080:8080"
+    depends_on:
+      - web
+
