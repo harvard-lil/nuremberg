@@ -14,4 +14,3 @@ minio/data/*
 !minio/data/.gitkeep
 nuremberg_dev.db
 nuremberg_prod_dump_2022-08-02.sqlite3.zip
-settings.py

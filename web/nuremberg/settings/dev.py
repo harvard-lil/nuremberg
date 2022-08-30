@@ -1,26 +1,8 @@
-import os
 from .generic import *
 
-SECRET_KEY = '@xf59!g4b(=z==*@#(0hdjc$_q5taw-t-1m#9@o!nzx_h1z@r9'
+SECRET_KEY = 'supersecret'
 DEBUG = True
 COMPRESS_ENABLED = False
-DATABASES['default'] = {
-  'ENGINE': 'django.db.backends.sqlite3',
-  'NAME': 'nuremberg_dev.db',
-  'USER': 'nuremberg'
-}
-
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        # 'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'ENGINE': 'nuremberg.search.lib.solr_grouping_backend.GroupedSolrEngine',
-        'URL': 'http://127.0.0.1:8983/solr/nuremberg_dev'
-    },
-}
-if os.environ.get('DOCKERIZED'):
-    HAYSTACK_CONNECTIONS['default']['URL'] = 'http://solr:8983/solr/nuremberg_dev'
 
 CACHES = {
     'default': {
@@ -36,25 +18,3 @@ STATIC_PRECOMPILER_COMPILERS = (
 )
 
 # MIDDLEWARE_CLASSES.append('django_cprofile_middleware.middleware.ProfilerMiddleware')
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-        },
-    },
-}
-
-DOCUMENTS_URL = 'http://minio:9000/nuremberg-documents/'
-DOCUMENTS_PRINTING_URL = DOCUMENTS_URL
-TRANSCRIPTS_URL = 'http://minio:9000/nuremberg-transcripts/'
-PROXY_DOCUMENT_IMAGE_THUMBS = True
-PROXY_TRANSCRIPTS = True

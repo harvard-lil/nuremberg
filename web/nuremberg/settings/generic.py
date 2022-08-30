@@ -92,9 +92,14 @@ WSGI_APPLICATION = 'nuremberg.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-# Configured in environment files
 DATABASES = {
+    'default': {
+      'ENGINE': 'django.db.backends.sqlite3',
+      'NAME': 'nuremberg_dev.db',
+      'USER': 'nuremberg'
+    }
 }
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 # Password validation
@@ -160,10 +165,41 @@ COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 # https://warehouse.python.org/project/whitenoise/
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'nuremberg.search.lib.solr_grouping_backend.GroupedSolrEngine',
+        'URL': 'http://solr:8983/solr/nuremberg_dev'
+    },
+}
 HAYSTACK_DEFAULT_OPERATOR = 'AND'
 
-DOCUMENTS_URL = 'http://s3.amazonaws.com/nuremberg-documents/'
-DOCUMENTS_PRINTING_URL = 'http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/'
-TRANSCRIPTS_URL = ''
-PROXY_DOCUMENT_IMAGE_THUMBS = False
-PROXY_TRANSCRIPTS = False
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
+
+# Look for images in AWS S3
+# DOCUMENTS_URL = 'http://s3.amazonaws.com/nuremberg-documents/'
+# DOCUMENTS_PRINTING_URL = 'http://nuremberg.law.harvard.edu/imagedir/HLSL_NUR_printing/'
+# TRANSCRIPTS_URL = ''
+# PROXY_DOCUMENT_IMAGE_THUMBS = False
+# PROXY_TRANSCRIPTS = False
+
+# Look for images in a local minio
+DOCUMENTS_URL = 'http://minio:9000/nuremberg-documents/'
+DOCUMENTS_PRINTING_URL = DOCUMENTS_URL
+TRANSCRIPTS_URL = 'http://minio:9000/nuremberg-transcripts/'
+PROXY_DOCUMENT_IMAGE_THUMBS = True
+PROXY_TRANSCRIPTS = True

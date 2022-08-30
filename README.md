@@ -23,7 +23,7 @@ The client uses [Docker/Docker Compose](https://docs.docker.com/compose/).
 Then visit [localhost:8000](http://localhost:8000).
 
 To run with production settings:
-1. Populate web/nuremberg/settings/settings.py appropriately.
+1. Set appropriate SECRET_KEY and ALLOWED_HOSTS env vars
 2. `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
 3. `docker compose exec web ./manage.py compress`
 4. `docker compose exec web ./manage.py collectstatic`

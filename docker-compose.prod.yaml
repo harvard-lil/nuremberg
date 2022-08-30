@@ -6,10 +6,12 @@ services:
 
   web:
     environment:
-      - DJANGO_SETTINGS_MODULE=nuremberg.settings.settings
+      - DJANGO_SETTINGS_MODULE=nuremberg.settings.prod
+      - SECRET_KEY=${SECRET_KEY:-secretkey}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
     # hack: sleep to give the database time to start up
     command: >
-      sh -c "sleep 5 && gunicorn nuremberg.wsgi:application --bind 0.0.0.0:8000"
+      bash -c "sleep 5 && gunicorn nuremberg.wsgi:application --bind 0.0.0.0:8000"
 
   nginx:
     image: bitnami/nginx:1.23.1
