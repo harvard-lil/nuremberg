@@ -13,14 +13,22 @@ The client uses [Docker/Docker Compose](https://docs.docker.com/compose/).
 
 1. `docker compose up`
 2. `cp dumps/nuremberg_prod_dump_2022-08-02.sqlite3.zip . && unzip nuremberg_prod_dump_2022-08-02.sqlite3`
-3. `mv nuremberg_prod_dump_2022-08-02.sqlite3 nuremberg_dev.db`
+3. `mv nuremberg_prod_dump_2022-08-02.sqlite3 web/nuremberg_dev.db`
 4. `docker compose cp solr_conf/ solr:/opt/solr-8.11.2/solr_conf`
 5. `docker compose exec solr cp -r /opt/solr-8.11.2/solr_conf /var/solr/data/nuremberg_dev`
 6. `docker compose exec solr solr create_core -c nuremberg_dev -d solr_conf`
 7. `docker compose exec web python manage.py rebuild_index`
-7. `docker compose exec web python manage.py runserver 0.0.0.0:8000`
+8. `docker compose exec web python manage.py runserver 0.0.0.0:8000`
 
 Then visit [localhost:8000](http://localhost:8000).
+
+To run with production settings:
+1. Populate web/nuremberg/settings/settings.py appropriately.
+2. `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
+3. `docker compose exec web ./manage.py compress`
+4. `docker compose exec web ./manage.py collectstatic`
+
+Then visit [localhost:8080](http://localhost:8080).
 
 
 ## Project Structure

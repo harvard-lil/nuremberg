@@ -4,44 +4,25 @@ services:
 
   solr:
     image: solr:8
-    ports:
-      - "127.0.0.1:8983:8983"
     volumes:
       # NAMED VOLUMES
       - solr_data:/var/solr
-    networks:
-      - default
 
   web:
     build:
-      context: ./
-      dockerfile: web.dockerfile
+      context: ./web
     image: nuremberg:0.15
     tty: true
     command: bash
     volumes:
       # BIND MOUNTS
-      - ./:/nuremberg
+      - ./web:/nuremberg
     environment:
       # let Django load Docker-specific settings conditionally
       - DOCKERIZED=True
-    ports:
-      - "127.0.0.1:8000:8000"
     networks:
       - default
       - minio
-
-  selenium:
-    image: selenium/standalone-chrome:3.141.59
-    ports:
-      - "4444:4444"
-    environment:
-      PORT: 4444
-      SCREEN_WIDTH: 1200
-      SCREEN_HEIGHT: 900
-      SCREEN_DEPTH: 24
-    networks:
-      - default
 
   minio:
     image: bitnami/minio:2022.8.22
@@ -51,7 +32,7 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-secretkey}
       - MINIO_DEFAULT_BUCKETS=nuremberg-documents:download,nuremberg-transcripts:download
     volumes:
-      - ./minio/data:/data:delegated
+      - ./minio/data:/data
     networks:
       - minio
 

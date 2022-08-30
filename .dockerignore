@@ -1,4 +1,2 @@
 **
-!requirements.txt
-!nuremberg/core/tests/requirements.txt
-!solr_conf
+!web/requirements.txt
