@@ -24,7 +24,6 @@ services:
       - default
       - minio
     depends_on:
-      - db
       - solr
       - minio
 
