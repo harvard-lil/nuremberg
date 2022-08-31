@@ -17,8 +17,9 @@ services:
     image: bitnami/nginx:1.23.1
     volumes:
       - ./nginx.conf:/opt/bitnami/nginx/conf/server_blocks/nuremberg.conf:ro
+    environment:
+      - HOST_NAME=${HOST_NAME:-web}
     ports:
       - "127.0.0.1:8080:8080"
     depends_on:
       - web
-
