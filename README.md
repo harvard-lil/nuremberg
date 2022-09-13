@@ -32,7 +32,7 @@ Then visit [localhost:8080](http://localhost:8080). (If you get a 502 wait a few
 
 When you are finished,
 
-5. docker compose -f docker-compose.yaml -f docker-compose.prod.yaml down
+5. docker compose -f docker-compose.yml -f docker-compose.prod.yml down
 
 
 ## Project Structure
