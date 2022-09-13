@@ -1,8 +1,8 @@
 # After updating this file, run
 #
-# `pip-compile && pip-compile requirements.in nuremberg/core/tests/requirements.in -o nuremberg/core/tests/requirements.txt`
+# `pip-compile`
 #
-# to update requirements.txt and nuremberg/core/tests/requirements.txt
+# to update requirements.txt
 
 # LTS through 2024
 Django~=3.2.14

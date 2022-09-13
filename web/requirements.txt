@@ -33,7 +33,7 @@ django-proxy==1.2.1
     # via -r requirements.in
 django-static-precompiler==2.0
     # via -r requirements.in
-django==3.2.14
+django==3.2.15
     # via
     #   -r requirements.in
     #   django-appconf
@@ -96,11 +96,11 @@ six==1.15.0
     # via
     #   django-compressor
     #   django-coverage-plugin
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 tomli==2.0.1
     # via pytest
-urllib3==1.24.2
+urllib3==1.26.12
     # via
     #   requests
     #   selenium
