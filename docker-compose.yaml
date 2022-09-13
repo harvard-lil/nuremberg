@@ -16,7 +16,7 @@ services:
     command: bash
     volumes:
       # BIND MOUNTS
-      - ./web:/nuremberg:ro
+      - ./web:/nuremberg
     environment:
       # let Django load Docker-specific settings conditionally
       - DOCKERIZED=True
