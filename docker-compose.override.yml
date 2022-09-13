@@ -1,0 +1,21 @@
+# overrides for local development
+version: '2'
+services:
+
+  solr:
+    ports:
+      - "127.0.0.1:8983:8983"
+
+  web:
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  selenium:
+    image: selenium/standalone-chrome:3.141.59
+    ports:
+      - "4444:4444"
+    environment:
+      PORT: 4444
+      SCREEN_WIDTH: 1200
+      SCREEN_HEIGHT: 900
+      SCREEN_DEPTH: 24

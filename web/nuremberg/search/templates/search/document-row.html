@@ -1,0 +1,160 @@
+{% load search_url %}
+<tr class="document-row {% if result.authors|length <= 2 %}extra-padding{% endif %}">
+  <td>
+    <p class="trial-flags">
+      <div class="inline-type document-type-icon type-{{result.material_type|slugify}}">
+      {{result.material_type}}</div>
+      {% for case in result.case_tags %}
+        <span class="trial-flag trial-{{case|slugify}}">{{case}}</span>
+      {% endfor %}
+    </p>
+    {% if result.material_type == 'Document' %}
+      <a class="unstyled" href="{% url 'documents:show' document_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
+        <div class="h3">{{result.title}}</div>
+        {% if result.literal_title %}
+          <p>{{result.literal_title|truncatewords:35|truncatechars:300}}</p>
+        {% endif %}
+
+        {% if result.material_type == 'Document' %}
+          <p>
+            <strong>HLSL Item No.:</strong>
+            {{result.pk}}
+          </p>
+        {% endif %}
+      </a>
+    {% elif result.material_type == 'Photograph' %}
+      <a class="unstyled" href="{% url 'photographs:show' photograph_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
+        <div class="h3">{{result.title}}</div>
+        <p>
+          {% if result.highlighted %}
+            {% for snippet in result.highlighted.highlight|slice:":1" %}
+              <span class="ellipsis">[ ... ]</span>
+              {{ snippet|trim_snippet }}
+              <span class="ellipsis">[ ... ]</span>
+            {% empty %}
+              {{result.literal_title|truncatewords:35|truncatechars:300}}
+            {% endfor %}
+          {% else %}
+            {{result.literal_title|truncatewords:35|truncatechars:300}}
+          {% endif %}
+        </p>
+      </a>
+    {% elif result.material_type == 'Transcript' %}
+      <a class="unstyled" href="{% url 'transcripts:search' transcript_id=result.transcript_id slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
+        <div class="h3">{{result.title}}</div>
+        <p>{{group.hits}} result{{ group.hits|pluralize }} in this transcript</p>
+        <p class="snippets">
+          {% if group.hits == 1 %}
+            {% for snippet in result.highlighted.highlight %}
+              <span class="ellipsis">[ ... p. {{ result.page_label|default:"unlabeled" }} ]</span>
+              {{ snippet|trim_snippet }}
+            {% empty %}
+              <span class="ellipsis">[ p. {{ result.page_label|default:"unlabeled" }} ]</span>
+              {{ result.text|slice:":150"|trim_snippet }}
+            {% endfor %}
+          {% else %}
+            {% for document in group.documents %}
+              <span class="ellipsis">[ ... p. {{ document.page_label|default:"unlabeled" }} ]</span>
+              {% if document.highlighted %}
+                {{ document.highlighted.highlight.0|trim_snippet }}
+              {% else %}
+                {{ document.text|slice:":150"|trim_snippet }}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          <span class="ellipsis">[ ... ]</span>
+        </p>
+      </a>
+    {% endif %}
+
+    {% if result.material_type == 'Photograph' %}
+      <p>
+        <strong>Source:</strong>
+        {{result.source}}
+      </p>
+    {% else %}
+      {% comment %}
+      <p>
+        <strong>Language of Text:</strong>
+        {{result.language}}
+      </p>
+      {% endcomment %}
+      {% if result.source %}
+        <p>
+          <strong>Source of Text:</strong>
+          {{result.source}}
+        </p>
+      {% endif %}
+      {% comment %}
+      {% if result.trial_activities %}
+        <p>
+          <strong>Trial Issues:</strong>
+          {% for activity in result.trial_activities|slice:":5" %}
+              <a href="{% search_query issue=activity %}">{{activity}}</a>{% if not forloop.last %},{% endif %}
+          {% endfor %}
+          {% if result.trial_activities|length > 5 %}
+            ...
+          {% endif %}
+        </p>
+      {% endif %}
+      {% endcomment %}
+      {% group_merge group.documents 'evidence_codes' as evidence_codes %}
+      {% if evidence_codes %}
+        <p>
+          <strong>Evidence Code{{ evidence_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
+          {% for code in evidence_codes %}
+            {{code}}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </p>
+      {% endif %}
+      {% group_merge group.documents 'exhibit_codes' as exhibit_codes %}
+      {% if exhibit_codes %}
+        <p>
+          <strong>Exhibit Code{{ exhibit_codes|length|pluralize }}{% if result.material_type == 'Transcript' %} Referenced{% endif %}:</strong>
+          {% for code in exhibit_codes %}
+            {{code}}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </p>
+      {% endif %}
+      {% comment %}
+      {% if result.defendants %}
+        <p>
+          <strong>Defendant{{result.defendants|pluralize}}:</strong>
+          {% for defendant in result.defendants %}
+              <a href="{% search_query defendant=defendant %}">{{defendant}}</a>{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        </p>
+      {% endif %}
+      {% endcomment %}
+    {% endif %}
+  </td>
+  <td>
+    {% if result.material_type == 'Photograph' %}
+      <a class="unstyled" href="{% url 'photographs:show' photograph_id=result.pk slug=result.slug %}{% if query %}?q={% encode_string query %}{% endif %}">
+        <img src="{{result.thumb_url}}" alt="Thumbnail of a photograph: {{result.literal_title}}" />
+      </a>
+    {% else %}
+      {% for author in result.authors %}
+        <p>
+          <a href="{% search_query author=author %}">{{author}}</a>
+        </p>
+      {% endfor %}
+    {% endif %}
+  </td>
+  <td>
+    <span class="date">
+        {% if result.date %}
+          {{result.date}}
+        {% else %}
+          Unknown
+        {% endif %}
+      </span>
+  </td>
+  <td class="type-col">
+    <div class="document-type-icon type-{{result.material_type|slugify}}">
+    {{result.material_type}}</div>
+    {% if result.material_type == 'Document' %}
+      <p class="total-pages">{{result.total_pages}} page{{result.total_pages|pluralize}}</p>
+    {% endif %}
+  </td>
+</tr>

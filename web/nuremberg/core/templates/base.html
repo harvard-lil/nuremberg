@@ -1,0 +1,88 @@
+{% load compress static compile_static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=360, initial-scale=0.75">
+
+    <title>Nuremberg - {% block title %}Base Page{% endblock %}</title>
+
+    {% compress css %}
+      <link type="{% if COMPRESS_ENABLED %}text/less{% else %}text/css{% endif %}" rel="stylesheet" href="{% static 'style/base.less'|compile %}">
+    {% endcompress %}
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="{% static 'scripts/html5shiv.min.js' %}" type="text/javascript"></script>
+      <script src="{% static 'scripts/respond.min.js' %}" type="text/javascript"></script>
+      <script src="{% static 'scripts/ie8-polyfills.js' %}" type="text/javascript"></script>
+    <![endif]-->
+  </head>
+  <body class="{% block body_class %}{% endblock %} {% if show_mockup %}mockups{% endif %}">
+    <nav aria-labelledby="bypass-link">
+      <a class="bypass-link" id="bypass-link" href="#content" tabindex="1">Jump to content</a>
+    </nav>
+    <header>
+      {% block header %}
+        {% include 'nav.html' %}
+      {% endblock %}
+    </header>
+
+    <main>
+      {% block content %}
+      Nothing here!
+      {% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      {% block footer %}
+        {% include "footer.html" %}
+      {% endblock %}
+    </footer>
+
+    {% block javascript %}
+      {# compress all site JS into a single blob #}
+      {% compress js %}
+        <script src="{% static 'scripts/jquery-1.12.4.min.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/jquery-ui.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/jquery-ajax-native.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/jquery-mousewheel.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/jquery-imagesloaded.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/spin.min.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/dropdown.js' %}" type="text/javascript"></script>
+
+        {# jsPDF is as heavy as the rest of our js put together, defer loading until it's needed #}
+        {# <script src="{% static 'scripts/jspdf.min.js' %}" type="text/javascript"></script>#}
+        <script> window.jsPDFURL = '{% static 'scripts/jspdf.min.js' %}'; </script>
+
+        <script src="{% static 'scripts/modulejs.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/modernizr.min.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/underscore.min.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/backbone.min.js' %}" type="text/javascript"></script>
+
+        <script src="{% static 'scripts/search.js' %}" type="text/javascript"></script>
+
+        <script src="{% static 'scripts/transcripts.js' %}" type="text/javascript"></script>
+
+        <script src="{% static 'scripts/download-pdf.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/download-queue.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/document-tools.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/document-viewport.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/images.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/dragging.js' %}" type="text/javascript"></script>
+        <script src="{% static 'scripts/documents.js' %}" type="text/javascript"></script>
+      {% endcompress %}
+      <script>
+        $(document).ready(function () {
+          var entryPoint = '{% block javascript_module %}{% endblock %}';
+          if (entryPoint) {
+            modulejs.require(entryPoint);
+          }
+        });
+      </script>
+    {% endblock %}
+  </body>
+</html>

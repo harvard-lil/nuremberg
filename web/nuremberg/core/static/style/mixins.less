@@ -1,0 +1,30 @@
+@static_url: '/static';
+@font_url: '@{static_url}/fonts';
+@image_url: '@{static_url}/images';
+
+@screen-xxs-min: 360px;
+
+.border-radius (@radius: 5px) {
+	-webkit-border-radius: @radius;
+	-moz-border-radius:    @radius;
+	border-radius:         @radius;
+
+	-moz-background-clip:    padding;
+	-webkit-background-clip: padding-box;
+	background-clip:         padding-box;
+}
+
+.hide-text {
+  font-size: 0 !important;
+  color: transparent !important;
+}
+
+.filter(@filter){
+	filter: @filter;
+	-webkit-filter: @filter;
+	-moz-filter: @filter;
+}
+
+.hide {
+	display: none;
+}
