@@ -17,31 +17,7 @@ def viewport(document):
 def log():
     print('BROWSER LOG:', document.get_log('browser'))
 
-@pytest.fixture(scope='module')
-def preloaded(document):
-    # test preloading as a shared fixture to speed up the other tests
-
-    img = wait(document, 5).until(presence_of_element_located(at('.document-image img')))
-    # img.get_attribute('src').should.be.none # first image populates too soon
-
-    # preload image as data-url
-    wait(document, 10).until(element_has_attribute(img, 'src'))
-    data_url = img.get_attribute('src')
-    document.save_screenshot('screenshots/preload-first.png')
-    assert 'data:image/jpeg;base64' in data_url
-    assert len(data_url) == 148871
-
-    # last image should not be downloaded yet
-    img = document.find_element_by_css_selector('.document-image:last-child img')
-    assert img.get_attribute('src') is None
-    document.execute_script("$('.viewport-content').scrollTop(99999);")
-    wait(document, 10).until(element_has_attribute(img, 'src'))
-    document.save_screenshot('screenshots/preload-last.png')
-    assert 'data:image/jpeg;base64' in img.get_attribute('src')
-
-    return True
-
-def test_zooming(document, viewport, preloaded):
+def test_zooming(document, viewport):
     img = document.find_element_by_css_selector('.document-image img')
 
     # scroll mode
@@ -72,7 +48,7 @@ def test_zooming(document, viewport, preloaded):
     assert int(img.size['width']) in range(int(viewport.size['width']*expected_scale-40), int(viewport.size['width']*expected_scale))
 
 
-def test_page_navigation(document, viewport, preloaded):
+def test_page_navigation(document, viewport):
     page = document.find_element_by_css_selector('.document-image[data-page="20"]')
     offsetTop = document.execute_script("return arguments[0].offsetTop;", page)
     document.find_element_by_css_selector('.page-buttons .last-page').click()
@@ -111,7 +87,7 @@ def test_page_navigation(document, viewport, preloaded):
     assert '00001010.jpg' in document.find_element_by_css_selector('.page-buttons .download-page').get_attribute('href')
 
 
-def test_pdf_generation(document, preloaded):
+def test_pdf_generation(document):
     # extremely ugly shim to detect PDF save
     document.execute_script("""
         var _cENS = document.createElementNS;
