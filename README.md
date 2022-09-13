@@ -52,13 +52,6 @@ feature set:
 - `.photographs`: Files for displaying images from the photographic archive.
 - `.search`: Files for the search interface and API.
 
-    This document covers the following topics:
-
-- [Setting up a development environment](#setup) [Running the test
-- suite](#testing) [Configuring project settings](#project-settings)
-- [Data](#data) [Packaging static assets](#static-assets)
-
-
 ## Testing
 
 Tests in the project are generally high-level integration acceptance tests that
