@@ -83,7 +83,7 @@ through image downloading and preloading. They can be run explicitly when
 necessary.
 
 ```
-docker compose exec web python pytest nuremberg/documents/browser_tests.py
+docker compose exec web pytest nuremberg/documents/browser_tests.py
 ```
 
 
