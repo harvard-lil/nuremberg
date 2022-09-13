@@ -121,8 +121,7 @@ indexing configuration is in the
 To build a brand new Solr schema, run:
 
 ```
-docker compose exec web python manage.py build_solr_schema
---configure-dir=solr_conf
+docker compose exec web python manage.py build_solr_schema --configure-dir=solr_conf
 ```
 
 This will generate both `schema.xml` and `solrconfig.xml` under the `solr_conf`
