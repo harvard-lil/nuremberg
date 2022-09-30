@@ -29,7 +29,7 @@ urlpatterns = [
         proxied(base_url=settings.DOCUMENTS_URL), name='proxy_image'),
     re_path(r'^proxy_transcript/(?P<path>.*)$',
         proxied(base_url=settings.TRANSCRIPTS_URL), name='proxy_transcript'),
-    re_path(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /search/\n\nUser-agent: SiteimproveBot\nDisallow: /", content_type="text/plain")),
+    re_path(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /search/\n\nUser-agent: SiteimproveBot\nDisallow: /\n\nUser-agent: SiteimproveBot-Crawler\nDisallow: /", content_type="text/plain")),
 ]
 
 handler400 = 'nuremberg.core.views.handler400'
