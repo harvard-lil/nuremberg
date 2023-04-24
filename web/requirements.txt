@@ -96,7 +96,7 @@ six==1.15.0
     # via
     #   django-compressor
     #   django-coverage-plugin
-sqlparse==0.4.2
+sqlparse==0.4.4
     # via django
 tomli==2.0.1
     # via pytest
