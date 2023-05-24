@@ -15,7 +15,7 @@ psycopg2
 lxml>=4.9.1
 django-haystack==3.0.0
 pysolr==3.9.0
-requests==2.25.1
+requests>=2.31.0
 
 # Assets
 django_compressor~=2.4.0
