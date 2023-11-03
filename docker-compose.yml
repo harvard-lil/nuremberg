@@ -11,7 +11,7 @@ services:
   web:
     build:
       context: ./web
-    image: nuremberg:0.25
+    image: nuremberg:0.26
     tty: true
     command: bash
     volumes:
